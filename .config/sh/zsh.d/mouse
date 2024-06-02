@@ -1,0 +1,41 @@
+[[ $TERM = *(xterm|rxvt)* ]] && return
+return
+
+zle-xterm-mouse() {
+	(( ZLE_USE_MOUSE )) || return
+
+	local bt mx my cx cy i match mbegin mend
+	setopt localoptions extendedglob # for (#b)
+
+	read -k bt # mouse button, x, y reported after \e[M
+	read -k mx
+	read -k my
+	[[ $bt == '#' ]] || return # only for btn1 release
+	case $bt {
+		'`') printf '\e[C' ;;
+		'a') printf '\e[<64;%d;%dM' $COLUMNS $LINES ;;
+	}
+
+	printf '\e[6n' # query cursor position
+	# can't use read -d R in zle
+	while read -k i && [[ $i != R ]] { cx+=$i; }
+
+	[[ $cx == (#b)??(*)\;(*) ]] || return
+	cy=$match[1]
+	cx=$match[2]
+
+	(( CURSOR += #mx - 32 - cx + (#my - 32 - cy) * COLUMNS ))
+}
+
+typeset -i ZLE_USE_MOUSE=1
+zle-toggle-mouse() {
+	(( ZLE_USE_MOUSE = ! ZLE_USE_MOUSE ))
+	(( ZLE_USE_MOUSE )) &&
+		printf '\e[?1000l' || printf '\e[?1000h'
+}
+
+precmd() printf '\e[?1000h' # enable mouse tracking
+preexec() printf '\e[?1000l' # disable mouse tracking
+
+zle -N zle-xterm-mouse #zle-xterm-mouse
+bindkey '\e[M' zle-xterm-mouse

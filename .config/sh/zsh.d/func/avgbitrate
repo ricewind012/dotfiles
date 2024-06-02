@@ -1,0 +1,10 @@
+local -i total
+local files=($XDG_MUSIC_DIR/**/*.([af]lac|wa#v)(.))
+local i match
+
+for i ($files) {
+	: ${${(M)"${(f)$(ffprobe $i 2>&1)}":#*bitrate: [0-9]# kb/s}//(#b)([0-9]##)}
+	(( total += match ))
+}
+
+printf '%d\n' $(( total / $#files ))

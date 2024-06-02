@@ -1,0 +1,23 @@
+return
+mouse() {
+	local bt btr mx my
+
+	read -k bt
+	read -k mx
+	read -k my
+	case $bt {
+		'`') btr=up ;;
+		'a') btr=down ;;
+		' ') btr=left ;;
+		'"') btr=right ;;
+		'!') btr=center ;;
+		'#') btr=release ;;
+	}
+
+	printf '%7s @ %dx%d\n' \
+		${btr:-$bt} $(( #my - 32 )) $(( #mx - 32 ))
+}
+
+zle -N mouse
+bindkey '\e[M' mouse
+printf '\e[?1000h'

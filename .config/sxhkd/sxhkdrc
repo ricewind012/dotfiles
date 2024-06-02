@@ -1,0 +1,44 @@
+# programs
+ctrl + alt + t
+	$TERMINAL
+
+super + v
+	clipmenu
+
+# screenshot
+ctrl + shift + {less,z,x,c}
+	screenshot {sel,window,vrecord,-A srecord}
+
+Home
+	screenshot full
+
+# audio
+End
+	player toggle || playerctl play-pause
+
+super + {comma,period}
+	player {prev,next} && { sleep 1; player -n; }
+
+alt + {0,minus,equal}
+	volume {mute,dec,inc}
+
+# wm
+alt + p
+	killall picom || picom
+
+alt + q
+	xdotool getwindowfocus windowquit
+
+super + {s,f}
+	herbstclient {floating,fullscreen} toggle || \
+	bspc node -t {floating,fullscreen} || bspc node -t tiled
+
+alt + {_,ctrl + }{1-9,0}
+	xdotool {set_desktop,getwindowfocus set_desktop_for_window} {0-8,9}
+
+# mouse
+KP_Divide
+	xdotool click 1
+
+KP_Multiply
+	xdotool click 3

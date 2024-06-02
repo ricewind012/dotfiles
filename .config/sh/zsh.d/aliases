@@ -1,0 +1,58 @@
+unalias -a
+
+# settings for commands
+append() alias $1="$1 $2"
+[ "${0##*/}" != sh ] && {
+	nc() for i; do
+		alias $i="nocorrect $i ${aliases[$i]#$i }"
+	done
+	ng() for i; do
+		alias $i="noglob $i ${aliases[$i]#$i }"
+	done
+}
+
+for i in probe mpeg play; do
+	append ff$i '-hide_banner'
+done
+for i in diff grep; do
+  append $i '--color=auto'
+done
+append feh '-.Z -g 1024x768 --force-aliasing -B white -\^ "feh$delim%n"'
+append sass '-I "$skindir/css/common"' && append stylus $_
+append wget '-c --hsts-file="$XDG_CACHE_HOME/wget-hsts"'
+append yt-dlp '-o "%(id)s.%(ext)s"'
+append ps '-o pid,command -x'
+append gallery-dl '-f "/O"'
+append df '-hx tmpfs'
+append free '-mt'
+append mkdir '-p'
+append du '-Lh'
+append cal '-m'
+append ip '-c'
+ng {z,}calc yt-dlp
+nc bspc mkdir mv killall
+
+# etc.
+alias psgrep="nocorrect ps | grep -v grep | grep -i"
+alias 7zip='wine "$windows/Program Files/7-Zip/7zFM.exe"'
+alias cwp='feh -A "xwallpaper --zoom %F && killall feh" -g 640x428 -.'
+alias psagrep="nocorrect \ps -o user,pid,command -x | grep -v grep | grep -i -e"
+alias key="xev | awk -F'[ )]+' '/^KeyPress/ { a[NR+2] } NR in a { printf \"%-3s %s\n\", \$5, \$8 }'"
+alias yta='yt-dlp --add-metadata --embed-thumbnail -x'
+alias ci='curl ifconfig.me; echo'
+alias wp='xwallpaper --zoom'
+alias ll='zlist -cCdl -G D'
+alias -g X='| xclip -sel c'
+alias se='sudoedit'
+alias p='print -rl'
+
+# edit and apply
+alias xhk='e $sxhkd && pkill -USR1 sxhkd'
+alias xres='e $XDG_CONFIG_HOME/sx/xresources && xrdb -load $_'
+alias xresc='e $XDG_CONFIG_HOME/sx/xresources-colors && xrdb -load $XDG_CONFIG_HOME/sx/xresources'
+
+# git
+alias gs='git status'
+alias gc='git commit'
+alias gd='git diff'
+alias gp='git push'

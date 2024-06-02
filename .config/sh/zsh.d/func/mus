@@ -1,0 +1,68 @@
+case ${1:-list} {
+	list)
+		local -i total
+		local archives=(zip rar 7z tar)
+		local -A audio; for f (mp3 m4a flac opus wav aiff)
+			audio[$f]=0
+		local f i k output
+
+		cd -- ${XDG_MUSIC_DIR:-$HOME/Music} || return 1
+		for i (**/*.(${(~j.|.)archives})(.)) {
+			output=("${(f)$(7z l $i)}")
+
+			for (( i=1; i<=$#output; i++ ))
+				[[ $output[$i]:e == (${(~kj.|.)audio}) ]] &&
+					(( audio[$output[$i]:e]++ ))
+		}
+		for i (**/*.(${(~kj.|.)audio}))
+			(( audio[$i:e]++ ))
+
+		for k (${(k)audio}) if (( audio[$k] )) {
+			(( total += audio[$k] ))
+			printf '%s\t%d\n' ${(k)audio[$k]} $audio[$k]
+		}; printf '%s\t%d\n' total $total
+	;;
+
+	dl)
+		local -i i
+		local l f=${2:-l}
+
+		${EDITOR:-vi} $f || return 1
+
+		while read -r l || [[ -n $l ]] {
+			local p=$l; case $l {
+				*/s-?????|*/s-???????????)
+					for i (1 2 3 4) p=${p#*/}; p=${p%%/*};;
+				*) p=${p##*/};;
+			}
+
+			local a=${${${l#*//}#*/}%%/*}; case $a {
+				s[4a]dwrist) a=SADWRIST;;
+				*) a=${a//[_-]/ };;
+			}
+
+			$commands[(i)(yt-dlp|youtube-dl)] \
+				--add-metadata \
+				--embed-thumbnail \
+				-f hls_opus_64 \
+				--output "$a - ${l##*/}.%(ext)s" \
+			$l
+		} < $f
+
+		rm $f
+	;;
+
+	flac)
+		local l
+
+		${EDITOR:-vi} $f || return 1
+
+		while read -r l || [[ -n $l ]] {
+			yt-dlp $l -o - |
+				ffmpeg -i - -c:a flac -compression_level 10 \
+			${l##*/}.flac
+		}
+
+		rm $f
+	;;
+}

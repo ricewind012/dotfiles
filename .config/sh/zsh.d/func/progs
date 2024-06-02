@@ -1,0 +1,6 @@
+local f REPLY
+local -A c
+setopt localoptions extendedglob
+
+for f ({/usr{/local,},${${XDG_DATA_HOME:-$HOME/.local/share}%/*}}/share/applications/*(.N)) c[$f]="${(f)$(<$f)}"
+read -r; nohup ${(z)${(z)${${${(M)"${(f)c[${(k)c[(r)*Name=(#i)*${~${REPLY//$'\n'}:?}*]}]}":#Exec=*}[1]}#Exec=}%\%[[:alpha:]]}:-$REPLY} &>/dev/null &!

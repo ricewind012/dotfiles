@@ -1,0 +1,120 @@
+pixivdl() for i { curl $i -H 'sec-ch-ua: ";Not A Brand";v="99", "Chromium";v="94"' -H 'Referer: https://www.pixiv.net/' -H 'sec-ch-ua-mobile: ?0' -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36' -H 'sec-ch-ua-platform: "Linux"' --compressed -o ${i##*/}; }
+bdir() print "${$(du -ahD "${1:-.}" | sort -rh | head -"${2:-20}")//.\//}"
+o() { $@ &>/dev/null &!; }
+cb() { xclip -sel c -t image/png < ${1#file://}; }
+imgcp() { curl -s $1 -o - | xclip -sel c -t image/png; }
+loginctl() { printf 'check /tmp first \n\n'; ls /tmp /tmp/dls; read && command loginctl $@; }
+compress() ffmpeg -i $1 -ar 44100 -c:a libmp3lame -q:a ${2:-2} /tmp/${${1##*/}%.wav}.mp3
+rgb() printf '%d %d %d\n' 0x${1%????} 0x${${1#??}%??} 0x${1#????}
+hex() printf '%02x%02x%02x\n' $1 $2 $3
+
+e() {
+	[[ ! -d $1:h ]] && mkdir $1:h
+	$EDITOR -- $@
+}
+
+git() {
+	local gitdir=$winhome/Downloads/git
+	local cmd=$1; shift
+
+	case $cmd {
+		clone)
+			local repodir=${${2%.git}:-$gitdir}/${${${1:?}##*/}%.git}
+			if [[ $1 == (-b|--branch) ]] {
+				local repodir=${${4%.git}:-$gitdir}/${${${3:?}##*/}%.git}-${2:?}
+				shift 2
+			}
+
+			command git clone $@ $repodir && cd $repodir
+		;;
+
+		dir) printf '%s\n' $gitdir ;;
+		*) command git $cmd $@
+	}
+}
+
+xbps() {
+	local cmd=$1; shift
+
+	case $cmd {
+		i) sudo xbps-install $@ ;;
+		r) sudo xbps-remove -R $@ ;;
+		s) xbps-query -Rs $@ ;;
+		f) xbps-query -Rf $@ ;;
+
+		up)
+			xbps i python3-{setuptools,psutil,dbus,nvml}
+      cd "$(git dir)/optimus-manager"
+      sudo python3 setup.py install
+      cd $OLDPWD
+		;;
+
+		p)
+			if [[ $1 == -e ]] {
+				shift; for i; xlocate /usr/bin/$i$
+			} else {
+				for i; xlocate /usr/bin/$i
+			} | column -t
+		;;
+	}
+}
+
+man() {
+	local -x LESS_TERMCAP_mb=$'\e[31;1;1m'
+	local -x LESS_TERMCAP_md=$'\e[31;1;1m'
+	local -x LESS_TERMCAP_me=$'\e[m'
+	local -x LESS_TERMCAP_se=$'\e[m'
+	local -x LESS_TERMCAP_so=$'\e[7m'
+	local -x LESS_TERMCAP_ue=$'\e[m'
+	local -x LESS_TERMCAP_us=$'\e[32;1;1m'
+
+	printf '\e[22;2t\e]2;man%s%s\a' $delim $1
+	command man $@
+	printf '\e[23;2t'
+}
+
+man2() {
+	case $1 {
+		es) <<< 'ESC: \033
+CSI: \033[ Control Sequence Introducer
+DCS: \033P Device Control String
+OSC: \033] Operating System Command
+
+Ps: A single (usually optional) numeric parameter,
+    composed of one or more digits
+Pm: Any number of single numeric parameters,
+    separated by ; character(s).
+    Individual values for the parameters are listed with Ps
+Pt: A text parameter composed of printable characters.' ;;
+
+		pr) <<< '% git checkout -b patch-1
+% git remote add upstream $orig_url
+..stuff' ;;
+	}
+}
+
+nzs() {
+	case $1 {
+		a) : $z/aliases ;;
+		c) : $z/css ;;
+		C) : $z/cnf ;;
+		f) : $z/functions ;;
+		p) : $z:h/.zprofile ;;
+		*) : $z:h/.zshrc ;;
+	}
+
+  $EDITOR $_ && . $_
+}
+
+cd() {
+  local parent=$1:h
+
+	if (( $# == 1 )) && [[ ! -d $1 ]] {
+		[[ ! -e $parent ]] && return 1
+
+		printf '%s \e[2m->\e[m %s\n' $1 $parent >&2
+		builtin cd -- $parent
+	} else {
+		builtin cd $@
+	}
+}

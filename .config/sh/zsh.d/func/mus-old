@@ -1,0 +1,55 @@
+#!/usr/bin/env zsh
+musicdir="$HOME/doc/mus"
+
+case ${1:-list} {
+	sort)
+		for i (*(/)) {
+			if [[ $i == \[* ]] continue
+
+			c=${${${i#*\(}%\)*}//[_-]/ }
+			mv "$i" "[${(U)c}] ${${${${${${i//\(*\)-}//-VINYL-FLAC}//-CD-FLAC}//_/ }//  / + }%-[0-9]*}.rar"
+		}
+	;;
+
+	list)
+		cd "$musicdir"
+		while read -r l; do case $l in
+			*.rar|*.zip|*.7z) 7z l "$l" | grep -F '....' | grep -E 'mp3|flac|wav';;
+			*.jpg|*.png|*.bmp) ;;
+			*.mp3|*.m4a|*.flac|*.opus|*.wav) printf '%s\n' "$l"
+		esac; done < <(printf '%s\n' **/*(.)) | awk '
+			BEGIN{e=ARGV[1];a[0]="mp3";a[1]="m4a";a[2]="flac";a[3]="opus";a[4]="wav"}
+			$0~a[0]{b[0]++}$0~a[1]{b[1]++}$0~a[2]{b[2]++}$0~a[3]{b[3]++}$0~a[4]{b[4]++}
+			END{for(i in a)if(e!="-a"&&b[i]!=0)printf("%s:\t%d\n",a[i],b[i])}
+		'
+	;;
+
+	dl|download)
+		f=${2:-l}
+
+		#[ "$(wc -l < $f)" -eq 1 ] &&
+		#	c="awk /^https/{gsub(\"https\",\"\nhttps\")}1 $f \|"
+
+		while read -r l; do
+			if [[ ! $l ]] continue
+
+			p=$l; case $l {
+				*/s-?????|*/s-???????????) for i (1 2 3 4) p=${p#*/}; p=${p%%/*};;
+				*) p=${p##*/};;
+			}
+
+			a=${${${l#*//}#*/}%%/*}; case $a {
+				s4dwrist|sadwrist) a=SADWRIST;;
+				where_swans-will_weep) a='where swans will weep';;
+				*) a=${a//[_-]/ };;
+			}
+
+			youtube-dl \
+				--add-metadata \
+				--embed-thumbnail \
+				--postprocessor-args "-metadata artist='$a'" \
+				--output "$a - ${l##*/}.%(ext)s" \
+			"$l"
+		done < "$f"
+	;;
+}

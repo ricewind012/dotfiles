@@ -1,0 +1,3 @@
+local a=(cirno-{holding-nix-sign,standing-on-balkony-nix-logo,teaches-{marisa-,}nix} cirnos-logo patch-santas-elfs)
+
+curl -Ls "https://github.com/gytis-ivaskevicius/high-quality-nix-content/blob/master/anime/$a[RANDOM % $#a + 1].png?raw=true" | xclip -sel c -t image/png

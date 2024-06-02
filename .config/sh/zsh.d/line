@@ -1,0 +1,30 @@
+# TODO
+# don't kill window contents on WINCH
+# vim affected?
+
+[[ $bruh ]] || return
+
+draw-line() {
+	local history=("${(f)$(fc -lI 2>/dev/null)}")
+
+	printf '\e7\e[%dH\e[?7l\e[7m%s\e[m\e[?7h\e8' \
+		$(( LINES - 1 )) \
+		${(%l:COLUMNS:):-%y -- $#history/%h}
+}
+
+zle-keymap-select() {
+  local str=${(%):-%~}
+	[[ $KEYMAP == vi* ]] &&
+    str="-- ${${KEYMAP/vicmd/NORMAL}/(main|viins)/INSERT} --"
+
+	printf '\e7\e[%dH\e[K%s\e8' $LINES $str
+}
+
+trap 'printf "\ec\e[1;%dr" $(( LINES - 2 )); draw-line; zle-keymap-select' WINCH
+printf '\e[1;%dr' $(( LINES - 2 ))
+zle -N zle-keymap-select
+
+alias $EDITOR='printf "\e7\e[;r"; $EDITOR; printf "\e[1;%dr\e8" $(( LINES - 2 ))'
+setopt promptsubst
+PS1=${(*)PS1//'%~' #}
+PS1+='%{$(draw-line; zle-keymap-select)'

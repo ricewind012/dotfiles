@@ -1,0 +1,133 @@
+css::edit() {
+	e $1 && stylus -p $1 > ${1%.styl}.css
+}
+
+css::divide() {
+	if [[ $1 == -n ]] {
+		print -- ${${2//,/,$'\n'}//$3/&}
+	} else {
+		print -- ${1//,/,$'\n'}
+	}
+}
+
+css::br() {
+	local j i r
+	local filter='.(baseShapeRound|fakeEdges)-*'
+	local var='var(--border-radius)'
+	local num='([1-8]px|.<->rem)'
+	local domain='discord.com'
+	local -i i stylus
+	local -A props=(
+		["$var"]="$num"
+		["$var 0 0 $var"]="$num 0 0 $num"
+		["0 $var $var 0"]="0 $num $num 0"
+		["$var $var 0 0"]="$num $num 0 0"
+		["0 0 $var $var"]="0 0 $num $num"
+		["$var 0 $var 0"]="$num 0 $num 0"
+		["0 $var 0 $var"]="0 $num 0 $num"
+	)
+
+	if [[ $1 == -s ]] {
+		printf '/* ==UserStyle==
+@name           %s
+@namespace      github.com/openstyles/stylus
+@version        1.0.0
+@description    A new userstyle
+@author         Me
+==/UserStyle== */
+@-moz-document domain("%s") {\n' $domain $domain
+		shift
+	}
+
+	for j i (${(kv)props}) {
+		r=(${(u)${"${(f)$(css-tools -f $1 find border-radius $i)}":#$~filter}#.theme-(light|dark) })
+
+		for (( i = 1; i <= $#r; i++ ))
+			printf '%s{border-radius:%s!important}\n' \
+				$r[$i] $j
+		printf '\n'
+	}
+	(( stylus )) && printf '}\n'; :
+}
+
+css() {
+	local i
+	local cssdir=$skindir/css
+	local cssglobal=$cssdir/common/vars.css
+	local prog=${1%%/*}
+	local -A files=(
+		vivaldi						$cssdir/vivaldi/custom.css
+		chrome-devtools		$cssdir/chrome-devtools/ext/custom.css
+		firefox-chrome		$firefox/chrome/css/chrome-custom.css
+		firefox-content		$firefox/chrome/css/content-custom.css
+	)
+	setopt localoptions nocorrectall
+
+	case $1 {
+		*.(scss|styl|less))
+			[[ ${prog%%-*} == firefox ]] && local isfirefox=1
+			local firefoxtypenoc=${prog##*-c}
+			local firefoxtype=${prog##*-}
+
+			local progdir=${files[$prog]%/*}
+			local pp; case ${1##*.} {
+				scss) pp=sass ;;
+				styl) pp=stylus ;;
+				less) pp=lessc ;;
+			}
+
+			[[ $2 ]] || e $cssdir/$1
+			[[ ! -d $progdir ]] && mkdir -p $progdir
+
+			rm $files[$prog]
+			(( isfirefox )) && [[ $firefoxtype == content ]] &&
+				printf '@-moz-document url-prefix(about:), url-prefix(chrome://), url-prefix(moz-extension://) {\n' \
+			>> $files[$prog]
+			cat $cssglobal >> $files[$prog]
+			(( isfirefox )) && [[ $firefoxtype == content ]] &&
+				printf '}\n' \
+			>> $files[$prog]
+			stylus -I $cssdir/common \
+				-p $cssdir/$prog/main.${1##*.} >> $files[$prog]
+
+			(( isfirefox )) && [[
+				${"${(f)$(<$firefox/chrome/userC$firefoxtypenoc.css)}"[-1]}
+				!=
+				"@import url(\"css/c$firefoxtypenoc-custom.css\");"
+			]] &&
+				printf '\n@import url("css/%s");' \
+					${files[$prog]##*/} \
+				>> $firefox/chrome/userC${(k)files[$prog]##*-c}.css
+			:
+		;;
+
+		update)
+			local clipboard=$(xclip -sel c -o)
+
+			[[ $clipboard == '/* ==UserStyle=='* ]] || return 1
+
+			printf '%s\n' $clipboard > $cssglobal
+			for i (${(k)files})
+				$0 $i/main.styl clipboard
+
+			[[ $files[$3] ]] && xclip -sel c < $files[$3]
+			:
+		;;
+
+		userstyles)
+			local name=$TMPDIR/dls/stylus-${(%):-%D{%Y-%m-%d}}
+			shift; (( $# )) || return 1
+
+			cd $windows2/repos/userstyles
+			[[ -d $name ]] || styles $name.json
+			mv $name/$^@.user.styl .
+			git status
+
+			rm -r $name
+			mv $name.json $skindir/css/stylus
+		;;
+	}
+}
+
+compctl -g "$skindir/css/*/**.(scss|styl|less)(:gs/${skindir//\//\\\/}\\/css\\//)" css
+compctl -g "$skindir/themes/(light|dark)*(/:gs/${skindir//\//\\\/}\\/skn\\//)" theme

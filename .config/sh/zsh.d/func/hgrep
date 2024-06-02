@@ -1,0 +1,9 @@
+local -i r i
+local c='fc -li 1'
+
+for (( i = 1; i <= ARGC; i++ ))
+	c="$c | grep -E -- ${(q)argv[$i]}"
+local o=$(eval "$c")
+[[ -z $o ]] && r=1 || printf '%s\n' $o
+
+return $r

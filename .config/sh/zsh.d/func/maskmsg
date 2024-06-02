@@ -1,0 +1,13 @@
+local m=$1
+
+while (( $#m <= 2000 )) {
+	m+='||\u200b||'
+}
+printf -v m '%b' $m$2
+
+if (( $#m > 2000 )) {
+	printf 'length is %d\n' $#m
+	return 1
+}
+
+printf '%s\n' $m | xclip -sel c

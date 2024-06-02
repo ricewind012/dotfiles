@@ -1,0 +1,122 @@
+prompt() {
+  printf '\e[4m%s\e[m%s' $1 ${2:+ $2 }
+}
+
+command_not_found_handler() {
+	printf 'zsh: command not found: %s\n' $1
+	# TODO XD
+	[[ $OSTYPE != *linux* || ! -f /etc/os-release ]] &&
+		return 127
+
+	local -i i tlength
+	local -a search update install{c,} split pkgs bins syms
+	local -A opts
+	local REPLY
+	local os=${${${(M)"${(f)$(</etc/os-release)}":#NAME=*}#NAME=}//\"}
+
+	case $os {
+		Void)
+			search=(xlocate)
+			update=(xlocate -S)
+			installc=(xbps-install)
+		;;
+
+		# TODO: other debian distros?
+		'Linux Mint')
+			search=(dpkg-query -S)
+			update=(idk)
+			installc=(apt install)
+		;;
+	}
+
+	[[ $commands[(i)($search[1]|$install[1])] ]] ||
+		return 127
+
+	# Options
+	#
+	# c - display package count
+	# s - display binary symlinks
+	# t - output result as a table
+	# i - install the selected result
+	# f - install first package by default
+	# p - prompt before installing package
+	# u - update the database (if supported)
+	for (( i = 1; i <= $#CNF_OPTS; i++ ))
+		opts[$CNF_OPTS[$i]]=1
+	(( opts[u] )) && $update
+
+	local -a output=("${(f)$($=search /bin/$1 2>/dev/null)}")
+	local -i count=$#output # for left-aligning numbers
+	for (( i = 1; i <= $#output; i++ )) {
+		split=($=output[$i])
+		pkgs+=${split[1]%-*}
+		bins+=$split[2]
+		syms[$i]=$split[4]
+
+		(( opts[t] )) && tlength=$(( $#pkgs[$i] > tlength ?
+			$#pkgs[$i] : tlength ))
+	}
+	# Bail out if none or too many (may be a typo)
+	(( $#pkgs != 1 && $#pkgs <= 100 )) || return 127
+
+	if (( count != 1 )) {
+		local s=s
+		(( opts[c] )) && local pkgc="$count "
+	} else {
+		# Don't display binary with same name
+		# ..if if it is the only package.
+		unset 'bins[1]'
+
+		# Don't display package count/number
+		unset 'opts[c]'
+	}
+
+	printf '\nit can be found in the following %spackage%c:\n' $pkgc $s
+	for (( i = 1; i <= $#pkgs; i++ ))
+		if (( opts[t] )) {
+			printf '\e[2m%s\e[m\e[32m%s\e[m%s%s\n' \
+				${opts[c]:+${(l:$#count:)i} } \
+				${(r:tlength + 1:)pkgs[$i]} \
+				${bins[$i]##*/} \
+				${opts[s]:+${syms[$i]:+ $'\e[2m'->$'\e[m' ${syms[$i]#/usr/bin/}}}
+		} else {
+			printf '\e[2m%s\e[m\e[32m%s\e[m%s\e[31m%s\e[m%s%s\n' \
+				${opts[c]:+${(l:$#count:)i} } \
+				$pkgs[$i] \
+				${bins[$i]:+: } \
+				${bins[$i]:+${${bins[$i]##*/}%${${bins[$i]##*/}#$1}}} \
+				${${bins[$i]##*/}#$1} \
+				${opts[s]:+${syms[$i]:+ $'\e[2m'->$'\e[m' ${syms[$i]#/usr/bin/}}}
+		}
+
+	if (( opts[i] )) {
+		local -i pkgn=1
+
+		if (( opts[p] )) {
+			if (( ! opts[f] && count != 1 )) {
+				prompt 'Package number to install?' '[1]'
+				read -r || {
+					printf '\n'
+					return 1
+				}
+				pkgn=$(( REPLY == 0 ? 1 : REPLY ))
+
+				if (( ! $+pkgs[$pkgn] )) {
+					printf 'No such package #%d\n' $pkgn
+					return 1
+				}
+			}
+
+			prompt "Install package $pkgs[$pkgn]?" '[y/N]'
+			# Use -q in order to exit with 127
+			read -sq; printf '%c\n' $REPLY
+
+			[[ $REPLY == n ]] && return 127
+		} else {
+			printf '\e[2mInstalling package %s...\e[m\n' \
+        $pkgs[$pkgn]
+		}
+
+		su -c "$installc $pkgs[$pkgn]" 2>&1
+	}
+} >&2
