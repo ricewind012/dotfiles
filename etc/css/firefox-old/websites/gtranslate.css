@@ -1,0 +1,12 @@
+@media (prefers-color-scheme: light) {
+	@-moz-document domain('translate.google.com') {
+		body, .frame::before {
+			background-color: #fafafa !important;
+		}
+	}
+}
+@-moz-document domain('translate.google.com') {
+	.frame::before {
+		border-bottom: none !important;
+	}
+}

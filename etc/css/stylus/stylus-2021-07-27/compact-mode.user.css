@@ -1,0 +1,25 @@
+/* ==UserStyle==
+@name           Compact mode
+@namespace      github.com/openstyles/stylus
+@version        1.0.0
+@description    A new userstyle
+@author         Me
+==/UserStyle== */
+
+@-moz-document
+	domain("codeberg.org"),
+	domain("gitlab.com")
+{
+	html, body {
+		line-height: unset !important;
+	}
+}
+
+@-moz-document domain("gitlab.com") {
+	table.table tr td, .md table:not(.code) tr td,
+	table.table tr th, .md table:not(.code) tr th,
+	.tree-holder .tree-table tr td,
+	.tree-holder .tree-table tr th {
+		line-height: unset !important;
+	}
+}

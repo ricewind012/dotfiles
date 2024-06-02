@@ -1,0 +1,60 @@
+#!/bin/sh
+eval "$(xrescolors)"
+
+# WM-specific options
+[ "$wm" ] || {
+	id=$(xprop -root -notype _NET_SUPPORTING_WM_CHECK)
+	id=${id##* }
+	wm=$(xprop -id "$id" -notype _NET_WM_NAME)
+	wm=${wm#*\"}
+	wm=${wm%\"*}
+}
+
+case $wm in
+	bspwm)
+		_() bspc config "$@"
+		for i in top bottom left right; do
+			_ ${i}_padding 0
+		done
+		_ window_gap 0
+		_ border_width 0
+		_ normal_border_color ""
+		_ focused_border_color ""
+	;;
+
+	berry)
+		_() berryc "$@"
+
+		_ title_height 24
+		_ draw_text false
+		_ set_font "$fn"
+		_ text_focus_color "$foreground"
+		_ text_unfocus_color "$fg2"
+
+		_ border_width 0
+		_ inner_border_width 0
+		_ focus_color "$ab"
+		_ unfocus_color "$background"
+		_ inner_focus_color "$ac"
+		_ inner_unfocus_color "$background"
+	;;
+
+	herbstluftwm)
+		_() herbstclient attr "$@"
+
+		_ theme.title_height 0
+		_ theme.title_color "#ffffff"
+		_ theme.title_font "LINE Seed JP_TTF:pixelsize=18"
+
+		_ theme.padding_bottom 12
+		_ theme.border_width 0
+		_ theme.inner_width 0
+		_ theme.color "#25252540"
+		_ theme.active.color "#06c755"
+	;;
+esac
+
+# Wallpaper
+. "$XDG_CONFIG_HOME/user-dirs.dirs"
+xwallpaper --zoom "$XDG_PICTURES_DIR/wal/unsplash/photo-1560928703-7e8f6bd6b715.jpeg"
+xsetroot -solid "$background"

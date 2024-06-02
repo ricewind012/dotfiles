@@ -1,0 +1,53 @@
+:root {
+	--toolbar-start-end-padding: 0px $i;
+
+	--toolbarbutton-disabled-opacity: 1 $i;
+	--toolbarbutton-hover-background: transparent $i;
+	--toolbarbutton-active-background: transparent $i;
+	--toolbarbutton-outer-padding: 0px $i;
+	--toolbarbutton-inner-padding: 0px $i;
+
+	// Tab buttons use this
+	--tabs-navbar-shadow-size: 0 $i;
+}
+
+toolbar {
+	appearance: none $i;
+	bgc(2);
+	pad(0);
+	brd(bottom);
+
+	&button {
+		&:not([disabled]) {
+			cursor: pointer $i;
+
+			panel &:hover {
+				hl();
+			}
+		}
+		&[disabled] {
+			opacity: 0.5;
+		}
+	}
+	&separator {
+		brd(top);
+		mar(0);
+	}
+
+	.&button-badge-stack,
+	.&item-combined-buttons {
+		mar(0);
+	}
+	#&-menubar {
+		brd(0);
+	}
+}
+
+toolbar,
+toolbarbutton menupopup[placespopup] > :is(menu, menuitem),
+.subview-subheader,
+panelview .toolbarbutton-1,
+.subviewbutton,
+.widget-overflow-list .toolbarbutton-1 {
+	min-height: unset $i;
+}

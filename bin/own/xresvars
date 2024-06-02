@@ -1,0 +1,57 @@
+#!/bin/sh -e
+
+quote() {
+	case $v in
+		*"'"*) q='"' ;;
+		*) q="'" ;;
+	esac
+}
+
+main() {
+	n='
+'
+
+	if [ -f "$1" ]; then
+		# Read the file
+		while IFS= read -r l; do
+			input=$input$n$l
+		done < "$1"
+	else
+		input=$(xrdb -query)
+	fi
+
+	while IFS= read -r l; do case $l in
+		!*|'#include'*|[[:space:]]*|'') ;;
+
+		'#define'[[:space:]]*)
+			l=${l#'#define'[[:space:]]}
+			p=${l%%[[:space:]]*}
+			v=${l#*[[:space:]]}
+			quote
+
+			output=$output$n$p=$q$v$q
+		;;
+
+		*:*)
+			p=${l%%:*}
+			v=${l##*:[[:space:]]}
+			quote
+
+			# Replace characters in $IFS with underscores
+			unset str
+			IFS='*.-'
+
+			for i in $p; do
+				[ "$i" ] && str=${str}_${i}
+			done
+
+			output=$output$n${str#_}=$q${v#[[:space:]]}$q
+		;;
+	esac; done <<-EOF
+	$input
+	EOF
+
+	printf '%s\n' "${output#?}"
+}
+
+main "$@"

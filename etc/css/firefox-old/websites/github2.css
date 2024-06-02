@@ -1,0 +1,115 @@
+/* Header */
+main > .bg-gray-light {
+	margin-bottom: 24px !important;
+}
+
+/* Move sidebar to the top */
+.repository-content > :not(.js-check-all-container).gutter-condensed.flex-column {
+  display: table !important;
+}
+.repository-content .flex-shrink-0.col-md-3,
+.repository-content .flex-shrink-0.col-md-9 {
+  display: table-footer-group !important;
+}
+/*.repository-content .flex-shrink-0.col-md-9 #readme,
+.repository-content .mt-3,*/
+.repository-content h2.mb-3/*:not(.file-navigation)*/ {
+  margin: 8px !important;
+}
+.repository-content .file-navigation {
+	/*margin: 8px 5px 0 5px;*/
+	margin-top: 8px;
+}
+.repository-content .BorderGrid-row .BorderGrid-cell{
+  padding: 0 !important;
+}
+
+/*.BorderGrid-row.hide-sm.hide-md  this is the about section */
+.repository-content .BorderGrid-row:nth-child(1) .BorderGrid-cell .mb-3.h4,
+.repository-content .BorderGrid-row:nth-child(1) .BorderGrid-cell div.d-flex svg {
+  display: none !important;
+}
+.repository-content .BorderGrid-row:nth-child(1) .BorderGrid-cell p.mt-3,  
+.repository-content .BorderGrid-row:nth-child(1) .BorderGrid-cell div.d-flex {
+  display: inline-flex !important;
+}
+.repository-content .BorderGrid-row:nth-child(1) .BorderGrid-cell{
+  width: 1% !important;
+  padding-top: 10px !important;
+}
+.repository-content .BorderGrid-row .BorderGrid-cell a,
+.repository-content .BorderGrid-row .BorderGrid-cell a .Counter {
+  border-radius: 6px !important;
+}
+
+/* Readme and license on same line */
+.repository-content .BorderGrid-row:nth-child(1) > .BorderGrid-cell > div.mt-3:nth-last-child(-n+3) {
+	display: inline-flex !important;
+	margin-top: 8px !important;
+	margin-bottom: 16px;
+}
+
+/* Readme */
+.repository-content .BorderGrid-row:nth-child(1) > .BorderGrid-cell > div.mt-3:last-child {
+	margin-left: 8px;
+}
+
+/* the thing */
+.repository-content .BorderGrid-row:not([hidden]):not([class*="hide"]):not(:last-child) {
+	border: 1px solid var(--color-border-secondary);
+} /* TODO: remove whitespace and center them */
+
+/* Ignore:
+ * 1. First row,
+ * 2. About and last row,
+ * 3. Programming languages bar.
+*/
+.repository-content .BorderGrid-row:not([hidden]):nth-child(n+2):nth-last-child(n+2) {
+  display: inline-flex !important;
+  /*padding-right: 100px;*/
+}
+.repository-content .BorderGrid-row:nth-child(n+2):nth-last-child(n+2) > .BorderGrid-cell > :not(.mb-3){
+  display: none !important;
+}
+
+/* Languages */
+.repository-content .BorderGrid-row:nth-last-child(1) {
+  display: block !important;
+  width: 100% !important;
+  margin: 8px 0 32px 0 !important;
+}
+.repository-content .BorderGrid-row:nth-last-child(1) ul.list-style-none {
+  display: flex !important;
+  justify-content: space-evenly !important;
+}
+.repository-content .BorderGrid-row:nth-last-child(1) .mb-3.h4 {
+  display: none !important;
+}
+.repository-content .BorderGrid-row:nth-last-child(1) > .BorderGrid-cell {
+  width: 1% !important;
+}
+.repository-content .BorderGrid-row:nth-last-child(1) > .BorderGrid-cell .mb-2 {
+  /*margin: 5px !important;*/
+	margin-bottom: 7px !important;
+}
+.repository-content .BorderGrid-cell {
+  border: 1px #e1e4e8 !important;
+}
+/* Language borders */
+.repository-content .BorderGrid--spacious>div:last-child>div>ul{
+	/*margin: 5px;*/
+	margin-top: -7px !important;
+	border: 1px solid var(--color-border-primary);
+	border-radius: 6px;
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
+}
+.repository-content .BorderGrid--spacious>div:last-child>div>ul>li{
+	margin-top: 7px;
+}
+.repository-content .Progress {
+	border: 1px solid var(--color-border-secondary);
+	border-bottom: 0;
+	border-bottom-left-radius: 0 !important;
+	border-bottom-right-radius: 0 !important;
+}

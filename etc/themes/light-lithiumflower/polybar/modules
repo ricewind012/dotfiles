@@ -1,0 +1,235 @@
+[module/alsa]
+type = internal/alsa
+
+label-volume = %percentage%%
+format-volume = <ramp-volume> <label-volume>
+format-volume-foreground = ${xrdb:color10}
+
+format-muted-prefix = " "
+format-muted-prefix-foreground = ${xrdb:color2}
+label-muted = Muted
+label-muted-foreground = ${xrdb:ur}
+
+ramp-volume-0 = 
+ramp-volume-1 = 
+ramp-volume-2 = 
+ramp-volume-3 = 
+ramp-volume-4 = 
+ramp-foreground = ${xrdb:color2}
+
+[module/cpu]
+type = internal/cpu
+interval = 2.0
+
+format = <label>
+format-foreground = ${xrdb:color10}
+format-prefix = " "
+format-prefix-foreground = ${xrdb:color2}
+label = %percentage%%
+
+[module/date]
+type = internal/date
+interval = 1.0
+
+time =  %H:%M
+time-alt =  %Y-%m-%d%
+label = %time%
+format = <label>
+format-foreground = ${xrdb:color3}
+
+[module/filesystem]
+type = internal/fs
+interval = 3600
+
+mount-0 = /
+fixed-values = true
+
+label-mounted = %percentage_used%%
+format-mounted-prefix = " "
+format-mounted-prefix-foreground = ${xrdb:color1}
+format-mounted = <label-mounted>
+format-mounted-foreground = ${xrdb:color9}
+
+label-unmounted = %mountpoint%: not mounted
+format-unmounted-prefix = " "
+format-unmounted-prefix-foreground = ${xrdb:color1}
+format-unmounted = <label-unmounted>
+format-unmounted-foreground = ${xrdb:color9}
+
+[module/memory]
+type = internal/memory
+interval = 2.0
+
+format-prefix = " "
+format-prefix-foreground = ${xrdb:color6}
+format = <label>
+format-foreground = ${xrdb:color14}
+label = %percentage_used%%
+
+[module/network]
+type = internal/network
+interval = 1.0
+
+interface = wlp5s0
+ping-interval = 5
+accumulate-stats = true
+unknown-as-up = true
+
+label-connected = "%downspeed:8% %upspeed:8%"
+format-connected = <label-connected>
+format-connected-foreground = ${xrdb:color12}
+
+label-disconnected = "%{F#646178} %{F#cc4a4a}Not connected"
+label-disconnected-foreground = ${xrdb:ur}
+format-disconnected = <label-disconnected>
+
+ramp-signal-0 = 
+ramp-signal-1 = 
+ramp-signal-2 = 
+ramp-signal-3 = 
+ramp-signal-4 = 
+ramp-foreground = ${xrdb:color4}
+
+[module/pulseaudio]
+type = internal/pulseaudio
+interval = 5
+
+sink = alsa_output.pci-0000_12_00.3.analog-stereo
+use-ui-max = true
+
+format-volume = <ramp-volume> <label-volume>
+label-volume = %percentage%%
+
+format-muted-prefix = " "
+label-muted = Muted
+label-muted-foreground = ${xrdb:ur}
+
+ramp-volume-0 = 
+ramp-volume-1 = 
+ramp-volume-2 = 
+ramp-volume-3 = 
+ramp-volume-4 = 
+ramp-foreground = ${xrdb:color5}
+
+[module/temperature]
+type = internal/temperature
+interval = 1.0
+
+thermal-zone = 0
+
+; Full path of temperature sysfs path
+; Use `sensors` to find preferred temperature source, then run
+; $ for i in /sys/class/hwmon/hwmon*/temp*_input; do echo "$(<$(dirname $i)/name): $(cat ${i%_*}_label 2>/dev/null || echo $(basename ${i%_*})) $(readlink -f $i)"; done
+; to find path to desired file
+; Default reverts to thermal zone setting
+;;hwmon-path = /sys/devices/platform/coretemp.0/hwmon/hwmon2/temp1_input
+
+warn-temperature = 80
+units = true
+
+format = <ramp> <label>
+format-warn = <ramp> <label-warn>
+label = %temperature-c%
+label-warn = "%temperature-c%"
+label-warn-foreground = ${xrdb:ur}
+
+ramp-0 = 
+ramp-1 = 
+ramp-2 = 
+ramp-3 = 
+ramp-4 = 
+;ramp-foreground = #55
+
+[module/keyboard]
+type = internal/xkeyboard
+
+blacklist-0 = num lock
+blacklist-1 = scroll lock
+
+format = <label-layout><label-indicator>
+format-prefix = " "
+format-prefix-foreground = ${xrdb:color6}
+
+label-layout = %layout%
+label-layout-foreground = ${xrdb:color14}
+label-indicator-on = " (%name%)"
+label-indicator-on-foreground = ${xrdb:ur}
+
+[module/title]
+type = internal/xwindow
+
+format = <label>
+label = %title%
+label-maxlen = 30
+
+[module/bspwm]
+type = internal/bspwm
+
+; Only show workspaces defined on the same output as the bar
+pin-workspaces = false
+
+enable-click = true
+enable-scroll = true
+
+ws-icon-0 = 1;
+ws-icon-1 = 2;
+ws-icon-2 = 3;
+ws-icon-3 = 4;
+ws-icon-4 = 5;
+ws-icon-default = 
+
+label-focused = %icon%
+label-focused-foreground = ${xrdb:hl}
+label-focused-padding = 2
+
+label-occupied = %icon%
+label-occupied-foreground = ${xrdb:fg}
+label-occupied-padding = 2
+
+label-urgent = %icon%
+label-urgent-foreground = ${xrdb:ur}
+label-urgent-padding = 2
+
+label-empty = %icon%
+label-empty-foreground = ${xrdb:fm}
+label-empty-padding = 2
+
+;;;;; CUSTOM MODULES ;;;;;
+
+[module/updates]
+type = custom/script
+interval = 3600
+
+format-prefix = " "
+format-prefix-foreground = ${xrdb:color5}
+format = <label>
+format-foreground = ${xrdb:color13}
+
+exec = updates
+
+[module/player]
+type = custom/script
+exec = player
+exec-if = player
+tail = true
+
+click-left = player previous
+click-middle = player toggle
+click-right = player next
+
+format-prefix = " "
+format-prefix-foreground = ${xrdb:color2}
+format = <label>
+format-foreground = ${xrdb:color10}
+
+[module/hackspeed]
+type = custom/script
+exec = hackspeed
+tail = true
+
+format-prefix = " "
+format-prefix-foreground = ${xrdb:color3}
+format = <label>
+format-foreground = ${xrdb:color11}
+
+; vim:ft=dosini

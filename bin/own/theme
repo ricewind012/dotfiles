@@ -1,0 +1,196 @@
+#!/bin/sh
+. "$bin/common.sh"
+
+current_theme() {
+	[ -d /proc ] || return 1
+	read -r p < "/proc/$PPID/comm"
+
+	case $p in autostart|*rc)
+		return
+	esac
+}
+
+set_theme() {
+	cp -r "$themedir/$theme/"* "$confdir"
+	theme-reload
+	"$themedir/$theme/apply"
+}
+
+args() case ${1:-$theme} in
+	update)
+		[ "$2" ] || prompt 'update what'
+		theme=${2:-$answer}
+		[ -d "$themedir/$theme" ] || die "No such theme $theme"
+
+		prompt n sure
+		testglob "$answer" = '[Yy]*' || return 1
+
+		for dir in $dirs; do
+			cp -r "$confdir/$dir" "$themedir/$theme"
+		done
+
+		for file in $files; do
+			dir=$themedir/$theme/${file%/*}
+
+			[ -d "$dir" ] || mkdir -p "$dir"
+			cp "$confdir/$file" "$dir"
+		done
+	;;
+
+	make)
+		[ "$2" ] || prompt 'make what'
+		theme=${2:-$answer}
+		[ -d "$themedir/$theme" ] && die "$theme already exists"
+
+		for dir in $dirs; do
+			cp -r "$confdir/$dir" "$themedir/$theme"
+		done
+
+		for file in $files; do
+			mkdir -p "$themedir/$theme/${file%/*}"
+			cp "$confdir/$file" "$themedir/$theme/$file"
+		done
+
+		printf '#!/bin/sh
+eval "$(xrescolors)"
+
+# WM-specific options
+[ "$wm" ] || {
+	id=$(xprop -root -notype _NET_SUPPORTING_WM_CHECK)
+	id=${id##* }
+	wm=$(xprop -id "$id" -notype _NET_WM_NAME)
+	wm=${wm#*\\"}
+	wm=${wm%%\\"*}
+}
+
+case $wm in
+	bspwm)
+		_() bspc config "$@"
+		for i in top bottom left right; do
+			_ ${i}_padding 0
+		done
+		_ window_gap %d
+		_ border_width %d
+		_ normal_border_color "%s"
+		_ focused_border_color "%s"
+	;;
+
+	berry)
+		_() berryc "$@"
+
+		_ title_height 24
+		_ draw_text false
+		_ set_font "$fn"
+		_ text_focus_color "$foreground"
+		_ text_unfocus_color "$fg2"
+
+		_ border_width 0
+		_ inner_border_width 0
+		_ focus_color "$ab"
+		_ unfocus_color "$background"
+		_ inner_focus_color "$ac"
+		_ inner_unfocus_color "$background"
+	;;
+
+	herbstluftwm)
+		_() herbstclient attr "$@"
+
+		_ theme.title_height %d
+		_ theme.title_color "%s"
+		_ theme.title_font "%s"
+
+		_ theme.padding_left %d
+		_ theme.padding_top %d
+		_ theme.padding_right %d
+		_ theme.padding_bottom %d
+
+		_ theme.border_width %d
+		_ theme.inner_width %d
+		_ theme.outer_width %d
+		_ theme.color "%s"
+		_ theme.normal.inner_color "%s"
+		_ theme.normal.outer_color "%s"
+		_ theme.active.inner_color "%s"
+		_ theme.active.outer_color "%s"
+	;;
+esac
+
+# Wallpaper
+. "$XDG_CONFIG_HOME/user-dirs.dirs"
+xwallpaper --zoom "$XDG_PICTURES_DIR/Wallpapers/wp.png"
+xsetroot -solid "$background"' \
+			"$(bspc config window_gap)" \
+			"$(bspc config border_width)" \
+			"$(bspc config normal_border_color)" \
+			"$(bspc config focused_border_color)" \
+			"$(herbstclient attr theme.title_height)" \
+			"$(herbstclient attr theme.title_color)" \
+			"$(herbstclient attr theme.title_font)" \
+			"$(herbstclient attr theme.padding_left)" \
+			"$(herbstclient attr theme.padding_top)" \
+			"$(herbstclient attr theme.padding_right)" \
+			"$(herbstclient attr theme.padding_bottom)" \
+			"$(herbstclient attr theme.border_width)" \
+			"$(herbstclient attr theme.inner_width)" \
+			"$(herbstclient attr theme.outer_width)" \
+			"$(herbstclient attr theme.color)" \
+			"$(herbstclient attr theme.normal.inner_color)" \
+			"$(herbstclient attr theme.normal.outer_color)" \
+			"$(herbstclient attr theme.active.inner_color)" \
+			"$(herbstclient attr theme.active.outer_color)" \
+		> "$themedir/$theme/apply"
+
+		chmod +x "$themedir/$theme/apply"
+		prompt y Edit
+		testglob "$answer" = '[Yy]*' &&
+			"${EDITOR:-vi}" "$themedir/$theme/apply"
+	;;
+
+	*)
+		if [ -d "$themedir/$theme" ]; then
+			set_theme
+		else
+			die "No such theme $theme"
+		fi
+	;;
+esac
+
+main() {
+	confdir=${XDG_CONFIG_HOME:=$HOME/.config}
+	themedir=$skindir/themes
+	progopts=t:d:f:nvh
+	unset theme
+
+	# Tracked directories/files
+	dirs="
+		dunst
+		picom
+		tint2
+		rofi
+	"
+	files="
+		gtk-3.0/settings.ini
+		sx/xresources-colors
+	"
+	#qt5ct/qt5ct.conf
+	#${2:+qt5ct/colors/${2#*-}.conf}
+
+	while getopts "$progopts" opt; do case $opt in
+		t) themedir=$OPTARG ;;
+		d) dirs=$OPTARG ;;
+		f) files=$OPTARG ;;
+		n) notification=1 ;;
+		v) verbose=1 ;;
+
+		[h?])
+			printf 'Usage: %s [-%s] theme\n' \
+				"${0##*/}" "$progopts" >&2
+			exit 2
+		;;
+	esac; done; shift $(( OPTIND - 1 ))
+
+	: "${theme:=${1:?No theme selected}}"
+	args "$@"
+}
+
+main "$@"

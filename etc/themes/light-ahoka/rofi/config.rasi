@@ -1,0 +1,75 @@
+configuration {
+    display-drun:   "app";
+    display-window: "window";
+    display-run:    "run";
+    show-icons:     true;
+}
+
+* {
+    lines: 15;
+    columns: 1;
+    background-color: #fff;
+    border-color: #252525;
+    text-color: #121212;
+    font: "azukifontBI 16";
+}
+
+#window {
+		width: 40%;
+}
+
+#mainbox {
+    children: [inputbar, listview];
+    background-color: #f0f0f0;
+    spacing: 12px;
+		margin: 16px;
+		padding: 8px;
+		border: 2px;
+}
+
+#listview {
+    background-color: #00000000;
+    spacing: 4px;
+    scrollbar: false;
+}
+
+#element {
+    background-color: #00000000;
+    padding: 4px;
+}
+
+#element-icon { 
+    size: 2ch; 
+}
+
+#element selected {
+    background-color: #cae4f4;
+    text-color: #252525;
+		border: 1px;
+		border-color: #9cd7fb;
+}
+
+#inputbar {
+    children:   [ prompt,textbox-prompt-colon,entry,case-indicator ];
+    background-color: #00000000;
+}
+
+#case-indicator {
+    background-color: #00000000;
+    spacing:    0;
+}
+#entry {
+    background-color: #00000000;
+    spacing:    0;
+}
+#prompt {
+    background-color: #00000000;
+    spacing:    0;
+}
+
+#textbox-prompt-colon {
+    background-color: #00000000;
+    expand:     false;
+    str:        ":";
+    margin:     0 0.3em 0 0;
+}

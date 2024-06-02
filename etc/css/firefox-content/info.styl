@@ -1,0 +1,51 @@
+@-moz-document regexp("about:(support|profiles).*") {
+body {
+	padding: var(--body-pad) $i;
+	lnh();
+}
+button {
+	normalise-button();
+
+	& + & {
+		mar(left);
+	}
+	.action-box &,
+	table & {
+		bg();
+	}
+}
+.opendir {
+	margin-left: 1ch $i;
+}
+
+h1 {
+	normalise-header();
+	display: flex;
+}
+h2,
+.action-box h3 {
+	normalise-header(false);
+}
+hr {
+	display: none;
+}
+.action-box {
+	pad();
+	brd();
+	mar(0);
+	mar(left);
+	width: 50% $i;
+
+	h3:first-of-type {
+		mar(top, 0);
+	}
+}
+table {
+	brd();
+	border-collapse: collapse;
+
+	& + button {
+		mar(top);
+	}
+}
+}

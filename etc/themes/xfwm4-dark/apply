@@ -1,0 +1,49 @@
+#!/bin/sh
+
+# Wine
+cat > "$TMPDIR/a.reg" <<-EOF
+Windows Registry Editor Version 5.00
+
+[HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\ThemeManager]
+"DllName"=""
+
+[HKEY_CURRENT_USER\Control Panel\Colors]
+"ActiveBorder"="37 37 37"
+"ActiveTitle"="204 204 204"
+"AppWorkspace"="178 212 244"
+"Background"="9 9 75"
+"ButtonAlternateFace"="0 255 0"
+"ButtonDkShadow"="0 0 0"
+"ButtonFace"="37 37 37"
+"ButtonHilight"="128 128 128"
+"ButtonLight"="37 37 37"
+"ButtonShadow"="80 80 80"
+"ButtonText"="204 204 204"
+"GradientActiveTitle"="204 204 204"
+"GradientInactiveTitle"="204 204 204"
+"GrayText"="128 128 128"
+"Hilight"="204 204 204"
+"HilightText"="18 18 18"
+"HotTrackingColor"="21 54 126"
+"InactiveBorder"="18 18 18"
+"InactiveTitle"="128 128 128"
+"InactiveTitleText"="37 37 37"
+"InfoText"="204 204 204"
+"InfoWindow"="37 37 37"
+"Menu"="18 18 18"
+"MenuText"="204 204 204"
+"Scrollbar"="80 80 80"
+"TitleText"="37 37 37"
+"Window"="18 18 18"
+"WindowFrame"="0 0 0"
+"WindowText"="204 204 204"
+EOF
+#wine regedit /s "$TMPDIR/a.reg" &
+
+# Wallpaper
+. "$XDG_CONFIG_HOME/user-dirs.dirs"
+xwallpaper --zoom "$XDG_PICTURES_DIR/wal/unsplash/photo-1556267427-ca8f16bab057.jpeg"
+
+# Start programs
+xfconf-query -c xfwm4 -p /general/theme -s Chicago95Dark
+printf 'Xft.antialias: 0\n' | xrdb -merge

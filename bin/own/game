@@ -1,0 +1,110 @@
+#!/bin/sh
+. "$bin/common.sh"
+
+win() {
+	cd -- "${1%/*}" || return 1
+	wineserver -k || exec wine "$@"
+}
+
+wine_desktop() {
+	file=${TMPDIR:=/tmp}/a.reg
+	[ "$1" -eq 0 ] && opt=- || opt='"Default"'
+
+	printf 'Windows Registry Editor Version 5.00
+
+[HKEY_CURRENT_USER\Software\Wine\Explorer]
+"Desktop"=%s' "$opt" >> "$file"
+	wine regedit /s "$file"
+}
+
+steam=${XDG_DATA_HOME:-$HOME/.local/share}/Steam/ubuntu12_32/steam
+prog=$1; shift
+
+get_proc picom && kill "$pid"
+
+case $prog in
+	osu)
+		case ${1:-stable} in
+			lazer)
+				xinput --set-prop 10 \
+					'libinput Accel Profile Enabled' 0, 1
+				xinput --set-prop 10 \
+					'libinput Accel Speed' 0.35
+
+				"$XDG_DOWNLOAD_DIR/misc/osu.AppImage" &
+			;;
+
+			stable)
+				xinput --set-prop 10 \
+					'libinput Accel Profile Enabled' 0, 1
+				xinput --set-prop 10 \
+					'libinput Accel Speed' 0.8
+
+				osu-wine &
+			;;
+		esac
+
+		while pgrep -x 'osu\!.*' >/dev/null; do sleep 60; done
+		xinput --set-prop 10 \
+			'libinput Accel Profile Enabled' 1, 0
+		xinput --set-prop 10 \
+			'libinput Accel Speed' 0.8
+	;;
+
+	mc)
+		ram &
+		path="$XDG_DOWNLOAD_DIR/misc/gaming/MultiMC"
+		LD_LIBRARY_PATH="$path:$LD_LIBRARY_PATH" \
+			exec "$path/MultiMC" &
+	;;
+
+	tf2)
+		#sudo ufw status | grep -q 'Status: active' &&
+		#	sudo rm /var/service/ufw
+		pgrep -x hl2_linux >/dev/null ||
+			$steam steam://rungameid/440
+		cd "$HOME/misc/cathook" ||
+			exit 1
+		sudo ./attach
+	;;
+
+	th)
+		p=${1:-13}
+		xmodmap "${xinit%/*}/xmodmap"
+		exec wine explorer "$winhome/Desktop/thcrap/th$p.lnk"
+		#while pgrep -x th$p.exe >/dev/null; do sleep 1; one
+		#xmodmap "${XINITRC%/*}/xmodmap-restore"
+	;;
+
+	fl)
+		[ "$1" -eq 64 ] && { bits=$1; shift; } || wineserver -k
+		wine start /unix "$windows/Program Files (x86)/Image-Line/FL Studio 20/FL$bits.exe" "$1" &
+
+		[ "$opt" ] || return
+		while ! n=$(xdotool search --class explorer.exe); do
+			sleep 5
+		done
+		for i in $n; do
+			[ "$(xdotool getwindowname "$i")" = \
+				'Default - Wine desktop' ] && break
+		done
+		xdotool set_window --name 'FL Studio 20' "$i"
+	;;
+
+	cod2)
+		#wine_desktop 0
+		win "$windows/gaming/Call of Duty 2/CoD2MP_s.exe"
+	;;
+
+  a17)
+    zsh -c 'cd "$windows/gaming/Atelier Sophie The Alchemist of the Mysterious Book" && wine start /unix A17.exe &!' # Crashes with /bin/sh
+  ;;
+
+	rr)
+		win "$windows/gaming/Rabi-Ribi/rabiribi.exe"
+	;;
+
+	steam)
+		$steam "steam://rungameid/${1?}"
+	;;
+esac

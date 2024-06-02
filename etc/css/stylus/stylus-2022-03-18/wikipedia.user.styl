@@ -1,0 +1,222 @@
+/* ==UserStyle==
+@name           Wikipedia
+@namespace      github.com/openstyles/stylus
+@version        1.0.0
+@description    A new userstyle
+@author         Me
+
+@preprocessor stylus
+==/UserStyle== */
+
+@-moz-document domain("wikipedia.org") {
+	a, a:visited {
+		color: var(--fg-link);
+	}
+}
+@-moz-document domain("m.wikipedia.org") {
+	body {
+		background-color: var(--bg) !important;
+		color: var(--fg) !important;
+	}
+
+	a {
+		color: var(--fg-link);
+	}
+
+	@media (prefers-color-scheme: dark) {
+		img[src="/static/images/mobile/copyright/wikipedia-wordmark-en.svg"],
+		.mw-ui-icon-small::before {
+			filter: invert();
+		}
+	}
+
+	/* Remove elements */
+	.minerva-footer-logo, .license, #footer-places // Footer bottom
+	{
+		display: none !important;
+	}
+
+	/* Menu */
+	#mw-mf-page-left {
+		background-color: var(--bg) !important;
+		box-shadow: var(--shadow-vrt) !important;
+
+		ul {
+			padding-bottom: 0 !important;
+
+			&:not(.hlist) li {
+				background-color: var(--bg2) !important;
+				border-top: var(--border-width) solid var(--border) !important;
+				padding-bottom: 0 !important;
+
+				a {
+					color: var(--fg) !important;
+					width: calc(100% - 25px) !important;
+
+					&:hover {
+						background-color: var(--bg3) !important;
+						box-shadow: none !important;
+					}
+				}
+			}
+		}
+
+		.hlist a {
+			color: var(--fg-link) !important;
+
+			&:hover {
+				fg-decoration: underline !important;
+			}
+		}
+	}
+
+	/* Page */
+	#mw-mf-page-center {
+		background-color: var(--bg) !important;
+
+		// Header
+		& > header {
+			background-color: var(--accent) !important;
+			box-shadow: inset 0 -1px var(--accent-border) !important;
+
+			&::after {
+				content: '';
+				position: absolute;
+				left: 0;
+				margin-top: -1px;
+				width: 100%;
+				height: 1px;
+				box-shadow: var(--shadow-low);
+			}
+
+			.search {
+				background-color: var(--bg2) !important;
+				border: var(--border-width) solid var(--border) !important;
+			}
+		}
+
+		// Content
+		#content {
+			background-color: var(--bg) !important;
+
+			.page-actions-menu {
+				border: var(--border-width) solid var(--border) !important;
+			}
+
+			#toc {
+				background-color: var(--bg2) !important;
+				border: var(--border-width) solid var(--border) !important;
+				padding: 0 !important;
+
+				.toctitle {
+					border-bottom: var(--border-width) solid var(--border);
+					padding: 0 32px 0 42px !important;
+
+					.mw-ui-icon-minerva-listBullet {
+						padding: .65em !important;
+					}
+
+					.toctogglespan + .mw-ui-icon {
+						top: 4px !important;
+						right: -1px !important;
+					}
+				}
+
+				& > ul {
+					padding-bottom: 0 !important;
+
+					// Normal spacing
+					margin-block-start: 1em;
+					margin-block-end: 1em;
+					margin-inline-start: 0;
+					margin-inline-end: 0;
+					padding-inline-start: 40px;
+					padding-inline-end: 40px;
+
+					* {					
+						list-style: upper-roman !important;
+					}
+
+					li {
+						margin-bottom: 0 !important;
+					}
+				}
+			}
+
+			.infobox {
+				background-color: var(--bg2) !important;
+				border: var(--border-width) solid var(--border) !important;
+
+				th, td {
+					border-bottom: var(--border-width) solid var(--border) !important;
+				}
+			}
+
+			code, pre {
+				background-color: var(--bg2) !important;
+				border: var(--border-width) solid var(--border) !important;
+			}
+
+			.hatnote, .dablink, .rellink {
+				background-color: var(--bg2) !important;
+				color: var(--fg2) !important;
+			}
+
+			.section-heading {
+				background-color: var(--bg2);
+				padding: var(--pad) !important;
+				border: var(--border-width) solid var(--border) !important;
+			}
+		}
+
+		// Footer
+		& > footer {
+			border-top: var(--border-width) solid var(--border) !important;
+
+			.last-modified-bar {
+				background-color: var(--bg2) !important;
+				border: var(--border-width) solid var(--border) !important;
+				color: var(--fg2) !important;
+
+				a {
+					color: var(--fg2) !important;
+				}
+			}
+
+			.ra-read-more {
+				h2 {
+					color: var(--fg2) !important;
+				}
+
+				li {
+					background-color: var(--bg2) !important;
+					border: var(--border-width) solid var(--border) !important;
+
+					.ext-related-articles-card-thumb {
+						background-color: var(--border) !important;
+					}
+
+					.ext-related-articles-card-detail {
+						h3 {
+							&::after {
+								display: none;
+							}
+
+							a {
+								color: var(--fg) !important;
+							}
+						}
+
+						p {
+							color: var(--fg2) !important;
+						}
+					}
+				}
+			}
+
+			.post-content h2 {
+				border: var(--border-width) solid var(--border) !important;
+			}
+		}
+	}
+}

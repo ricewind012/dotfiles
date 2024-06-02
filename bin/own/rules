@@ -1,0 +1,81 @@
+#!/bin/sh
+
+rules='
+	1 Nightly:Navigator state=tiled
+	1 Nightly:Toolkit state=floating
+	1 Nightly:Firefox state=floating border=off
+	1 Nightly:firefox state=floating
+	1 Nightly:Devtools state=floating
+	1 Chromium
+	1 Vivaldi-stable
+
+	2 Ripcord
+	2 discord
+
+	3 foobar2000.exe
+	3 SoulseekQt
+	3 Nicotine
+
+	4 photoshop.exe
+	4 fl64.exe
+	4 fl.exe
+
+  5 a17.exe
+	5 cod2mp_s.exe
+	5 isaac-ng.exe
+	5 osu\!.exe
+	5 osu\!
+	5 Steam state=floating border=off
+	5 steamwebhelper state=floating
+	5 hl2_linux
+	5 csgo_linux64
+	5 ru-turikhay-tlauncher-bootstrap-Bootstrap state=floating
+	5 motion_recorder
+	5 "Minecraft*"
+
+	photoshop.exe manage=off
+	ksysguard state=floating
+	Peek state=floating
+'
+
+id=$(xprop -root -notype _NET_SUPPORTING_WM_CHECK)
+id=${id##* }
+wm=$(xprop -id "$id" -notype _NET_WM_NAME)
+wm=${wm#*\"}
+wm=${wm%\"*}
+
+case $wm in
+	bspwm) cmd='bspc rule -a' ;;
+	herbstluftwm) cmd='herbstclient rule' ;;
+esac
+
+while read -r ws class pref; do
+	[ "$ws" ] || continue
+
+	IFS=: read -r class instance <<-EOF
+	$class
+	EOF
+
+	if printf '%d' "$ws" >/dev/null 2>&1; then
+		case $wm in
+			bspwm)
+				ws="desktop='^$ws'"
+				class=$class${instance:+:$instance}
+			;;
+
+			herbstluftwm)
+				ws="tag=$ws"
+				class="class=$class${instance:+ instance=$instance}"
+				pref=
+			;;
+		esac
+	else
+		pref=$class
+		class="class=$ws"
+		ws=
+	fi
+
+	eval "$cmd $class $ws $pref"
+done <<-EOF
+$rules
+EOF

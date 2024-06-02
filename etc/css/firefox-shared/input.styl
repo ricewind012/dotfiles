@@ -1,0 +1,36 @@
+dropmarker, // XUL select arrow
+.textbox-search-sign // search-textbox icon
+{
+	display: none $i;
+}
+
+input {
+	appearance: none $i;
+
+	//&:not([type]),
+	&[type="email"],
+	&[type="tel"],
+	&[type="text"],
+	&[type="password"],
+	&[type="url"],
+	&[type="number"],
+	&[type="search"],
+	/textarea {
+		normalise-input();
+		mar(0);
+	}
+	&[type="color"] {
+		normalise-color();
+	}
+	&[type="checkbox"] {
+		normalise-checkbox(false);
+	}
+	&[type="radio"] {
+		normalise-radio();
+	}
+	&[type="date"],
+	/menulist,
+	/select {
+		normalise-select();
+	}
+}

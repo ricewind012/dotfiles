@@ -1,0 +1,133 @@
+@use 'sass:math';
+@import 'common';
+$pad: 16px;
+
+@mixin gradient-border($border-width: 1px) {
+	$border-width-x2: $border-width * 2 !global;
+
+	& {
+		position: relative;
+		border: none;
+
+		&::before, &::after {
+			content: '';
+			position: absolute;
+			top: -$border-width;
+			bottom: 0;
+			left: -$border-width;
+			right: 0;
+			width: calc(100% + #{$border-width-x2});
+			height: calc(100% + #{$border-width-x2});
+		}
+
+		&::after {
+			background-color: var(--border);
+			z-index: -1;
+			@include anim;
+		}
+
+		&:hover::after {
+			opacity: 0;
+		}
+
+		&::before {
+			background-image: $gradient;
+			z-index: -2;
+		}
+	}
+}
+
+html, body {
+	height: 100%;
+}
+
+body {
+	display: grid;
+	grid-template-columns: 10% 90%;
+	margin: 0;
+	background-color: var(--accent);
+	//background-image: url('bg.jpg');
+	color: var(--text);
+
+	@-moz-document url-prefix() {
+		&::before {
+			content: '';
+			position: absolute;
+			height: 1px;
+			top: -1px;
+			width: 100%;
+			box-shadow: var(--shadow-low);
+		}
+	}
+}
+
+nav {
+	background-color: var(--bg);
+	border-right: 1px solid var(--border);
+	color: var(--text);
+	padding: $pad;
+}
+
+header {
+	background-color: var(--accent);
+	border: 1px solid var(--accent-border);
+	color: var(--text);
+	text-align: center;
+	padding: $pad;
+}
+
+div {
+	margin: 0 auto;
+	padding: $pad * 2;
+}
+
+table, input, button {
+	background-color: var(--bg);
+	color: var(--text);
+	@include anim;
+	@include gradient-border;
+
+	&:hover {
+		box-shadow: var(--shadow-low);
+		@include anim;
+	}
+}
+
+input {
+	width: 98px;
+	padding: math.div($pad,4);
+	margin-bottom: $pad * 2;
+}
+
+button {
+	padding: math.div($pad,4);
+	margin-left: $border-width-x2; // for now, when input doesnt work
+}
+
+input:focus, button:focus {
+	border-color: var(--text);
+	outline: none;
+	@include anim;
+}
+
+table {
+	padding: $pad;
+	margin-bottom: $pad * 2;
+}
+
+th {
+	border-bottom: 1px solid var(--border);
+	padding-bottom: $pad;
+}
+
+a {
+	color: var(--text-link);
+
+	&:not(:hover) {
+		text-decoration: none;
+	}
+}
+
+ul {
+	list-style-type: lower-roman;
+}

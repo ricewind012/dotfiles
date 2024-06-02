@@ -1,3 +1,8 @@
 .config/sh/.zcompdump
 .config/sh/.zsh_history
 
+bin/binaries
+bin/etc
+bin/python
+bin/own/phoneupdate
+

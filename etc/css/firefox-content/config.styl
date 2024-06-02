@@ -1,0 +1,105 @@
+@-moz-document url-prefix("about:config") {
+/**
+ * Global
+**/
+:root {
+	--prefs-table-border-width: var(--border-width) $i;
+}
+input {
+	&[type="text"],
+	&[type="checkbox"] {
+		--bg2: var(--bg);
+	}
+	&[type="checkbox"] {
+		--border: var(--reserve-border);
+		normalise-checkbox();
+	}
+}
+[class="ghost-button"] {
+	normalise-button();
+}
+.cell {
+	&-edit,
+	&-reset {
+		width: calc(var(--pad) * 2 + var(--font-size)) $i;
+	}
+	&-edit {
+		& > button {
+			background-color: transparent $i;
+			brd(0);
+		}
+	}
+}
+
+/**
+ * Header
+**/
+#toolbar {
+	// Don't get me affected by header-focus()
+	--bg: var(--reserve-bg);
+	--fg: var(--reserve-fg);
+	--fg2: var(--reserve-fg2);
+	--border: var(--reserve-border);
+	--pad: calc(var(--reserve-pad) / 2);
+	bg(2);
+	header-focus();
+	pad();
+	brd(bottom);
+}
+#about-config-search {
+	--bg2: var(--bg);
+	--fg: var(--reserve-fg);
+	--border: var(--reserve-border);
+	background-image: none $i;
+}
+.checkbox-container {
+	fg();
+}
+
+/**
+ * Content
+**/
+#show-all {
+	margin-left: var(--body-pad) $i;
+	margin-top: var(--body-pad) $i;
+}
+#prefs {
+	brd();
+	margin: var(--body-pad) $i;
+	width: calc(100% - var(--body-pad) * 2) $i;
+
+	&:empty {
+		display: none;
+	}
+
+	&[has-visible-prefs] > .add {
+		& > th,
+		& > td {
+			&::before {
+				height: var(--pad) $i;
+			}
+		}
+	}
+
+	button {
+		background-size: var(--font-size) $i;
+		box(var(--font-size));
+		min-width: unset $i;
+		min-height: unset $i;
+		cursor: pointer;
+
+		&:not(:hover) {
+			fg(2);
+		}
+	}
+}
+th {
+	pad(top, 0);
+	pad(right, 0);
+	pad(bottom, 0);
+}
+#form-edit > label {
+	display: inline-flex $i;
+	mar(right);
+}
+}

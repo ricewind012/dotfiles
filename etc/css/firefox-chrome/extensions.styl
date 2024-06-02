@@ -1,0 +1,35 @@
+#unified-extensions-area {
+	flex-direction: row;
+}
+.unified-extensions-item {
+	pad(0);
+
+	&-contents,
+	&-menu-button {
+		display: none $i;
+	}
+	&-action-button {
+		pad();
+
+		#nav-bar & {
+			pad(0);
+
+			.toolbarbutton-badge {
+				display: none;
+			}
+		}
+	}
+
+	for k in $extensions {
+		&{s(
+			'[data-extensionid="%s"] .toolbarbutton-icon',
+			unquote($extensions[k][id])
+		)} {
+			list-style-image: s(
+				'url("%s/%s.svg")',
+				unquote($icons-path),
+				unquote(k)
+			);
+		}
+	}
+}

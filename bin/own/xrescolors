@@ -1,0 +1,16 @@
+#!/bin/sh -e
+
+if [ -f "$1" ]; then
+	input=$(cat "$1")
+else
+	input=$(xrdb -query)
+fi
+
+while IFS= read -r l; do case $l in *'#'[[:xdigit:]]*)
+	l=${l##*.}
+	p=${l%%:*}
+	v=${l##*:[[:space:]]}
+	printf "${f:-%s=%s\n}" "$p" "${v##[[:space:]]}"
+esac; done <<-EOF
+$input
+EOF

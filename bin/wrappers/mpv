@@ -1,0 +1,16 @@
+#!/bin/sh
+
+while IFS='=' read -r k v; do case $k in gtk-font-name)
+	font=$v; break
+esac; done < "$XDG_CONFIG_HOME/gtk-3.0/settings.ini"
+
+exec /usr/bin/mpv \
+	--no-audio-display \
+	--osd-bar=no \
+	--title="mpv${delim:- | }\${filename}" \
+	--screenshot-directory="$XDG_PICTURES_DIR/scr/mpv" \
+	--screenshot-template='%F - %P' \
+	--screenshot-format=png \
+	--sub-ass-force-style="FontName=$font" \
+	--ytdl-format='bestvideo[height<=720]+bestaudio/best[height<=720]' \
+"$@"

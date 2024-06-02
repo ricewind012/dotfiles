@@ -1,0 +1,142 @@
+@-moz-document url-prefix("about:debugging") {
+/**
+ * Global
+**/
+:root {
+	--bg-color: var(--bg) $i;
+	--text-color: var(--fg) $i;
+	--secondary-text-color: var(--fg2) $i;
+
+	--border-color: var(--border) $i;
+	--box-background: var(--bg2) $i;
+	--box-border-color: var(--border) $i;
+
+	--button-background-color: var(--bg) $i;
+	--button-color: var(--fg) $i;
+	--button-hover-background-color: var(--bg) $i;
+	--button-active-background-color: var(--bg) $i;
+
+	--category-background-hover: var(--hl) $i;
+	--category-text: var(--hl-fg) $i;
+	--category-text-selected: var(--hl-fg) $i;
+
+	--fieldpair-text-color: var(--fg2) $i;
+
+	--sidebar-text-color: var(--fg) $i;
+	--sidebar-background-hover: var(--bg2) $i;
+
+	--card-background-color: var(--bg2) $i;
+	--card-separator-color: var(--border) $i;
+
+	--category-transition-duration: var(--trans-dur) $i;
+
+	--icon-ok-color: var(--color10) $i;
+	--icon-info-color: var(--color11) $i;
+
+	--link-color: var(--fg-link) $i;
+	--link-color-active: var(--fg-link) $i;
+	--link-color-hover: var(--fg-link) $i;
+
+	--primary-button-background-color: var(--bg) $i;
+	--primary-button-color: var(--fg) $i;
+	--primary-button-hover-background-color: var(--bg) $i;
+	--primary-button-active-background-color: var(--bg) $i;
+
+	--base-line-height: var(--line-height) $i;
+
+	--success-background: color-a(2) $i;
+
+	--warning-background: color-a(3) $i;
+	--warning-border: var(--color11) $i;
+	--warning-icon: var(--fg) $i;
+	--warning-text: var(--fg) $i;
+
+	--error-background: color-a(1) $i;
+	--error-border: var(--color9) $i;
+	--error-icon: var(--fg) $i;
+	--error-text: var(--fg) $i;
+}
+.default {
+	&-input {
+		normalise-input();
+		appearance: none;
+
+		.card & {
+			bg();
+		}
+	}
+	/.primary-button,
+	&-button {
+		normalise-button();
+		height: unset $i;
+
+		.card & {
+			bg();
+		}
+	}
+}
+.app {
+	--sidebar-width: 240px $i;
+	grid-column-gap: 0 $i;
+
+	&__content {
+		padding: var(--body-pad) $i;
+		mar(0);
+	}
+}
+
+/**
+ * Sidebar
+**/
+.sidebar {
+	bg(2);
+	pad(0);
+	brd(right);
+	width: 240px $i;
+
+	&-item {
+		fg(2);
+		pad();
+		brd(0);
+		height: unset $i;
+
+		&:not(&--selected):hover {
+			fg();
+		}
+
+		&--selected {
+			hl();
+		}
+	}
+	&-fixed-item {
+		&__container {
+			grid-template-columns: calc(var(--font-size) + 1ch) 1fr $i;
+		}
+		&__icon {
+			margin-right: 1ch $i;
+			box(var(--font-size));
+		}
+	}
+}
+.separator {
+	margin: 0 calc(var(--pad) * -1) $i;
+}
+
+/**
+ * Content
+**/
+.card {
+	pad();
+	brd();
+	mar(bottom);
+	shd(0);
+}
+.message {
+	pad();
+	margin: var(--pad) 0 $i;
+	border-radius: var(--border-radius) $i;
+}
+.alt-heading {
+	normalise-header();
+}
+}

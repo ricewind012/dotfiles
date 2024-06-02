@@ -1,0 +1,186 @@
+#!/bin/sh
+. "$bin/common.sh"
+
+get_component_dir() {
+	for dir in \
+		"$WINEPREFIX/drive_c/users/$USER/AppData/Roaming/foobar2000/user-components" \
+		"$fb2k/user-components" \
+		"$fb2k/components"
+	do
+		[ -d "$dir" ] && {
+			component_dir=$dir
+			break
+		}
+	done
+}
+
+get_component() {
+	# TODO user_profiles_enabled
+	[ -f "$WINEPREFIX/drive_c/users/$USER/AppData/Roaming/foobar2000/user-components/$1/$1.dll" ] ||
+	[ -f "$fb2k/user-components/$1/$1.dll" ] ||
+	[ -f "$fb2k/components/$1.dll" ]
+}
+
+get_extractor() {
+	for i in 7z unzip unar; do
+		command -v "$i" >/dev/null && cmd=$i && break
+	done
+
+	case $cmd in
+		7z) ex='7z x -y -o' ;;
+		unar) ex='unar -f -o' ;;
+		unzip) ex='unzip -u -d' ;;
+		*) die 'No extractor found' ;;
+	esac
+}
+
+no_arg() {
+	[ "$1" ] || {
+		printf 'No arg for %s option\n' "$i" >&2
+		usage
+	}
+}
+
+usage() {
+	printf 'Usage: %s [foobar2000 args]\n' \
+		"${0##*/}" >&2
+	exit "${1:-2}"
+}
+
+restart() {
+	prompt n 'Restart foobar2000'
+	testglob "$answer" = '[Yy]*' &&
+		start
+}
+
+start() {
+	#[ "$args" ] || wineserver -k
+	exec wine "$fb2k/foobar2000.exe" $args
+}
+
+# Replacement function for winepath -w.
+#
+# TODO: use dosdevices(/)/*: for
+# more correct $WINEPREFIX/drive_c or whatever
+winepath() {
+	drive=Z
+	case $1 in
+		"$WINEPREFIX/drive_c"*)
+			drive=C
+			set -- "${1#$WINEPREFIX/drive_c}"
+		;;
+
+		.) set -- "$PWD";;
+		./*) set -- "$PWD/${1#**/}";;
+		*) [ -f "$1" ] && set -- "$PWD/$1";;
+	esac
+
+	IFS=/; for i in $1; do
+		file=$file\\${i#*/}
+	done
+	file=$drive:$file
+
+	unset IFS
+}
+
+main() {
+	: "${XDG_DATA_HOME:=$HOME/.local/share}"
+	: "${TMPDIR:=/tmp}"
+	: "${fb2k:=$XDG_DATA_HOME/foobar2000}"
+
+	# No getopts used for compatibility
+	# ..with foobar2000 args.
+	for i; do case $i in
+		# Install the program, $2 - installer
+		-i|--install)
+			no_arg "$2"
+			installdir=$TMPDIR/foobar2000
+
+			set -e
+			get_extractor
+			trap 'rm -r "$installdir"' EXIT INT
+
+			mkdir -p "$installdir" "$fb2k"
+			mv "$2" "$installdir"
+			$ex"$installdir" "$2"
+			mv "$installdir" "$fb2k"
+
+			return "$?"
+		;;
+
+		-a|--component-add)
+			set -e
+			no_arg "$2"
+
+			name=${2##*/}
+			name=${name%.*}
+			get_component_dir
+			cdir=$component_dir/$name
+
+			case ${2##*.} in
+				7z|rar|zip|fb2k-component)
+					get_extractor
+					mkdir -p "$cdir"
+					$ex"$cdir" "$2" '*.dll'
+				;;
+
+				dll)
+					mkdir -p "$cdir"
+					mv "$2" "$cdir"
+				;;
+			esac
+
+			restart
+		;;
+
+		-r|--component-remove)
+			set -e
+			no_arg "$2"
+
+			get_component_dir
+			get_component "$2" &&
+				rm -r "$component_dir/$2"
+
+			restart
+		;;
+
+		-e|--component-exists)
+			no_arg "$2"
+			get_component "$2"
+
+			return "$?"
+		;;
+
+		-h|-help)
+			usage 0
+		;;
+
+		*)
+			# Convert Unix paths to Windows paths.
+			if [ -e "$i" ]; then
+				winepath "$i" # winepath -w -- "$i"
+				args="$args $file"
+
+			# Use -something instead of /something
+			# ..to avoid confusion with Unix paths.
+			elif testglob "$i" = '-[[:alnum:]]*'; then
+				[ "${#i}" -ne 2 ] && args="$args /${i#-}"
+
+			else
+				usage
+			fi
+		;;
+	esac; shift; done
+
+	[ -d "$fb2k" ] ||
+		die 'foobar2000 not found'
+
+	! command -v wine-theme >/dev/null && {
+		wine-theme > "$TMPDIR/theme.reg"
+		wine regedit /s "$TMPDIR/theme.reg"
+	}
+
+	start
+}
+
+main "$@"

@@ -1,0 +1,51 @@
+# background
+background_color_hover = #252525 25
+
+rounded = 0
+background_color = #252525 25
+
+border_width = 1
+border_sides = T
+border_color = #252525 50
+
+# panel
+panel_background_id = 1
+panel_items = T:C
+panel_size = 100% 48
+
+# separator
+separator_size = 1
+separator_style = line
+separator_color = #252525 50
+separator_padding = 0
+
+# tooltip
+tooltip_background_id = 1
+tooltip_font = Segoe UI 12
+tooltip_font_color = #ffffff 100
+tooltip_padding = 8 8
+
+# task
+task_text = 1
+task_centered = 1
+task_padding = 16
+task_font = Segoe UI 12
+task_font_color = #ffffff 100
+task_active_font_color = #ffffff 100
+mouse_left = toggle_iconify
+taskbar_mode = multi_desktop
+taskbar_padding = 0
+taskbar_hide_if_empty = 1
+taskbar_distribute_size = 1
+
+# thumbnails
+task_tooltip = 1
+task_thumbnail = 1
+task_thumbnail_size = 210
+
+# clock
+time1_format = %H:%M
+time1_font = Segoe UI 12
+clock_font_color = #ffffff 100
+clock_tooltip = %Y-%m-%d
+clock_padding = 16

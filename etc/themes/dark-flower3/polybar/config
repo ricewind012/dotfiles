@@ -1,0 +1,81 @@
+include-file = $XDG_CONFIG_HOME/polybar/modules
+
+[bar/bottom]
+enable-ipc = true
+monitor = HDMI-1-1
+monitor-fallback = HDMI-1
+monitor-strict = false
+fixed-center = false
+bottom = true
+width = 70
+offset-x = 16
+offset-y = 56
+
+background = ${xrdb:background}
+foreground = ${xrdb:foreground}
+font-0 = "cure.se:pixelsize=8;2"
+
+modules-center = date
+
+tray-position = none
+tray-maxsize = 16
+
+cursor-click = pointer
+cursor-scroll = ns-resize
+
+[bar/bottom2]
+enable-ipc = true
+monitor = HDMI-1-1
+monitor-fallback = HDMI-1
+monitor-strict = false
+fixed-center = false
+bottom = true
+width = 126
+offset-x = 16
+offset-y = 16
+
+background = ${xrdb:bg}
+foreground = ${xrdb:fg}
+font-0 = "cure.se:pixelsize=8;2"
+
+modules-center = ws
+
+tray-position = none
+tray-maxsize = 16
+
+cursor-click = pointer
+cursor-scroll = ns-resize
+
+[bar/bottom3]
+enable-ipc = true
+monitor = HDMI-1-1
+monitor-fallback = HDMI-1
+monitor-strict = false
+fixed-center = false
+bottom = true
+width = 28
+offset-x = 16
+offset-y = 96
+
+background = ${xrdb:background}
+foreground = ${xrdb:foreground}
+font-0 = "cure.se:pixelsize=8;2"
+
+modules-center = temperature
+
+tray-position = none
+tray-maxsize = 16
+
+cursor-click = pointer
+cursor-scroll = ns-resize
+
+[settings]
+screenchange-reload = false
+compositing-background = source
+compositing-foreground = over
+compositing-overline = over
+compositing-underline = over
+compositing-border = over
+pseudo-transparency = false
+
+; vim:ft=dosini

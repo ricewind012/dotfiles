@@ -1,0 +1,115 @@
+#!/usr/bin/env zsh
+
+prompt() {
+	printf '\e7\e[H\e[7m%*s\r%s%s %s\e[m\e8' \
+		$COLUMNS '' ${opts[p]:=app:} $query
+}
+
+key() {
+	typeset -gi cmd
+	local q key
+
+	case $1 {
+		$'\f')
+			printf '\e7\e[%dH\e[9999C\e[1J\e[2J\e8' 1
+			prompt
+		;;
+
+		$'\b')
+			[[ $query =~ [[:space:]] ]] &&
+				query=${query%[[:space:]]*} || query=
+		;;
+
+		$'\n')
+			if (( $+commands[${query%%[[:space:]]*}] )) {
+				nohup ${(z)${q:-$query}} &!
+				exit
+			} else {
+				(( cmd )) || printf 'No such command\n'
+				cmd=1
+			}
+		;;
+
+		$'\177')
+			query=${query%??}
+		;;
+
+		$'\004')
+			exit
+		;;
+	}
+
+	if [[ $1 != $'\n' ]] {
+		case ${opts[s]:=app} {
+			app) q=${(z)${${${${(M)"${(f)c[${(k)c[(r)*Name=(#i)*${~query//$'\n'}*]}]}":#Exec=*}[1]}#Exec=}%\%[[:alpha:]]}:-$query} ;;
+			bin) q=$commands[(I)$~query] ;;
+		}
+		[[ ! $query ]] && q=
+		query+=$REPLY
+	}
+
+	case $opts[d] {
+		history)
+			case $1 {
+				$'\004') key=Ctrl-D ;;
+				$'\177') key=Backspace ;;
+				$'\b') key=Ctrl-Backspace ;;
+				$'\f') key=Ctrl-L ;;
+				$'\n') key=Enter ;;
+				*) key=$1 ;;
+			}
+
+			printf '%s %s\n' $key $query
+		;;
+
+		search)
+			[[ $q && $cmd -ne 1 ]] && printf '%s\n' $q
+		;;
+	}
+}
+
+main() {
+	local -A opts c
+	local -i OPTIND
+	local opt OPTARG f REPLY
+	local progopts=d:hp:s:
+	setopt extendedglob
+
+	while getopts $progopts opt; do case $opt in
+		[h?])
+			<<-EOF >&2
+			Usage: $ZSH_ARGZERO:t [-$progopts]
+
+			-d Draw [history|search]
+			-h Print this message
+			-p Prompt
+			-s Search for [app - default|bin]
+			EOF
+			exit 2
+		;;
+
+		*) opts[$opt]=${OPTARG:-1} ;;
+	esac; done; shift $(( OPTIND - 1 ))
+
+	for f ({/usr{/local,},${${XDG_DATA_HOME:=$HOME/.local/share}%/*}}/share/applications/*(.N))
+		c[$f]="${(f)$(<$f)}"
+
+	trap 'prompt' WINCH
+	trap "printf '\e[?1049l\e[?7h\e[?25h\e[;r\e[23;2t'" \
+		INT EXIT
+	# CSI ? 1049[hl]: Use (alternative|normal) screen buffer
+	# CSI ? 7 l     : No auto-wrap mode
+	# CSI ? 25 l    : Hide cursor
+	# CSI Ps ; Ps r : Set scrolling region (top;bottom)
+	printf '\e[?1049h\e[?7l\e[?25l\e[2;r\e[2H'
+	# CSI 22 ; 2 t  : Save xterm window title on stack
+	# OSC 2 ; Pt ST : Change window title to Pt
+	printf '\e[22;2t\e]2;%s\a' $ZSH_ARGZERO:t
+
+	prompt; for (( ;; )) {
+		read -rsk1 && key $REPLY
+		prompt
+	}
+}
+
+main $@

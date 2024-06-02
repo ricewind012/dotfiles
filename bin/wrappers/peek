@@ -1,0 +1,13 @@
+#!/bin/sh
+. "$bin/common.sh"
+. "${XDG_CONFIG_HOME:-$HOME/.config}/user-dirs.dirs"
+
+[ -t 0 ] || /usr/bin/peek
+
+cd "$XDG_VIDEOS_DIR" || exit 1
+for i in Peek*; do
+	s=$(stat "$i" | grep 'Birth' | cutmd -d':.' -f4)
+	c=${i#Peek }
+	n=$(echo "${c%.*}" | tr ' ' '_')-$s.mp4
+	mv "$i" "$n"
+done

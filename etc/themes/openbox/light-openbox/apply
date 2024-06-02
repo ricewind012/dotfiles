@@ -1,0 +1,13 @@
+#!/bin/sh
+xrdb "$XDG_CONFIG_HOME/sx/xresources"
+eval "$(xrescolors)"
+
+# WM specific options
+sed -i "s|<theme><name>.*<|<theme><name>mosquito-light<|" \
+	"${XDG_CONFIG_HOME:=$HOME/.config}/openbox/rc.xml"
+openbox --reconfigure
+
+# Wallpaper
+. "$XDG_CONFIG_HOME/user-dirs.dirs"
+xwallpaper --stretch "$XDG_PICTURES_DIR/wal/light/bg.png"
+xsetroot -solid "#f4d8ca"

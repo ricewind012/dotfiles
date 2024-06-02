@@ -1,0 +1,68 @@
+#sidebar {
+	&-box {
+		bgc();
+		brd(right);
+		width: var(--sidebar-width) $i;
+
+		if (sidebar-overlay) {
+			position: absolute;
+			z-index: 1;
+			height: 100%;
+		}
+	}
+	&-splitter {
+		display: none;
+	}
+
+	&-header {
+		bg(2);
+		pad();
+		brd(bottom);
+	}
+	&-icon {
+		opacity: 1 $i;
+	}
+	&-title {
+		pad(0);
+		cursor: pointer $i;
+	}
+	&-switcher {
+		&-target {
+			background-color: transparent $i;
+			pad(0);
+			brd(0);
+			mar(right);
+			gap: 1ch;
+		}
+		&-arrow {
+			opacity: 1 $i;
+			box(var(--font-size));
+		}
+	}
+
+	&-search-container {
+		bg(2);
+		pad();
+		brd(bottom);
+
+		& > #search-box {
+			--bg2: var(--bg);
+			normalise-input();
+		}
+	}
+}
+#viewButton {
+	--bg2: var(--bg);
+	normalise-select();
+	mar(0);
+	mar(left);
+
+	.button {
+		&-text {
+			mar(0);
+		}
+		&-menu-dropmaker {
+			display: none $i; // ?
+		}
+	}
+}

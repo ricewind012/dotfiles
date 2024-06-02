@@ -1,0 +1,188 @@
+/* ==UserStyle==
+@name           Global rules
+@namespace      github.com/openstyles/stylus
+@version        1.0.0
+@description    A new userstyle
+@author         Me
+==/UserStyle== */
+
+/**
+ * Colors
+ * have to change transparent colors because stylus sucks
+ *
+ * I.   Background
+ * II.  Text
+ * III. Scrollbar
+ * IV.  Transparent background
+ * V.   Shadows
+ *
+**/
+@media (prefers-color-scheme: light) { :root {
+	--bg: #fff;
+	--bg2: #faf9f8;
+	--bg3: #f0f0f0;
+	--accent: #cae4f4;
+	--accent-border: #9cd7fb;
+	--border: #e1e4e8;
+	--hl: var(--text-link);
+
+	--text: #252525;
+	--text-muted: #757575;
+	--text-muted2: #404040;
+	--text-link: #1488ff;
+
+	--colorFg: #252525;
+	--colorBg: #f0f0f0;
+	--colorBgDark: #e8e8e8;
+	--colorBorder: #c7c7c7;
+	--colorBorderIntense: #b3b3b3;
+
+	--color3: #1488ff;
+
+	--bg-tr: #ffffffbf;
+	--bg-tr: #ffffff80;
+	--bg-tr: #ffffff40;
+}}
+
+@media (prefers-color-scheme: dark) { :root {
+	--bg: #070b16;
+	--bg2: #0f172f;
+	--bg3: #152143;
+	--accent: #1d2e66;
+	--accent-border: #3954ae;
+	--accent: #221122;
+	--accent-border: #4a254a;
+	--border: #1f2d53;
+	--hl: var(--text-link);
+
+	--text: #dbdcdd;
+	--text-muted: #909090;
+	--text-link: #1488ff;
+
+	--colorFg: #dbdcdd;
+	--colorBg: #0f172f;
+	--colorBgDark: #091129;
+	--colorBorder: #30333c;
+	--colorBorderIntense: #40434c;
+
+	--color1: #e35682;
+	--color2: #6684de;
+	--color3: #3f986d;
+	--color4: #d36a4a;
+	--color5: #ae70c5;
+
+	--bg-tr: #070b16bf;
+	--bg-tr2: #070b1680;
+	--bg-tr3: #070b1640;
+}}
+
+:root {
+	--shadow-color: rgba(0,0,0,.15);
+	--shadow-inset: wat var(--shadow-color);
+	--shadow-vrtcl: 0 0 8px var(--shadow-color);
+	--shadow-small: 0 1px 4px var(--shadow-color);
+	--shadow-large: 0 4px 16px var(--shadow-color);
+	--trans-dur: 150ms;
+}
+
+/* Font */
+*:not(.octicon) {
+	font-family: Rosemary !important;
+}
+
+#startpage * {
+	font-family: azuki_font !important;
+}
+#stylus * {
+	font-family: azuki_font !important;
+	font-size: 100%;
+}
+#stylus #header {
+	font-size: 90%;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+	width: 16px;
+}
+::-webkit-scrollbar-button {
+	display: flex;
+	width: 16px;
+	height: 16px;
+}
+::-webkit-scrollbar-button:vertical {
+	border-left: 1px solid var(--colorBg);
+}
+::-webkit-scrollbar-button:vertical:decrement {
+	background-image: linear-gradient(transparent 68%, var(--colorBg) 68%), linear-gradient(135deg, var(--colorBg) 45%, transparent 45%), linear-gradient(45deg, var(--colorFg) 53%, var(--colorBg) 53%);
+}
+::-webkit-scrollbar-button:vertical:decrement:hover {
+	background-image: linear-gradient(transparent 68%, var(--colorBgDark) 68%), linear-gradient(135deg, var(--colorBgDark) 45%, transparent 45%), linear-gradient(45deg, var(--colorFg) 53%, var(--colorBgDark) 53%);
+}
+::-webkit-scrollbar-button:vertical:decrement:active {
+	background-image: linear-gradient(transparent 68%, var(--colorFg) 68%), linear-gradient(135deg, var(--colorFg) 45%, transparent 45%), linear-gradient(45deg, var(--colorBg) 53%, var(--colorFg) 53%);
+}
+::-webkit-scrollbar-button:vertical:increment {
+	background-image: linear-gradient(45deg, var(--colorBg) 45%, transparent 45%), linear-gradient(-225deg, transparent 53%, var(--colorBg) 53%), linear-gradient(-180deg, var(--colorBg) 31%, var(--colorFg) 31%);
+}
+::-webkit-scrollbar-button:vertical:increment:hover {
+	background-image: linear-gradient(45deg, var(--colorBgDark) 45%, transparent 45%), linear-gradient(-225deg, transparent 53%, var(--colorBgDark) 53%), linear-gradient(-180deg, var(--colorBgDark) 31%, var(--colorFg) 31%);
+}
+::-webkit-scrollbar-button:vertical:increment:active {
+	background-image: linear-gradient(45deg, var(--colorFg) 45%, transparent 45%), linear-gradient(-225deg, transparent 53%, var(--colorFg) 53%), linear-gradient(-180deg, var(--colorFg) 31%, var(--colorBg) 31%);
+}
+::-webkit-scrollbar-button:horizontal {
+	border-top: 1px solid var(--colorBg);
+}
+::-webkit-scrollbar-button:horizontal:decrement {
+	background-image: linear-gradient(-135deg, transparent 53%, var(--colorBg) 53%), linear-gradient(-45deg, transparent 53%, var(--colorBg) 53%), linear-gradient(90deg, var(--colorFg) 70%, var(--colorBg) 70%);
+}
+::-webkit-scrollbar-button:horizontal:decrement:hover {
+	background-image: linear-gradient(-135deg, transparent 53%, var(--colorBgDark) 53%), linear-gradient(-45deg, transparent 53%, var(--colorBgDark) 53%), linear-gradient(90deg, var(--colorFg) 70%, var(--colorBgDark) 70%);
+}
+::-webkit-scrollbar-button:horizontal:decrement:active {
+	background-image: linear-gradient(-135deg, transparent 53%, var(--colorFg) 53%), linear-gradient(-45deg, transparent 53%, var(--colorFg) 53%), linear-gradient(90deg, var(--colorBg) 70%, var(--colorFg) 70%);
+}
+::-webkit-scrollbar-button:horizontal:increment {
+	background-image: linear-gradient(135deg, transparent 53%, var(--colorBg) 53%), linear-gradient(45deg, transparent 53%, var(--colorBg) 53%), linear-gradient(-90deg, var(--colorFg) 70%, var(--colorBg) 70%);
+}
+::-webkit-scrollbar-button:horizontal:increment:hover {
+	background-image: linear-gradient(135deg, transparent 53%, var(--colorBgDark) 53%), linear-gradient(45deg, transparent 53%, var(--colorBgDark) 53%), linear-gradient(-90deg, var(--colorFg) 70%, var(--colorBgDark) 70%);
+}
+::-webkit-scrollbar-button:horizontal:increment:active {
+	background-image: linear-gradient(135deg, transparent 53%, var(--colorFg) 53%), linear-gradient(45deg, transparent 53%, var(--colorFg) 53%), linear-gradient(-90deg, var(--colorBg) 70%, var(--colorFg) 70%);
+}
+::-webkit-scrollbar-track {
+	background-color: var(--colorBg);
+	background-clip: border-box;
+}
+::-webkit-scrollbar-track:vertical {
+	border-left: 1px solid var(--colorBg);
+	border-right: 1px solid var(--colorBg);
+}
+::-webkit-scrollbar-track:horizontal {
+	border-top: 1px solid var(--colorBg);
+	border-bottom: 1px solid var(--colorBg);
+}
+::-webkit-scrollbar-thumb {
+	background-color: var(--colorBorder);
+	background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+	background-color: var(--colorBorderIntense);
+}
+::-webkit-scrollbar-thumb:active {
+	background-color: var(--colorFg);
+}
+::-webkit-scrollbar-thumb:vertical {
+	border-left: 1px solid transparent;
+	border-right: 1px solid transparent;
+}
+::-webkit-scrollbar-thumb:horizontal {
+	border-top: 1px solid transparent;
+	border-bottom: 1px solid transparent;
+}
+::-webkit-scrollbar-corner,
+::-webkit-scrollbar-resize {
+	background-color: var(--colorBg);
+}

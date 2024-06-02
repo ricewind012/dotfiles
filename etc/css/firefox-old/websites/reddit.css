@@ -1,0 +1,77 @@
+@-moz-document domain('reddit.com') {
+	.res.res-commentBoxes .comment,
+	.commentarea .comment {
+		border-radius: 0 !important;
+	}
+	#sr-header-area {
+		height: 18px !important;
+		line-height: 18px !important;
+	}
+	.tagline, .search-result-meta,
+	.domain, .domain a, .entry .buttons li a,
+	span.redditSingleClick, .commentarea .menuarea,
+	.commentarea .menuarea .toggle a, div.commentNavSortType {
+		font-size: 12px !important;
+	}
+
+	/* Remove certain elements */
+	.footer-parent, .debuginfo, /* Footer */
+	.give-gold-button, .buttons li:not([class]) {
+		display: none !important;
+	}
+
+	/* Hide elements */
+	#header-bottom-right, /* Login */
+	#sr-header-area /* Header top */ {
+		visibility: hidden;
+	}
+
+	/* unsorted */
+	/*.linklisting > .clearleft {
+		margin: 8px !important;
+	}*/
+	.nav-buttons {
+		padding: 6px !important;
+	}
+
+	/* New reddit stolen icons */
+	@font-face {
+		font-family: "redesignFont";
+		src: url(https://www.redditstatic.com/desktop2x/fonts/redesignIcon/redesignFont.e68baae7e616cf832cacf2df091e58f3.eot),
+				 url(https://www.redditstatic.com/desktop2x/fonts/redesignIcon/redesignFont.e68baae7e616cf832cacf2df091e58f3.woff),
+				 url(https://www.redditstatic.com/desktop2x/fonts/redesignIcon/redesignFont.e68baae7e616cf832cacf2df091e58f3.ttf),
+				 url(https://www.redditstatic.com/desktop2x/fonts/redesignIcon/redesignFont.e68baae7e616cf832cacf2df091e58f3.svg);
+	}
+	.buttons li a::before {
+		font-family: "redesignFont";
+		display: block;
+		float: left;
+	}
+	.buttons li a {
+		margin-left: 2px;
+	}
+	.buttons li a:not(.comments) {
+		text-transform: capitalize;
+	}
+	/*.buttons li a:hover::before {
+		text-decoration: underline;
+	}*/
+	.buttons .first a::before {content: "\f10c"}
+	.buttons .share a::before {content: "\f136"}
+	.buttons .save-button a::before {content: "\f135"}
+	.buttons .hide-button a::before {content: "\f120"}
+	.buttons .reply-button a::before {content: "\f10c"}
+	.buttons .report-button a::before {content: "\f134"}
+	.buttons .embed-comment a::before {content: "\f112"}
+	.buttons .first .bylink:not(.comments)::before {content: "\f123"}
+	
+	/* Remove side panel for small windows */
+	@media only screen and (max-width: 1024px) {
+		.side {
+			display: none;
+		}
+		body > .content {
+			margin: 16px !important;
+		}
+	}
+}

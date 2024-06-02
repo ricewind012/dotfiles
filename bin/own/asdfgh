@@ -1,0 +1,72 @@
+#!/bin/sh
+
+unset file
+unix=0; windows=0
+progopts=uwls0h
+sep='
+'
+
+while getopts "$progopts" opt; do case $opt in
+	u) unix=1; break ;;
+	w) windows=1; break ;;
+	# how do they do them ? wine and win are different xd
+	l) long=1 ;;
+	s) short=1 ;;
+	0) sep=$(printf '\0') ;;
+
+	[h?])
+		printf 'Usage: %s [-%s] path\n' \
+			"${0##*/}" "$progopts" >&2
+		exit 2
+	;;
+esac; done; shift $(( OPTIND - 1 ))
+[ "$windows" -eq 0 ] && unix=1 # Default behavior
+
+if [ "$windows" -eq 1 ]; then
+	drive=Z
+	case $1 in
+		"${WINEPREFIX:=$HOME/.wine}/drive_c"*)
+			drive=C
+			set -- "${1#"$WINEPREFIX/drive_c"}"
+		;;
+
+		/*) ;;
+		.) set -- "$PWD" ;;
+		./*) set -- "$PWD/${1#**/}" ;;
+		*) [ "$1" != "$PWD" ] && set -- "$PWD/$1" ;;
+	esac
+
+	IFS=/; for i in $1; do
+		file=$file\\${i#*"$IFS"}
+	done
+	file=$drive:${file#\\}
+	[ "${file#"${file%?}"}" = : ] && file=$file\\
+
+elif [ "$unix" -eq 1 ]; then
+	IFS=\\; for i in $1; do
+		file=$file/${i#*"$IFS"}
+	done
+	file=${file#/[[:alpha:]]:}
+	: "${file:=/}"
+	#[ "$file" = // ] && file=/
+	#[ "${file%"${file#??}"}" = // ] && file=${file#/}
+	#[ "${file#"${file%??}"}" = /. ] && file=${file%.}
+	case $file in
+		//*) file=${file#/} ;;
+		/.) file=${file%.} ;;
+
+		/[Uu][Ss][Ee][Rr][Ss]*)
+			file=$WINEPREFIX/dosdevices/c:$file
+		;;
+	esac
+fi
+
+unset progopts drive sep unix windows IFS i
+
+printf '%s\n' "$file"
+
+: 'while read -r l; do case $l in [[:alpha:]]:*\\foobar2000\\)
+	break
+esac; done <<-EOF
+$(strings "$XDG_DATA_HOME/foobar2000/configuration/Core.cfg")
+EOF'

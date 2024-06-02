@@ -1,0 +1,19 @@
+#!/bin/sh
+xrdb "$XDG_CONFIG_HOME/sx/xresources"
+_() bspc config "$@"
+
+# WM specific options
+killall -q borders
+_ window_gap 24
+_ border_width 4
+_ normal_border_color "#191c15"
+_ focused_border_color "#555e3e"
+
+# Wallpaper
+. "${XDG_CONFIG_HOME:-$HOME/.config}/user-dirs.dirs"
+xwallpaper --stretch "$XDG_PICTURES_DIR/wal/dark/66406050_p0.jpg"
+xsetroot -solid "$bg"
+
+# etc.
+sed -i 's/dark-mode", false/dark-mode", true/' "$ujs"
+sed -i 's/DarkTheme", 0/DarkTheme", 1/' "$ujs"

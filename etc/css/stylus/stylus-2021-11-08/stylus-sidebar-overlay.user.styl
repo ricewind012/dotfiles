@@ -1,0 +1,79 @@
+/* ==UserStyle==
+@name           Stylus sidebar overlay
+@namespace      github.com/openstyles/stylus
+@version        1.0.0
+@description    A new userstyle
+@author         Me
+
+@preprocessor stylus
+==/UserStyle== */
+
+anim(e = \&) {
+	@media (prefers-reduced-motion: no-preference) {
+		{e} {
+			transition: var(--trans-dur);
+		}
+	}
+}
+
+@-moz-document regexp("(moz|chrome)-extension://.*") {
+	:root {
+		--sidebar-bg: var(--bg-tr);
+		--sidebar-width: 16px;
+	}
+
+	#stylus {
+		#header {
+			background-color: var(--sidebar-bg) !important;
+			backdrop-filter: var(--popup-filter);
+			anim();
+
+			@media (max-width: 850px) {
+				border-right: 1px dashed var(--text-muted) !important;
+				border-bottom: none !important;
+				position: fixed !important;
+				width: 280px !important;
+				height: 100% !important;
+
+				#details-wrapper {
+					flex-direction: column !important;
+				}
+
+				~/.usercss .CodeMirror-scroll {
+					max-height: 100% !important;
+				}
+			}
+
+			&:not(:hover) {
+				width: var(--sidebar-width) !important;
+				flex: 0 0 var(--sidebar-width) !important;
+				padding: 0 !important;
+
+				* {
+					opacity: 0;
+				}
+			}
+
+			&::-webkit-scrollbar {
+				display: none !important;
+			}
+		}
+
+		&-manage, &-edit {
+			#sections, #installed {
+				padding-left: var(--sidebar-width) !important;
+			}
+		}
+	}
+
+	#stylus-install-usercss {
+		#header {
+			position: absolute;
+			height: 100%;
+		}
+
+		.main {
+			margin-left: var(--sidebar-width);
+		}
+	}
+}

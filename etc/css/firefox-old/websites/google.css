@@ -1,0 +1,37 @@
+@-moz-document domain('google.com') {
+	div[data-attrid="kc:/ugc:thumbs_up"] {
+		display: none;
+	}
+	.hdtb-mitem a:hover,
+	.hdtb-mitem .GOE98c {
+		color: black;
+	}
+
+	/* No JS */
+	.bz1lBb, #qdClwb, .ZINbbc, .KP7LCb {
+		border-radius: 0 !important;
+	}
+	.TwVfHd {
+		border-radius: 8px !important;
+	}
+
+	/* more compact view */
+	.kCrYT {
+		padding: 10px 14px 10px;
+	}
+	.TwVfHd {
+		padding: 4px 6px !important;
+	}
+	.cREFlf {
+		padding: 16px;
+	}
+
+	/* border */
+	.X6ZCif {
+		padding-bottom: 6px !important;
+		border-bottom: 1px solid #e0e0e0;
+	}
+	.GpQGbf {
+		margin-top: 3px !important;
+	}
+}

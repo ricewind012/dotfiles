@@ -1,0 +1,45 @@
+! NOT mountaineer dark
+*.background: #1b1b1b
+*.foreground: #cccccc
+
+*.color0:	#808080
+*.color8: #404040
+
+*.color1:  #cca4a4
+*.color9:  #9a7c7c
+
+*.color2:  #a4ccab
+*.color10: #7c9a81
+
+*.color3:  #c8cca4
+*.color11: #979a7c
+
+*.color4:  #a4b8cc
+*.color12: #7c8b9a
+
+*.color5:  #cca4cb
+*.color13: #9a7c99
+
+*.color6:  #b1a4cc
+*.color14: #867c9a
+
+*.color7:  #cccccc
+*.color15: #9a9a9a
+
+! other
+#define FONT CozetteVector
+#define FONT_SIZE 9
+#define PAD 4
+*.bg: #1b1b1b
+*.bg2: #363636
+*.fg: #cccccc
+*.fg2: #666666
+*.ac: #221122
+*.ab: #44264b
+*.hl: #1488ff
+*.ht: #ffffff
+*.ur: #e53935
+*.fn: FONT
+*.fs: FONT_SIZE
+
+! vim: ft=xdefaults

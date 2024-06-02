@@ -1,0 +1,79 @@
+configuration {
+	modi:						"window,drun,ssh,run";
+	display-drun:   "app";
+	display-window: "window";
+	display-run:    "run";
+}
+
+// vars
+* {
+	bg: #070b16;
+	bg2: #0f172f;
+	br: #213469;
+	fg: #cacbcc;
+	fm: #666666;
+	ac: #221122;
+	ab: #44264b;
+	hl: #1488ff;
+	ht: #ffffff;
+	ur: #e53935;
+	fn: "CozetteVector 9";
+}
+
+* {
+	lines: 10;
+	font: var(fn);
+	border-color: var(br);
+}
+
+window {
+	background-color: var(bg);
+	padding: 0;
+	border: 1;
+	width: 15%;
+}
+
+mainbox {
+	children: [inputbar, listview];
+	spacing: 0;
+}
+
+inputbar {
+	children: [prompt, textbox-prompt-colon, entry, case-indicator];
+	background-color: var(bg2);
+	border: 0 0 1 0;
+	padding: 8;
+}
+
+listview {
+	border: 0;
+	padding: 8;
+	spacing: 4;
+	scrollbar: false;
+}
+
+element {
+	padding: 4;
+}
+element normal.normal, element alternate.normal {
+	background-color: #00000000;
+	text-color: var(fg);
+}
+element selected.normal {
+	background-color: var(hl);
+	text-color: var(ht);
+}
+
+prompt {
+	text-color: var(fg);
+}
+textbox-prompt-colon {
+	text-color: var(fg);
+	margin-right: 0;
+	expand: false;
+	str: ":";
+}
+entry {
+	text-color: var(fg);
+	placeholder-color: var(fm);
+}

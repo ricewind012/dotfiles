@@ -1,0 +1,37 @@
+/* ==UserStyle==
+@name           Stylus syntax highlighting
+@namespace      github.com/openstyles/stylus
+@version        1.0.0
+@description    A new userstyle
+@author         Me
+
+@preprocessor stylus
+==/UserStyle== */
+
+clr(c)
+	&
+		color: s("var(--color%s)", c) !important
+
+@-moz-document regexp("(moz|chrome)-extension://.*")
+	.cm-s-default .cm
+		&-header, &-def, &-negative, &-qualifier, &-error, &-attribute, &-link
+			clr(9)
+		&-quote, &-positive, &-number, &-variable-3, &-builtin, &-atom
+			clr(10)
+		&-operator
+			clr(11)
+		&-keyword, &-tag, &-property
+			clr(12)
+		&-tag, &-string, &-string-2
+			clr(13)
+		&-variable-2
+			clr(14)
+		&-comment, &-bracket, &-meta
+			color: var(--text-muted) !important
+		&-matchhighlight
+			background-color: var(--hl) !important
+			color: var(--hl-text) !important
+			/*
+.cm-s-default .cm-variable,
+.cm-s-default .cm-punctuation,
+.cm-s-default .cm-property,*/

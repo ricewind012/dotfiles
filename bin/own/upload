@@ -1,0 +1,56 @@
+#!/bin/sh -e
+. "$bin/common.sh"
+
+args() {
+	uploader=${1:-transfer}
+
+	case $uploader in
+		transfer) args="$args -T '$file' 'https://transfer.sh/$file'" ;;
+		0x0) args="$args -F 'file=@$file' https://0x0.st" ;;
+
+		catbox)
+			args="
+				-F reqtype=fileupload
+				$args
+				-F 'fileToUpload=@$file'
+				https://litterbox.catbox.moe/resources/internals/api.php
+			"
+		;;
+	esac
+}
+
+usage() {
+	printf 'Usage: %s [-%s] file\n' "${0##*/}" "$progopts" >&2
+	exit 2
+}
+
+main() {
+	headersdir=${XDG_CACHE_HOME:=$HOME/.cache}/${0##*/}
+	progopts=a:df:h
+
+	while getopts "$progopts" opt; do case $opt in
+		[h?]) usage ;;
+		a) args=$OPTARG ;;
+		d) dry=echo ;;
+		f) file=$OPTARG ;;
+		n) notification=1 ;;
+	esac; done; shift $(( OPTIND - 1 ))
+
+	[ "$file" ] || usage
+	[ -e "$file" ] || die "$file: no such file or directory"
+
+	[ -d "$headersdir" ] ||
+		mkdir -p "$headersdir"
+	[ -d "$file" ] && {
+		file=$file.zip
+		7z a -tzip "$file" "${file%.*}"
+	}
+
+	args "$@"
+
+	$dry curl \
+		-D "$headersdir/${uploader}_$(date '+%Y-%m-%d_%H-%M-%S')" \
+		$args
+}
+
+main "$@"

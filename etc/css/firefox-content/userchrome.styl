@@ -1,0 +1,32 @@
+@-moz-document url-prefix("about:userchrome") {
+/**
+ * Header
+**/
+.sticky-container {
+	pad(0);
+}
+.search-textbox {
+	bg(2);
+	pad(0);
+	brd(0);
+	outline: none $i;
+
+	/.main-heading,
+	& {
+		min-height: unset $i;
+	}
+}
+
+/**
+ * Content
+**/
+input[type="checkbox"].toggle-button {
+	bg();
+
+	&::before {
+		brd(0);
+		mar(0);
+		box(unset);
+	}
+}
+}

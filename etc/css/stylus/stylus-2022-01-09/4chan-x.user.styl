@@ -1,0 +1,48 @@
+/* ==UserStyle==
+@name           4chan X
+@namespace      github.com/openstyles/stylus
+@version        1.0.0
+@description    A new userstyle
+@author         Me
+
+@preprocessor stylus
+==/UserStyle== */
+
+@-moz-document domain("4channel.org") {
+	#overlay {
+		background-color: transparent !important;
+	}
+	#header-bar {
+		background-color: var(--accent) !important;
+		color: var(--fg) !important;
+		border: none !important;
+		border-bottom: var(--border-width) solid var(--accent-border) !important;
+		box-shadow: var(--shadow-mid) !important;
+	}
+	#fourchanx-settings {
+		padding: 0 !important;
+		box-shadow: var(--shadow-big) !important;
+
+		& > nav {
+			background-color: var(--accent);
+			border-bottom: var(--border-width) solid var(--accent-border);
+			padding: var(--pad) !important;
+			box-shadow: var(--shadow-mid);
+
+			a:not(:hover) {
+				text-decoration: none;
+			}
+		}
+
+		.section-container {
+			padding: var(--pad);
+		}
+		fieldset {
+			border-radius: var(--border-radius) !important;
+		}
+	}
+	.dialog {
+		background-color: var(--bg) !important;
+		border: var(--border-width) solid var(--accent-border) !important;
+	}
+}

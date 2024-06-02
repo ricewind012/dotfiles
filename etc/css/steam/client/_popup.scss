@@ -1,0 +1,81 @@
+// Dropdown
+[class^="dropdown_DialogDropDownMenu_"] {
+	padding: 0 $i;
+
+	@include child-attr("Item") {
+		padding: $dialog-pad $i;
+
+		&:hover {
+			background-color: $hl $i;
+			color: $hl-text $i;
+		}
+	}
+}
+
+[class^="tooltip_TextToolTip"] {
+	background-color: $bg-tr $i;
+	backdrop-filter: $popup-filter;
+	padding: $dialog-pad $i;
+	border-radius: $border-radius $i;
+	color: $text $i;
+}
+
+// Context menu
+[class*="contextmenu_"] {
+	$cm-pad: 8px;
+
+	@include child-attr("contextMenu_") {
+		background-image: none $i;
+		background-color: $accent $i;
+		box-shadow: $shadow-ins $accent-border, $shadow-big $i;
+		padding: $cm-pad $i;
+		@include dropfade;
+	}
+
+	@include child-attr("contextMenu") {
+		@include child-attr("Item") {
+			color: $text $i;
+			padding: math.div($cm-pad, 2) $i;
+			border-radius: $border-radius $i;
+			border: none $i;
+
+			&[class*="active"], &:hover {
+				background-color: $accent-border $i;
+			}
+		}
+
+		//@include child-attr("Action") {
+		@include child-attr("Item") {
+			background-image: none $i;
+
+			&.Stream,
+			&.Connect,
+			&.Launch,
+			&.PlayMusic,
+			&.Play {
+				@include color($color2, background-color);
+			}
+			&.Download,
+			&.Update,
+			&.PreLoad,
+			&.Resume,
+			&.Pause,
+			&.BorrowApp,
+			&.Stop,
+			&.Cancel,
+			&.Install,
+			&.PurchaseApp {
+				@include color($color5, background-color);
+			}
+
+			svg { top: 7px; }
+		}
+	}
+
+	svg {
+		position: absolute;
+		right: 0;
+		top: 2px;
+		fill: $text $i;
+	}
+}

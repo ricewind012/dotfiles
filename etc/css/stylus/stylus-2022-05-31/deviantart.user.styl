@@ -1,0 +1,83 @@
+/* ==UserStyle==
+@name           DeviantArt
+@namespace      github.com/openstyles/stylus
+@version        1.0.0
+@description    A new userstyle
+@author         Me
+
+@preprocessor stylus
+==/UserStyle== */
+
+@-moz-document domain("deviantart.com") {
+	// Remove elements
+	[data-hook="deviation_meta"] + div + div, // Tags
+	[aria-label="Navigation menu"],
+	footer,
+	{
+		display: none !important;
+	}
+
+	// Not logged in
+	header > :last-child, // Submit button
+	[data-hook="action_bar"],
+	[data-hook="user_watch_button"],
+	[id^="comment-"].no-theme-skin > div,
+	[href="https://www.deviantart.com/join/"],
+	[href="https://www.deviantart.com/users/login"]
+	{
+		display: none !important;
+	}
+
+	// Global
+	.theme-dark {
+		// Background
+		--D1: var(--bg);
+		--D2: var(--bg);
+		--D3: var(--bg);
+		--D4: var(--bg2);
+		--D5: var(--fg2);
+		--D6: var(--fg2);
+		--D7: var(--fg);
+		--D8: var(--fg);
+		--D9: var(--bg3);
+
+		// Text
+		--L1: var(--fg);
+		--L2: var(--fg);
+		--L3: var(--fg);
+		--L4: var(--fg2);
+		--L5: var(--fg2);
+		--L6: var(--fg2);
+		--L7: var(--fg2);
+		--L8: var(--fg2);
+		--L9: var(--fg2);
+
+		// etc.
+		--C14: var(--accent); // accent
+		--AS39: none; // deviation top gradient
+
+		// sorted ones
+		//--g-brand: var(--accent);
+		--g-theme-primary: var(--bg);
+		--g-theme-secondary: var(--bg2);
+		--g-theme-tertiary: var(--bg3);
+		--g-theme-primary-opposite: var(--fg);
+		--g-theme-secondary-opposite: var(--fg2);
+		--g-theme-tertiary-opposite: var(--fg2);
+
+		--g-typography-primary: var(--fg);
+		--g-typography-secondary: var(--fg2);
+		--g-typography-tertiary: var(--fg2);
+
+		--g-divider-fill: var(--border);
+		--g-stroke-default: var(--border);
+		--g-stroke-hover: var(--border);
+	}
+
+	[data-hook="all_content"] > div > div {
+		//--site-margin: var(--pad);
+	}
+	[role="complementary"] { // Suggested collections
+		background: none var(--bg2) !important;
+	}
+}

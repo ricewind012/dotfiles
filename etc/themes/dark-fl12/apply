@@ -1,0 +1,42 @@
+#!/bin/sh
+eval "$(xrescolors)"
+
+# WM-specific options
+[ "$wm" ] || {
+	id=$(xprop -root -notype _NET_SUPPORTING_WM_CHECK)
+	id=${id##* }
+	wm=$(xprop -id "$id" -notype _NET_WM_NAME)
+	wm=${wm#*\"}
+	wm=${wm%\"*}
+}
+
+case $wm in
+	fvwm3)
+	;;
+
+	herbstluftwm)
+		_() herbstclient attr "$@"
+
+		_ theme.title_height 18
+		_ theme.title_depth 4
+		_ theme.title_align left
+		_ theme.normal.title_color '#81878b'
+		_ theme.active.title_color '#ccd2d6'
+		_ theme.title_font 'Arial Bold:pixelsize=12'
+
+		_ theme.border_width 6
+		_ theme.outer_width 1
+		_ theme.normal.outer_color '#2a3338'
+		_ theme.active.outer_color '#283137'
+		_ theme.inner_width 1
+		_ theme.normal.inner_color '#2a3338'
+		_ theme.active.inner_color '#283137'
+		_ theme.normal.color '#434c51'
+		_ theme.active.color '#3c454b'
+	;;
+esac
+
+# Wallpaper
+. "$XDG_CONFIG_HOME/user-dirs.dirs"
+xwallpaper --tile "$windows/Program Files (x86)/Image-Line/FL Studio 20/Artwork/Wallpapers/FL-chan (SD).png"
+xsetroot -solid "$background"

@@ -1,0 +1,52 @@
+/* ==UserStyle==
+@name           YouTube
+@namespace      github.com/openstyles/stylus
+@version        1.0.0
+@description    A new userstyle
+@author         Me
+==/UserStyle== */
+
+@-moz-document domain("youtube.com") {
+	/* Remove elements */
+	#contents.ytd-rich-grid-renderer > ytd-rich-section-renderer, /* "What did you think of this video?" */
+	#menu.ytd-video-primary-info-renderer ytd-button-renderer,
+	#movie_player .ytp-doubletap-ui-legacy,
+	#menu.ytd-compact-video-renderer,
+	ytd-badge-supported-renderer,
+	ytd-mini-guide-renderer,
+	#voice-search-button,
+	#sponsor-button,
+	#country-code,
+	#left-arrow,
+	#guide {
+		display: none !important;
+	}
+	#page-manager {
+		margin-left: 0 !important;
+	}
+
+	/* Remove dropdowns/menus */
+	#menu,
+	#action-menu,
+	#guide-button.ytd-masthead {
+		display: none !important;
+	}
+	#menu.ytd-video-primary-info-renderer {
+		display: block !important;
+	}
+	.metadata.ytd-compact-video-renderer,
+	h3.ytd-rich-grid-media {
+		padding-right: 0 !important;
+	}
+	h3.ytd-grid-video-renderer {
+		margin: 0 !important;
+	}
+
+	/* Remove video preview */
+	#preview, #hover-overlays {
+		display: none !important;
+	}
+	ytd-thumbnail-overlay-time-status-renderer {
+		display: inline-block !important;
+	}
+}

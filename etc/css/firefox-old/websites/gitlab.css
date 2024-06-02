@@ -1,0 +1,30 @@
+@-moz-document domain('gitlab.com') {
+	/* Hide the left sidebar */
+	.nav-sidebar {
+		display: none !important;
+	}
+	.page-with-icon-sidebar,
+	.page-with-contextual-sidebar {
+		padding-left: unset !important;
+	}
+
+	/* Use entire screen */
+	.limit-container-width .flash-container,
+	.limit-container-width .detail-page-header,
+	.limit-container-width .page-content-header,
+	.limit-container-width .commit-box,
+	.limit-container-width .info-well,
+	.limit-container-width .commit-ci-menu,
+	.limit-container-width .files-changed-inner,
+	.limit-container-width .limited-header-width,
+	.limit-container-width .limited-width-notes,
+	.limit-container-width,
+	.container-fluid.container-limited.limit-container-width .file-holder.readme-holder.limited-width-container .file-content,
+	.container-limited.limit-container-width .file-holder.readme-holder.limited-width-container .file-content,
+	.limit-container-width .issuable-details .detail-page-description,
+	.limit-container-width .issuable-details .mr-source-target,
+	.limit-container-width .issuable-details .mr-state-widget,
+	.limit-container-width .issuable-details .merge-manually {
+		max-width: unset !important;
+	}
+}

@@ -1,0 +1,42 @@
+/* ==UserStyle==
+@name						file://
+@namespace      github.com/openstyles/stylus
+@version        1.0.0
+@description    A new userstyle
+@author         Me
+
+@preprocessor stylus
+==/UserStyle== */
+
+@-moz-document url-prefix("file://") {
+	:root:not(#startpage) {
+		body {
+			background-color: var(--bg);
+			color: var(--text);
+			margin: 0;
+		}
+
+		a {
+			&:not(:visited) {
+				color: var(--text-link);
+			}
+
+			&:visited {
+				color: var(--color5);
+			}
+		}
+
+		#listingParsingErrorBox + h1 {
+			background-color: var(--accent);
+			border-color: var(--accent-border);
+			margin-top: 0;
+			padding: 8px;
+		}
+
+		#parentDirLinkBox, table {
+			display: block;
+			padding: 8px;
+			padding-right: 0;
+		}
+	}
+}

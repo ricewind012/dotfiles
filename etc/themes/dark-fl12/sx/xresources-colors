@@ -1,0 +1,47 @@
+!! mountaineer
+*.background: #353e44
+*.foreground: #ccd2d6
+
+*.color0:	 #666d72
+*.color8:  #191919
+
+*.color1:  #b788a8
+*.color9:  #8f6080
+
+*.color2:  #aed598
+*.color10: #7ba165
+
+*.color3:  #dab0a0
+*.color11: #aa8070
+
+*.color4:  #93add0
+*.color12: #6781a4
+
+*.color5:  #b788a8
+*.color13: #8f6080
+
+*.color6:  #96acb8
+*.color14: #6b818d
+
+*.color7:  #ccd2d6
+*.color15: #666d72
+
+! other
+#define FONT MS Gothic
+#define FONT_SIZE 9
+#define PAD 8
+
+*.fn: FONT
+*.fs: FONT_SIZE
+
+*.bg2: #3c454b
+*.fg2: #666d72
+*.border: #283137
+
+*.hl: #1367b8
+*.hf: #dde4ea
+
+*.ac: #cccccc
+*.ab: #cccccc
+
+! vim: ft=xdefaults

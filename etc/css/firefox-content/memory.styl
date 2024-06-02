@@ -1,0 +1,48 @@
+@-moz-document url-prefix("about:memory") {
+html {
+	bgc();
+}
+body {
+	padding: var(--body-pad) $i;
+}
+.ancillary {
+	mar(0);
+}
+.opsRow {
+	bgc(2);
+	pad();
+	brd();
+	mar(top, 0);
+	mar(right);
+	mar(bottom);
+	width: 300px;
+
+	&Label {
+		normalise-header();
+		center();
+		justify-content: space-between;
+		gap: 1ch;
+	}
+}
+.section {
+	background-color: color-a(3) $i;
+	fg();
+	pad();
+	brd(,var(--color3));
+	mar(0);
+}
+
+input[type="checkbox"] {
+	normalise-checkbox();
+	bg();
+}
+button {
+	normalise-button();
+	bg();
+	appearance: none;
+
+	&:not(:last-child) {
+		mar(right);
+	}
+}
+}

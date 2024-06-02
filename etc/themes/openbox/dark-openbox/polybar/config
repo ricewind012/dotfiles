@@ -1,0 +1,129 @@
+include-file = $XDG_CONFIG_HOME/polybar/modules
+
+[bar/bottom]
+enable-ipc = true
+monitor = HDMI-1-1
+monitor-fallback = HDMI-1
+monitor-strict = false
+fixed-center = false
+bottom = true
+width = 50%
+height = 32
+offset-x = 25%
+offset-y = 16
+
+background = ${xrdb:bg}
+foreground = ${xrdb:fg}
+
+; fg-light
+separator = %{F#909090}|%{F-}
+
+font-0 = "Cozette:size=9;2"
+font-1 = "icomoon\-feather:size=6;2"
+font-2 = "Arial:size=8;1"
+font-3 = "Bahnschrift:size=8;1"
+font-4 = "Calibri:size=8;1"
+font-5 = "Cambria Math:size=8;1"
+font-6 = "Candara:size=8;1"
+font-7 = "Comic Sans MS:size=8;1"
+font-8 = "Consolas:size=8;1"
+font-9 = "Constantia:size=8;1"
+font-10 = "Corbel:size=8;1"
+font-11 = "Courier New:size=8;1"
+font-12 = "Courier:size=8;1"
+font-13 = "Ebrima:size=8;1"
+font-14 = "FixedSys:size=8;1"
+font-15 = "Fixedsys:size=8;1"
+font-16 = "Franklin Gothic Medium:size=8;1"
+font-17 = "Gabriola:size=8;1"
+font-18 = "Gadugi:size=8;1"
+font-19 = "Georgia:size=8;1"
+font-20 = "HoloLens MDL2 Assets:size=8;1"
+font-21 = "Impact:size=8;1"
+font-22 = "Ink Free:size=8;1"
+font-23 = "Javanese Text:size=8;1"
+font-24 = "Leelawadee UI:size=8;1"
+font-25 = "Lucida Console:size=8;1"
+font-26 = "Lucida Sans Unicode:size=8;1"
+font-27 = "MS Gothic:size=8;1"
+font-28 = "MS PGothic:size=8;1"
+font-29 = "MS Sans Serif:size=8;1"
+font-30 = "MS Serif:size=8;1"
+font-31 = "MS UI Gothic:size=8;1"
+font-32 = "MV Boli:size=8;1"
+font-33 = "Malgun Gothic:size=8;1"
+font-34 = "Marlett:size=8;1"
+font-35 = "Microsoft Himalaya:size=8;1"
+font-36 = "Microsoft JhengHei:size=8;1"
+font-37 = "Microsoft New Tai Lue:size=8;1"
+font-38 = "Microsoft PhagsPa:size=8;1"
+font-39 = "Microsoft Sans Serif:size=8;1"
+font-40 = "Microsoft Tai Le:size=8;1"
+font-41 = "Microsoft YaHei:size=8;1"
+font-42 = "Microsoft YaHei UI:size=8;1"
+font-43 = "Microsoft Yi Baiti:size=8;1"
+font-44 = "MingLiU\-ExtB:size=8;1"
+font-45 = "MingLiU_HKSCS\-ExtB:size=8;1"
+font-46 = "Mongolian Baiti:size=8;1"
+font-47 = "Myanmar Text:size=8;1"
+font-48 = "NSimSun:size=8;1"
+font-49 = "Nirmala UI:size=8;1"
+font-50 = "Nirmala UI:size=8;1"
+font-51 = "PMingLiU\-ExtB:size=8;1"
+font-52 = "Palatino Linotype:size=8;1"
+font-53 = "Segoe MDL2 Assets:size=8;1"
+font-54 = "Segoe Print:size=8;1"
+font-55 = "Segoe Script:size=8;1"
+font-56 = "Segoe UI:size=8;1"
+font-57 = "Segoe UI Emoji:size=8;1"
+font-58 = "Segoe UI Historic:size=8;1"
+font-59 = "Segoe UI Symbol:size=8;1"
+font-60 = "Segoe UI:size=8;1"
+font-61 = "SimSun:size=8;1"
+font-62 = "SimSun\-ExtB:size=8;1"
+font-63 = "Sitka Banner:size=8;1"
+font-64 = "Sitka Display:size=8;1"
+font-65 = "Sitka Heading:size=8;1"
+font-66 = "Sitka Small:size=8;1"
+font-67 = "Sitka Subheading:size=8;1"
+font-68 = "Sitka Text:size=8;1"
+font-69 = "Small Fonts:size=8;1"
+font-70 = "Sylfaen:size=8;1"
+font-71 = "Symbol:size=8;1"
+font-72 = "System:size=8;1"
+font-73 = "Tahoma:size=8;1"
+font-74 = "Terminal Greek 737 (437G):size=8;1"
+font-75 = "Terminal Greek 869:size=8;1"
+font-76 = "Terminal:size=8;1"
+font-77 = "Times New Roman:size=8;1"
+font-78 = "Trebuchet MS:size=8;1"
+font-79 = "Verdana:size=8;1"
+font-80 = "Webdings:size=8;1"
+font-81 = "Wingdings:size=8;1"
+font-82 = "Yu Gothic:size=8;1"
+font-83 = "Yu Gothic UI:size=8;1"
+
+padding-left = 1
+padding-right = 2
+
+module-margin-left = 2
+module-margin-right = 2
+modules-left = ws
+modules-right = date
+
+tray-position = none
+tray-maxsize = 16
+
+cursor-click = pointer
+cursor-scroll = ns-resize
+
+[settings]
+screenchange-reload = false
+compositing-background = source
+compositing-foreground = over
+compositing-overline = over
+compositing-underline = over
+compositing-border = over
+pseudo-transparency = false
+
+; vim:ft=dosini

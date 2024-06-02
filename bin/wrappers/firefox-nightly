@@ -1,0 +1,11 @@
+#!/bin/sh
+#rm "${XDG_CACHE_HOME:-$HOME/.cache}/${ffprofile#$HOME/.}/startupCache"/*
+
+if
+	command -v apulse >/dev/null &&
+	! pgrep -x pulseaudio >/dev/null
+then
+	cmd=apulse
+fi
+
+exec $cmd /opt/firefox-nightly/firefox "$@"

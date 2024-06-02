@@ -1,0 +1,279 @@
+#!/usr/bin/env node
+
+class CFiles {
+	constructor(arrFileContents) {
+		this.m_arrFileLines = arrFileContents
+	}
+
+	ProcessStats() {
+		let aaFiles    = {}
+		let nDownloads = 0
+		let nResults   = 0
+		let nSize      = 0
+		let strLetter
+		let strUnit
+
+		if (!fs.existsSync(g_strProgramDir))
+			fs.mkdirSync(g_strProgramDir, { recursive: true })
+
+		for (let i = 0; i < this.m_arrFileLines.length; i++) {
+			let arrData = ParseLine(
+				this.m_arrFileLines[i],
+				this.m_arrFileLines[i + 1]
+			)
+
+			if (!arrData || arrData.filter(e => !e).length)
+				continue
+
+			let date = arrData[0]
+			let file = arrData[1]
+			let user = arrData[2]
+
+			if (!fs.existsSync(file)) {
+				console.log(new Error(
+					`no such file or directory: ${file}`
+				).message)
+				continue
+			}
+
+			fs.lstatSync(file, (hError, hStats) => {
+				nDownloads    = aaFiles[file] ? nDownloads + 1 : 1
+				aaFiles[file] = {
+					nDownloads: nDownloads,
+					nFileSize:  hStats.size
+				}
+				if (g_mapOptions.get('c')) {
+					aaFiles[file].strUser = user
+					aaFiles[file].strDate = date
+				}
+				if (nDownloads > 1)
+					strLetter = 's'
+
+				[ nSize, strUnit ] = GetSize(hStats.size)
+
+				console.log(
+					'%s => %d %s, %d %download%c',
+					file, nSize, strUnit, nDownloads, strLetter
+				)
+
+				nResults++
+				strLetter = ''
+			})
+		}
+
+		if (!nResults)
+			throw new Error('No files found')
+
+		if (g_mapOptions.get('c')) {
+		} else {
+		}
+	}
+
+	Stats() {
+		let aaFiles = require(`${g_strProgramDir}/stats.json`)
+		let nTotal  = 0
+
+		Object.values(aaFiles).forEach(e =>
+			nTotal += e.nDownloads * e.nFileSize
+		)
+
+		if (g_mapOptions.get('i'))
+			for (let [ k, v ] of Object.entries(aaFiles)) {
+				let [ nSize, strUnit ] = GetSize(v.nFileSize)
+				let strLetter          = v.nDownloads > 1 ? 's' : ''
+
+				console.log(
+					'%s => %.2f %s, %d download%c',
+					k, nSize, strUnit, v.nDownloads, strLetter
+				)
+			}
+
+		let [ nSize, strUnit ] = GetSize(nTotal)
+		console.log('Total size: %.2f %s', nSize, strUnit)
+	}
+
+	Print() {
+		let arrUploaded = []
+
+		for (let i = 0; i < this.m_arrFileLines.length; i++) {
+			let arrData = ParseLine(
+				this.m_arrFileLines[i],
+				this.m_arrFileLines[i + 1]
+			)
+
+			if (!arrData || arrData.filter(e => !e).length)
+				continue
+
+			arrUploaded.push(arrData)
+		}
+
+		if (!arrUploaded.length)
+			throw new Error('No uploaded files found')
+		else
+			console.log(arrUploaded)
+	}
+}
+
+let ConvertDate = strDate => new Date(strDate).getTime()
+
+function GetSize(nBytes) {
+	let arrUnits = [ 'B', 'KB', 'MB', 'GB', 'TB' ]
+	let e        = Math.log(nBytes) / Math.log(1024)
+
+	return [
+		nBytes / (1024 ** Math.floor(e)),
+		arrUnits[e + 1]
+	]
+}
+
+function ParseLine(strLine1, strLine2) {
+	if (g_mapOptions.get('f') == g_strNicotineLog) {
+		if (
+			strLine2?.replace(strLine2.replace(/ Upload.*/, '')) ==
+			strLine1.replace(strLine1.replace(/ Upload.*/, ''))
+				.replace(/Upload started/g, 'Upload finished')
+		)
+			return
+
+		return [
+			ConvertDate(
+				strLine1.replace(/ Upload.*/, '')
+			),
+			`${process.env.XDG_MUSIC_DIR}/${strLine1
+				.replace(/.*, file /, '')
+				.replace(/.*\\/, '')
+				.replace(/\\/g, '/')}`,
+			strLine1
+				.replace(/.*: user /, '')
+				.replace(/,.*/, '')
+		]
+	} else {
+		if (strLine2?.endsWith('   Queued'))
+			return
+
+		return [
+			ConvertDate(
+				strLine1.replace(/^\[/, '').replace(/\].*/, '')
+			),
+			`${process.env.XDG_MUSIC_DIR}/${strLine1
+				.replace(/.*for file @@[a-z]{5}\\/, '')
+				.replace(/\\/g, '/')}`,
+			strLine1
+				.replace(/.*requested by /, '')
+				.replace(/ for file.*/, '')
+		]
+	}
+}
+
+function ParseOptions(strOptions) {
+	let mapParsed         = new Map()
+	let arrOtherArguments = []
+
+	for (let i = 2; i <= process.argv.length; i++) {
+		let strArgument = process.argv[i]
+
+		if (!strArgument)
+			continue
+
+		let arrMatches = strArgument.match(/^-(\w)=?(.*)/)
+
+		if (!arrMatches) {
+			if (!process.argv[i - 1].match(/^-\w$/))
+				arrOtherArguments.push(strArgument)
+			continue
+		}
+
+		let strOptionArgument =
+			arrMatches[2] || process.argv[i + 1]
+		let bArgumentRequired =
+			strOptions.includes(`${arrMatches[1]}:`)
+		let bKnownArgument    =
+			strOptions.includes(arrMatches[1])
+
+		if (bArgumentRequired && !strOptionArgument)
+			throw new Error(
+				`-${arrMatches[1]} requires an argument`
+			)
+
+		mapParsed.set(
+			bKnownArgument    ? arrMatches[1]     : '?',
+			bArgumentRequired ? strOptionArgument : true
+		)
+	}
+
+	return [ mapParsed, arrOtherArguments ]
+}
+
+function AssignEnvVar(strVariable, strValue) {
+	process.env[strVariable] =
+		process.env[strVariable] || strValue
+}
+
+function Usage() {
+	let strProgramName = process.argv[1].replace(/.*\//, '')
+
+	console.info(`Usage: ${strProgramName} [-${g_strProgramOpts}]
+
+-f Logs file path (falls back to Nicotine+)
+-F Script file for custom commands
+-h Print this message
+
+ProcessStats:
+-c Process a CSV file instead
+
+Print:
+-d Date format
+
+Stats:
+-i Print file size and downloads along with total size`)
+
+	process.exit(2)
+}
+
+function main() {
+	global.fs   = require('fs')
+	global.path = require('path')
+
+	AssignEnvVar(
+		'XDG_DATA_HOME',
+		`${process.env.HOME}/.local/share`
+	)
+	AssignEnvVar(
+		'XDG_CONFIG_HOME',
+		`${process.env.HOME}/.config`
+	)
+
+	let strDataDir          = process.env.XDG_DATA_HOME
+	global.g_strNicotineLog =
+		`${strDataDir}/nicotine/logs/transfers/transfers.log`
+	global.g_strProgramOpts = 'cd:f:F:hi'
+	global.g_strProgramDir  = `${strDataDir}/${process.argv0}`
+
+	global.g_mapOptions; global.g_arrOtherArguments; [
+		g_mapOptions,
+		g_arrOtherArguments
+	] = ParseOptions(g_strProgramOpts)
+
+	if (g_mapOptions.get('h') || g_mapOptions.get('?'))
+		Usage()
+	if (!g_mapOptions.get('d'))
+		g_mapOptions.set('d', '%Y-%m-%d @ %T')
+	if (!g_mapOptions.get('f'))
+		g_mapOptions.set('f', g_strNicotineLog)
+
+	fs.readFile(g_mapOptions.get('f'), (hError, strData) => {
+		if (hError)
+			throw new Error(hError.message)
+
+		strData = strData.toString()
+
+		if (!strData.length)
+			throw new Error('Empty file')
+
+		let files = new CFiles(strData.split('\n'))
+		for (let i = 0; i < g_arrOtherArguments.length; i++)
+			files[g_arrOtherArguments[i]]()
+	})
+}
+
+main()

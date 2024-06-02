@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# Wallpaper
+. "$XDG_CONFIG_HOME/user-dirs.dirs"
+wp=$(printf '%s\n' "$XDG_PICTURES_DIR/wal/light/anime/"* | shuf | head -n 1)
+xwallpaper --zoom "$wp"
+
+# Start programs
+xfconf-query -c xfwm4 -p /general/theme -s Chicago95
+printf 'Xft.antialias: 0\n' | xrdb -merge

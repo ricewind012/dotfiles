@@ -1,0 +1,22 @@
+#!/bin/sh
+xrdb "$XDG_CONFIG_HOME/sx/xresources"
+_() bspc config "$@"
+
+# WM specific options
+killall -q borders
+for i in top bottom left right; do _ $i\_padding 0; done
+_ window_gap 12
+_ border_width 8
+_ normal_border_color "#030306"
+_ focused_border_color "#1f1d3e"
+
+# Wallpaper
+. "${XDG_CONFIG_HOME:-$HOME/.config}/user-dirs.dirs"
+xwallpaper --stretch "$XDG_PICTURES_DIR/wal/dark/17471761668345167872_screenshots_2016-03-27_00003.jpg"
+
+color=$(grep 'bg ' "$polybar/config"); color=${color#bg = }
+xsetroot -solid "$color"
+
+# etc.
+sed -i 's/dark-mode", false/dark-mode", true/' "$ujs"
+sed -i 's/DarkTheme", 0/DarkTheme", 1/' "$ujs"

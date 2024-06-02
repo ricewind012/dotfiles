@@ -1,0 +1,29 @@
+#!/bin/sh
+eval "$(xrescolors)"
+
+# WM-specific options
+_() herbstclient attr "$@"
+
+_ theme.title_height 0
+_ theme.title_color "#ffffff40"
+_ theme.title_font "nope"
+
+_ theme.padding_left 12
+_ theme.padding_top 0
+_ theme.padding_right 0
+_ theme.padding_bottom 0
+
+_ theme.border_width 0
+_ theme.inner_width 0
+_ theme.outer_width 0
+_ theme.color "#ffffff40"
+_ theme.active.color "#ffffff"
+_ theme.normal.inner_color "#25252540"
+_ theme.normal.outer_color "#ffffff"
+_ theme.active.inner_color "#252525"
+_ theme.active.outer_color "#ffffff"
+
+# Wallpaper
+. "$XDG_CONFIG_HOME/user-dirs.dirs"
+xwallpaper --zoom "$XDG_PICTURES_DIR/wal/twitter/mitu0119/media_Fr03bFkaEAEyKpy.jpg"
+xsetroot -solid "$background"

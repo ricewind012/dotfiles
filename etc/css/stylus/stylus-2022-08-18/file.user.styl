@@ -1,0 +1,101 @@
+/* ==UserStyle==
+@name						file://
+@namespace      github.com/openstyles/stylus
+@version        1.0.0
+@description    A new userstyle
+@author         Me
+
+@preprocessor stylus
+==/UserStyle== */
+
+replace-text(content, text-color = var(--fg), pos = after) {
+	& {
+		letter-spacing: -9999px;
+		color: transparent !important;
+		background-color: transparent !important;
+
+		&::{pos} {
+			content: content;
+			letter-spacing: 0;
+			color: text-color;
+		}
+	}
+}
+
+@-moz-document regexp("file://.*/"), regexp("https?://.*(jpe?g|png|web[pm])\\.$") {
+	body {
+		background-color: var(--bg);
+		color: var(--fg);
+		margin: 0;
+		line-height: var(--line-height);
+	}
+
+	a {
+		--icon-size: 16px;
+		color: var(--fg);
+		display: block;
+		padding-left: calc(var(--icon-size) + 1ch) !important;
+	}
+
+	#header {
+		display: none;
+	}
+
+	#parentDirLink {
+		padding-top: 0;
+		display: flex;
+		align-items: center;
+
+		&Box {
+			background-color: var(--accent);
+			color: var(--accent-fg) !important;
+			border-bottom: var(--border-width) solid var(--accent-border);
+			padding: var(--pad);
+			margin-bottom: 0;
+			display: flex !important;
+			gap: var(--pad);
+		}
+
+		& > span {
+			replace-text('Parent directory', var(--accent-fg));
+		}
+	}
+
+	table {
+		display: block;
+		padding: var(--body-pad);
+	}
+
+	.icon {
+		background-position: left !important;
+	}
+
+	/* sorting */
+	#theader {
+		width: unset;
+		gap: 1ch;
+		display: inline-flex;
+		align-items: center;
+		position: absolute;
+		right: var(--pad);
+		top: var(--pad);
+
+		&::before {
+			content: 'Sort by: ' ;
+			color: var(--accent-fg);
+		}
+
+		& > th {
+			display: flex;
+			color: var(--accent-fg);
+
+			&:hover {
+				text-decoration: underline;
+			}
+			&:not(:last-child)::after {
+				content: ', ';
+				display: inline-block;
+			}
+		}
+	}
+}

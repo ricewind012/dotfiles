@@ -1,0 +1,201 @@
+#!/usr/bin/env zsh
+
+warn()
+	printf '%s:%d: %s: %s\n' ${1#files::} ${(%):-%i} $3 $2 >&2
+
+die() {
+	warn $@
+	exit 1
+}
+
+date_conv() {
+	local -i rdate
+
+	zmodload zsh/datetime 2>/dev/null && {
+		strftime -s rdate -r $2 $1
+		strftime -s date $opts[d] $rdate
+		return
+	}
+
+	date=$(date -d $1 +$opts[d])
+}
+
+get_size() {
+	local -a units=(B KB MB GB TB)
+	local -i e=$(( log($1) / log(1024) ))
+	typeset -gF size=$(( $1 / (1024 ** floor(e)) ))
+	typeset -g unit=$units[$((e+1))]
+}
+
+proc_vars() {
+	if [[ $opts[f] == $nicotine ]] {
+		[[ ${2#${2%% Upload*}} == ${${1#${1%% Upload*}}//Upload started/Upload finished} ]] ||
+			return 1
+
+		date_conv ${1%% Upload*} '%Y-%m-%d %T'
+		file=$XDG_MUSIC_DIR/${${${1##*, file }#*\\}//\\/\/}
+		user=${${1##*: user }%%,*}
+	} else {
+		[[ $2 == *'   Queued' ]] ||
+			return 1
+
+		date_conv ${${1#\[}%%\]*} '%a %b %e %T %Y'
+		file=${XDG_MUSIC_DIR%/*}/${${1##*for file @@[a-z](#c5)\\}//\\/\/}
+		user=${${1##*requested by }%% for file*}
+	}
+}
+
+# applies only once for now
+files::proc_stats() {
+	set -x
+	zmodload zsh/files 2>/dev/null
+	local -A fstat files
+	local -i i dls r size
+	local unit s k v
+	local sfile=$progdir/stats
+
+	[[ ! -d $progdir ]] && mkdir -p -- $progdir
+	if [[ -f $sfile ]] { rm -- $sfile } #. $sfile
+
+	for (( i=1; i<=$#filec; i++ ))
+		proc_vars $filec[$i] $filec[$((i+1))] && {
+			if [[ ! -f $file ]] {
+				#warn $0 $file 'no such file or directory'
+				continue
+			}
+
+			zmodload zsh/stat 2>/dev/null &&
+				stat -H fstat -L -- $file
+			zmodload zsh/system 2>/dev/null && {
+				sysseek -w end 0 && fstat[size]=$(( systell(0) ))
+			} < $file
+			(( fstat[size] )) || fstat[size]=$(wc -c < $file)
+
+			[[ $files[$file] ]] && (( dls++ )) || dls=1
+			files[$file]="$dls $fstat[size]"
+			(( opts[c] )) && files[$file]+=" $user $date"
+			(( dls > 1 )) && s=s
+			zmodload zsh/mathfunc 2>/dev/null &&
+				get_size $fstat[size]
+			printf '%s => %d %s, %d download%c\n' \
+				$file ${size:-$fstat[size]} ${unit:-B} $dls $s
+
+			(( r++ ))
+			unset s
+		}
+
+	if (( opts[c] )) {
+		printf 'File,Downloads,Size,User,Date\n' > $sfile.csv
+		for k v (${(@kv)files})
+			printf '%s,%s\n' ${k//,/\\,} ${v// /,} >> $sfile.csv
+	} else {
+		printf 'files["%q"]="%s"\n' ${(@kv)files} > $sfile
+	}
+
+	(( r != 0 )) && return ||
+		die $0 $opts[f] 'no files found'
+}
+
+# TODO: Recording upload speed of
+files::stats() {
+	local -A files
+	local -i total e size dls
+	local i k v unit s
+	. $progdir/stats || return 1
+	zmodload zsh/mathfunc
+
+	for i ($files)
+		(( total += ${i##* } * ${i%% *} ))
+
+	(( opts[i] )) && for k v (${(@kv)files}) {
+		get_size ${v##* }
+		dls=${v%% *}
+		(( dls > 1 )) && s=s
+
+		printf '%s => %.2f %s, %d download%c\n' \
+			${(Q)k//\\} ${size:-${v##* }} ${unit:-B} $dls $s
+		unset s
+	}
+	get_size $total
+	printf 'Total size: %.2f %s\n' ${size:-$total} ${unit:-B}
+}
+
+files::print() {
+	local -i i r
+
+	# SoulseekQt:
+	# [Mon Jul 4 10:48:59 2022] Queue upload requested by kaboom for file @@bvenl\mus\j\Globex Corp\Volume 10\01. Dwarde & Equinox & Tim Reaper - Globex Corp Vol. 6 A1 (Equinox Remix).mp3
+	# [Mon Jul 4 10:48:59 2022]    Queued
+	#
+	# Nicotine+:
+	# 2021-04-23 21:33:59 Upload started: user PovoSorry, IP address ('90.206.6.173', 61981), file a\d\Other\Various Artists - Meeting of the Minds, Vol. 1\04. Tim Reaper & Msymiakos - Placidity.mp3
+	# 2021-04-23 21:34:07 Upload finished: user PovoSorry, IP address ('90.206.6.173', 61981), file a\d\Other\Various Artists - Meeting of the Minds, Vol. 1\04. Tim Reaper & Msymiakos - Placidity.mp3
+
+	for (( i=1; i<=$#filec; i++ ))
+		proc_vars $filec[$i] $filec[$((i+1))] && {
+			printf '[%s] Uploaded %s requested by %s\n' \
+				$date $file $user
+			(( r++ ))
+		}
+
+	(( r != 0 )) && return ||
+		die $0 $opts[f] 'no uploaded files found'
+}
+
+usage() {
+	<<-EOF >&2
+	Usage: ${ZSH_ARGZERO##*/} [-$progopts] $funcs
+
+	-f Use another file (falls back to Nicotine+)
+	-F Script file for custom commands
+	-h Print this message
+
+	proc_stats:
+	-c Process a CSV file instead
+
+	print:
+	-d Date format
+
+	stats:
+	-i Print file size and downloads along with total size
+	EOF
+	exit 2
+}
+
+main() {
+	local -A opts
+	local -i OPTIND
+	local opt OPTARG msg
+	local progopts=cd:f:F:hi
+	local funcs=${${(Mokj.|.)functions:#files::*}//files::}
+	progdir=${XDG_DATA_HOME:=$HOME/.local/share}/${ZSH_ARGZERO##*/}
+	nicotine=$XDG_DATA_HOME/nicotine/logs/transfers/transfers.log
+	eval ${(M)"${(f)$(<${XDG_CONFIG_HOME:=$HOME/.config}/user-dirs.dirs)}":#XDG_MUSIC_DIR=*}
+	setopt extendedglob
+
+	while getopts $progopts opt; do case $opt in
+		[h?]) usage ;;
+		*) opts[$opt]=${OPTARG:-1} ;;
+	esac; done; shift $(( OPTIND - 1 ))
+	: ${opts[d]:=%Y-%m-%d @ %T}
+
+	[[ -f ${opts[f]:=$nicotine} ]] ||
+		msg='no such file or directory'
+	[[ -s $opts[f] ]] ||
+		msg='empty file'
+	[[ -r $opts[f] ]] ||
+		msg='permission denied'
+	[[ $msg ]] &&
+		die $0 $opts[f] $msg
+
+	# Avoid reading the file before execution
+	if [[ $1 != ($~funcs) ]] {
+		[[ $1 ]] && warn $0 $1 'command not found'
+		usage
+	}
+
+	filec=("${(f)$(<$opts[f])}")
+	${(zj.;.):-files::${(u)^@}}
+}
+
+main $@

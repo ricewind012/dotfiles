@@ -1,0 +1,39 @@
+#!/bin/sh
+. "$bin/common.sh"
+
+reload() {
+	if get_proc "$1"; then
+		kill -USR1 "$pid"
+	else
+		"$1" &
+	fi
+}
+
+xrdb "$XDG_CONFIG_HOME/sx/xresources"
+case $wm in
+	xfwm4)
+		get_proc xfce4-panel
+		kill "$pid"
+		sleep 2 && xfce4-panel &
+	;;
+
+	*)
+		picom &
+		#polybar-msg cmd restart || polybar bottom &!
+		reload tint2
+	;;
+esac
+get_proc /usr/bin/dunst && kill "$pid"
+term-reload
+
+# Chrome ignores GTK theme for no reason
+while IFS='=' read -r k v; do case $k in
+	gtk-application-prefer-dark-theme) break
+esac; done < "$XDG_CONFIG_HOME/gtk-3.0/settings.ini"
+
+sed -i -E "s/(ui\.systemUsesDarkTheme\", )[0-9]/\1$v/g" \
+	"$firefox/user.js"
+
+[ "$v" -eq 1 ] && vstheme=Dark || vstheme=Light
+sed -i "s/Visual Studio \w\+ /Visual Studio $vstheme /" \
+	"$XDG_CONFIG_HOME/Code/User/settings.json"

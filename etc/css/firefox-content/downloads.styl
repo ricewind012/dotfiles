@@ -1,0 +1,30 @@
+@-moz-document url-prefix("about:downloads") {
+#contentAreaDownloadsView {
+	padding: var(--body-pad) $i;
+	lnh();
+}
+richlist {
+	&box {
+		brd();
+	}
+	&item {
+		pad();
+	}
+}
+.download {
+	&TypeIcon {
+		mar(0);
+		mar(right);
+		box(calc(var(--font-size) * 2 * var(--line-height)));
+	}
+	&Details {
+		opacity: 1 $i;
+		fg(2);
+		mar(0);
+
+		richlistitem[selected] & {
+			color: var(--hl-fg) $i;
+		}
+	}
+}
+}

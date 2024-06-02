@@ -1,0 +1,22 @@
+#!/bin/sh
+
+for i; do
+	case $i in *soundcloud.com/*) ;; *) continue ;; esac
+	file=$(yt-dlp --get-filename "$i") || continue
+
+	[ "${file##*.}" = wav ] && {
+		file=${file%.wav}.flac
+
+		yt-dlp "$i" -o - |
+			ffmpeg -loglevel error \
+		-i pipe:0 -c:a flac -compression_level 12 "$file"
+	}
+
+	yt-dlp --add-metadata --embed-thumbnail "$i" -o "$file"
+
+	[ -f "$file.jpg" ] && image=$file.jpg
+	[ -f "$file.png" ] && image=$file.png
+	[ "$image" ] && [ "${file##*.}" = flac ] &&
+		metaflac --import-picture-from="$image" "$file" &&
+		rm -- "$image"
+done

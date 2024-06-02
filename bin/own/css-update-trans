@@ -1,0 +1,8 @@
+#!/usr/bin/env zsh
+
+# turn rgba into hex
+setopt extendedglob
+
+local -F num=${${${${(M)"${(f)$(<$skindir/css/common/vars.css)}":#[[:space:]]##--bg-opacity*}##*[[:space:]]}#0}%;}
+printf -v num '%.0f' $(( num * (num < 1 ? 255 : 1) ))
+printf '%02x' $num

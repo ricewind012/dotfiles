@@ -1,0 +1,159 @@
+/* ==UserStyle==
+@name           Reddit
+@namespace      github.com/openstyles/stylus
+@version        1.0.0
+@description    A new userstyle
+@author         Me
+
+@preprocessor stylus
+==/UserStyle== */
+
+@-moz-document domain("reddit.com") {
+	#sr-header-area {
+		height: 18px !important;
+		line-height: 18px !important;
+	}
+
+	/* Remove elements */
+	#header-bottom-right, #login_login-main, .commentsignupbar, // Login
+	.comment .tagline .score, .comment .tagline .score-hidden,
+	.give-gold-button, .share,
+	.footer-parent, .debuginfo, // Footer
+	.read-next-container,
+	.subscribe-button,
+	#sr-header-area, // Header top
+	.message-button,
+	.awardings-bar,
+	.report-button,
+	.side .submit,
+	#header-img-a,
+	.linkinfo // Sidebar post info
+	{
+		display: none !important;
+	}
+
+	/* Header */
+	#header {
+		background-color: var(--accent) !important;
+		border-bottom-color: var(--accent-border) !important;
+
+		.pagename {
+			font-variant: unset !important;
+
+			a {
+				color: var(--text) !important;
+			}
+		}
+
+		.tabmenu li {
+			font-weight: normal !important;
+			margin: 0 !important;
+
+			&.selected a {
+				background-color: var(--bg) !important;
+				color: var(--text) !important;
+				border-color: var(--accent-border) !important;
+				border-bottom-color: var(--bg) !important;
+			}
+
+			a {
+				background-color: transparent !important;
+				color: var(--text-muted) !important;
+				padding: 2px 4px 0 4px !important;
+
+				&:hover {
+					background-color: var(--bg3) !important;
+				}
+			}
+		}
+	}
+
+	/* Body */
+	body, .side {
+		background-color: var(--bg) !important;
+	}
+	.md {
+		&, :not(a) {
+			color: var(--text) !important;
+		}
+
+		.link .usertext-body & {
+			background-color: var(--bg2) !important;
+			border-color: var(--border) !important;
+			border-radius: var(--border-radius) !important;
+		}
+	}
+	.title {
+		color: var(--hl) !important;
+	}
+
+	/* New reddit stolen icons */
+	/*@font-face {
+		font-family: "redesignFont";
+		src: url(https://www.redditstatic.com/desktop2x/fonts/redesignIcon/redesignFont.e68baae7e616cf832cacf2df091e58f3.eot),
+				 url(https://www.redditstatic.com/desktop2x/fonts/redesignIcon/redesignFont.e68baae7e616cf832cacf2df091e58f3.woff),
+				 url(https://www.redditstatic.com/desktop2x/fonts/redesignIcon/redesignFont.e68baae7e616cf832cacf2df091e58f3.ttf),
+				 url(https://www.redditstatic.com/desktop2x/fonts/redesignIcon/redesignFont.e68baae7e616cf832cacf2df091e58f3.svg);
+	}
+	.buttons {
+		li a {
+			margin-left: 2px;
+
+			&:not(.comments) {
+				text-transform: capitalize;
+			}
+
+			&::before {
+				font-family: "redesignFont";
+				display: block;
+				float: left;
+			}
+
+			&:hover::before {
+				text-decoration: underline;
+			}
+		}
+
+		.first a::before {content: "\f10c"}
+		.share a::before {content: "\f136"}
+		.save-button a::before {content: "\f135"}
+		.hide-button a::before {content: "\f120"}
+		.reply-button a::before {content: "\f10c"}
+		.report-button a::before {content: "\f134"}
+		.embed-comment a::before {content: "\f112"}
+		.first .bylink:not(.comments)::before {content: "\f123"}
+	}
+
+	/* Sidebar */
+	.side .content {
+		color: var(--text);
+		border-color: var(--border) !important;
+	}
+	.titlebox {
+		* {
+			color: var(--text) !important;
+		}
+
+		.bottom {
+			border-top-color: var(--border) !important;
+		}
+	}
+
+	/* Remove side panel for small windows */
+	@media only screen and (max-width: 1024px) {
+		/*.side {
+			display: none;
+		}*/
+		body > .content {
+			margin: 16px !important;
+		}
+	}
+	
+	/* Unsorted */
+	.nav-buttons {
+		padding: 6px !important;
+	}
+	a {
+		color: var(--text-link);
+	}
+}

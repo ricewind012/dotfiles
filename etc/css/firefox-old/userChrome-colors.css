@@ -1,0 +1,25 @@
+:root {
+	--main-background: #cae4f4;
+	--urlbar-background: #fff;
+
+	--context-background: #eff0f1;
+	--context-border: #404040;
+	--context-disabled: #606060;
+	--context-front: #202020;
+	--context-hover: #d6d7d8;
+	--context-separator: #808080;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--toolbar-bgcolor: #000 !important;
+		--main-background: #070b16;
+		--urlbar-background: #000;
+
+		--context-background: #100f0e;
+		--context-border: #a0a0a0;
+		--context-disabled: #606060;
+		--context-front: #ddd;
+		--context-hover: #292827;
+		--context-separator: #808080;
+}

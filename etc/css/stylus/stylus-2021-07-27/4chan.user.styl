@@ -1,0 +1,227 @@
+/* ==UserStyle==
+@name					 4chan
+@namespace			github.com/openstyles/stylus
+@version				1.0.0
+@description		A new userstyle
+@author				 Me
+
+@preprocessor stylus
+==/UserStyle== */
+
+anim(e = \&) {
+	@media (prefers-reduced-motion: no-preference) {
+		{e} {
+			transition: var(--trans-dur);
+		}
+	}
+}
+
+@-moz-document domain("4channel.org") {
+	/* Variables */
+	$body-pad = 8px;
+	$pad = 8px;
+
+	/* Remove elements */
+	#absbot,
+	.boardBanner,
+	.abovePostForm,
+	body > form[name="post"],
+	.aboveMidAd,
+	.sideArrows,
+	.postInfo input,
+	.op input {
+		display: none;
+	}
+
+	/* Main rules */
+	body {
+		background: none var(--bg) !important;
+		color: var(--text) !important;
+		margin: $body-pad !important;
+		padding: 0 !important;
+	}
+
+	hr {
+		border-color: var(--border);
+	}
+
+	#quote-preview {
+		box-shadow: var(--shadow-big);
+	}
+
+	a, a:visited {
+		color: var(--text-link) !important;
+
+		&:not(.postMenuBtn):hover {
+			color: var(--text-link) !important;
+			text-decoration: underline;
+		}
+	}
+
+	#header-bar {
+		background-color: var(--accent) !important;
+		color: var(--text) !important;
+		border-bottom-color: var(--accent-border) !important;
+		box-shadow: var(--shadow-low) !important;
+	}
+
+	#quickReply {
+		box-shadow: var(--shadow-big);
+
+		& > form {
+			padding: ($pad / 2);
+		}
+
+		#qrHeader {
+			background-color: var(--bg2) !important;
+			border-bottom: 1px solid var(--border);
+			color: var(--text) !important;
+		}
+
+		#qrForm > div:not(:last-child), textarea {
+			margin-bottom: ($pad / 2) !important;
+		}
+
+		input:not(#qrFile), textarea {
+			background-color: var(--bg2);
+			border-color: var(--border) !important;
+			color: var(--text);
+
+			&:focus {
+				border-color: var(--hl) !important;
+				anim();
+			}
+		}
+
+		#qrFile {
+			width: unset !important;
+		}
+
+		#t-resp {
+			text-transform: unset !important;
+		}
+	}
+
+	.op {
+		.postInfo {
+			margin-top: $pad;
+		}
+		.fileThumb {
+			margin: $pad ($pad * 2) $pad 0 !important;
+		}
+	}
+
+	.newPostsMarker:not(#quote-preview) {
+		box-shadow: 0 3px var(--color1) !important;
+	}
+
+	.reply {
+		background-color: var(--bg3) !important;
+		border-color: var(--border) !important;
+		margin: $body-pad 0 !important;
+		padding: 0 !important;
+		anim('&:not(.preview), &.highlight');
+
+		@media (max-width: 768px) {
+			&:not(.preview):not(#quickReply) {
+				width: 100%;
+			}
+		}
+
+		&.highlight {
+			background-color: var(--bg3) !important;
+			box-shadow: var(--shadow-low);
+			border-color: var(--hl) !important;
+		}
+
+		&.preview {
+			&.inlined {
+				background-color: var(--bg3) !important;
+				box-shadow: var(--shadow-low);
+			}
+
+			&:not(.inlined) {
+				margin-top: 0 !important;
+			}
+		}
+
+		.postInfo {
+			background-color: var(--bg2);
+			border-bottom: 1px solid var(--border);
+			padding: $pad;
+		}
+
+		.fileText {
+			padding: $pad;
+			padding-bottom: 0;
+		}
+
+		.fileThumb {
+			margin: $pad ($pad * 2) $pad $pad !important;
+		}
+
+		blockquote {
+			margin: 0;
+			padding: $pad;
+
+			.reply:first-child {
+				margin-top: 0 !important;
+			}
+
+			.file + & {
+				padding-top: 0;
+			}
+		}
+	}
+
+	/* Colors */
+	.post[id] {
+		.subject, .postNum a:not(:hover) {
+			color: var(--text-muted) !important;
+		}
+	}
+
+	.name {
+		color: var(--color5) !important;
+		font-weight: unset !important;
+	}
+
+	.quoteLink, .quotelink, .deadlink {
+		color: var(--color3) !important;
+
+		&[href]:hover {
+			color: var(--color11) !important;
+		}
+	}
+
+	.quote {
+		color: var(--color2) !important;
+	}
+
+	.postMenuBtn {
+		color: var(--color4) !important;
+	}
+
+	/* Syntax highlighting */
+	.prettyprint {
+		background-color: var(--bg);
+		border: 1px solid var(--border) !important;
+		//padding: $pad / 4 !important;
+	}
+
+	span.kwd /* def */ {
+		color: var(--color4);
+	}
+	span.lit {
+		color: var(--color3);
+	}
+	span.typ {
+		color: var(--color2);
+	}
+	span.pun {
+		color: var(--text-muted);
+	}
+	span.pln {
+		color: var(--text);
+	}
+}

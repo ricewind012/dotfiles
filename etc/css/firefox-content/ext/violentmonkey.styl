@@ -1,0 +1,117 @@
+// Global
+:root {
+	--bg: @css { hsl(var(--bg-h), var(--bg-s), var(--bg-l)) } $i;
+	--fg: @css { hsl(var(--fg-h), var(--fg-s), var(--fg-l)) } $i;
+	--sidebar-width: 228px;
+}
+
+input, button, select {
+	appearance: none $i;
+}
+input {
+	&[type="checkbox"] {
+		normalise-checkbox();
+		filter: none $i;
+	}
+	&[type="radio"] {
+		normalise-radio();
+	}
+}
+button {
+	normalise-button();
+}
+select {
+	normalise-select();
+}
+
+// Sidebar
+.aside {
+	&-content {
+		pad(0);
+		brd(right);
+		width: var(--sidebar-width) $i;
+
+		hr {
+			brd(top);
+			mar(0);
+		}
+	}
+	&-menu-item {
+		width: 100%;
+		flex-grow: unset $i;
+
+		a {
+			fg(2);
+			text-decoration: none $i;
+			pad();
+
+			&:hover {
+				fg();
+			}
+
+			&.active {
+				hl();
+			}
+		}
+	}
+}
+
+// Content {
+.tab {
+	margin-left: var(--sidebar-width) $i; // bruh
+
+	&-installed header {
+		bg(2);
+		lnh();
+		pad();
+		brd(bottom);
+		height: unset $i;
+	}
+}
+.filter-search {
+	height: unset $i;
+}
+.script {
+	bg(2);
+	pad();
+	brd();
+	mar(left);
+	mar(top);
+	height: unset $i;
+
+	&s {
+		pad(bottom);
+	}
+}
+
+// Editor
+@import 'common-codemirror';
+
+// Dropdown
+.vl-dropdown-menu {
+	pad();
+	brd();
+	shd(big);
+	dropfade();
+}
+
+// Dialog
+.modal-content {
+	pad(0);
+	brd();
+	shd(big);
+
+	& > form {
+		text-align: right;
+		bg(2);
+		pad();
+		brd(top);
+
+		button {
+			bg();
+		}
+	}
+}
+.vl-modal-backdrop {
+	background-color: transparent $i;
+}

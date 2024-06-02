@@ -1,0 +1,25 @@
+#!/bin/sh
+eval "$(xresvars "$XDG_CONFIG_HOME/sx/xresources-colors")"
+_() bspc config "$@"
+
+# WM specific options
+for i in top bottom left right; do _ ${i}_padding 0; done
+_ window_gap 25
+_ border_width 8
+_ normal_border_color "#e1e4e8"
+_ focused_border_color "$foreground"
+killall -q borders; "${bspwm%/*}/borders" &
+
+# Wallpaper
+. "${XDG_CONFIG_HOME:=$HOME/.config}/user-dirs.dirs"
+xwallpaper --stretch "$XDG_PICTURES_DIR/wal/light/white-flower-nature-4K-92.jpg"
+xsetroot -solid "#e1e4e8"
+
+# etc.
+sed -i 's/colorscheme.*/colorscheme mountaineer-light/' "$vim"
+sed -i 's/dark-mode", true/dark-mode", false/' "$ujs"
+sed -i 's/DarkTheme", 1/DarkTheme", 0/' "$ujs"
+xrdb "$XDG_CONFIG_HOME/sx/xresources"
+
+# Launch programs
+polybar-msg cmd restart || polybar bottom &

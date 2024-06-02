@@ -1,0 +1,70 @@
+#!/bin/sh
+
+usage() {
+	printf "Usage: %s [-%s] color ...
+
+-w Image width
+-h Image height
+-p Don't display background-repeat/size
+" "${0##*/}" "$progopts" >&2
+	exit 2
+}
+
+main() {
+	progopts=w:h:p
+
+	while getopts "$progopts" opt; do case $opt in
+		\?) usage ;;
+		w) width=$OPTARG ;;
+		h) height=$OPTARG ;;
+		p) shutup=1 ;;
+	esac; done; shift "$(( OPTIND - 1 ))"
+
+	[ "$#" -eq 0 ] && usage
+	[ "$width" -le 0 ] && usage
+	[ "$height" -le 0 ] && usage
+
+	n=1
+	x=1
+	y=1
+
+	printf 'background:'
+	printf '\n\t'
+
+	for i; do
+		[ "$stop" ] && continue
+
+		# image
+		printf 'linear-gradient(90deg, %s 1px, %s)' "$i" "$i"
+		printf ' '
+
+		# position
+		printf '%dpx %dpx' "$x" "$y"
+		[ "$n" -eq "$#" ] && printf ';\n' || printf ','
+
+		x=$(( x + 1 ))
+		n=$(( n + 1 ))
+
+		if [ "$y" -eq "$(( height + 1 ))" ]; then
+			printf '\b;\n'
+			stop=1
+			continue
+		fi
+
+		if [ "$x" -eq "$(( width + 1 ))" ]; then
+			x=1
+			y=$(( y + 1 ))
+		fi
+
+		printf '\n\t'
+	done
+
+	if [ ! "$shutup" ]; then
+		printf 'background-repeat: no-repeat;\n'
+
+		# Intentional, even if it's supposed to repeat.
+		printf 'background-size: 1px 1px;\n'
+	fi
+}
+
+main "$@"

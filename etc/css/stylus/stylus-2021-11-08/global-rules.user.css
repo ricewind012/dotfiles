@@ -1,0 +1,266 @@
+/* ==UserStyle==
+@name           Global rules
+@namespace      github.com/openstyles/stylus
+@version        1.0.0
+@description    A new userstyle
+@author         Me
+==/UserStyle== */
+
+/**
+ * Colors
+ *
+ * I.   Global
+ * II.  Settings
+ * III. Background
+ * IV.  Text
+ * V.   Colorscheme
+ * VI.  Scrollbar
+ * VII. Other
+ *
+**/
+:root {
+	/*--font-normal: Rosemary;
+	--font-code: azukifontBI;*/
+	--font-normal: CozetteVector; --font-code: var(--font-normal);
+	--font-size: 9pt;
+	--text-link: var(--hl);
+
+	--shadow-ins: 0 0 0 var(--border-width);
+	--shadow-vrt: 0 0 8px var(--shadow-clr);
+	--shadow-low: 0 1px 4px var(--shadow-clr);
+	--shadow-mid: 0 4px 8px var(--shadow-clr);
+	--shadow-big: var(--shadow-mid), 0 28px 48px var(--shadow-clr);
+
+	--hl: #1488ff;
+	--hl-error: #cc4a4a;
+	--hl-text: #fff;
+
+	--pad: 8px;
+	--body-pad: var(--pad);
+	--border-width: 1px;
+	--trans-dur: 150ms;
+	--bg-opacity: .25;
+	--border-radius: 0;
+	--saturation-factor: 1;
+	--popup-filter: blur(36px);
+}
+
+@media (prefers-color-scheme: light) { :root {
+	--bg-hue: 0;
+	--bg-saturation: 0%;
+	--bg-brightness-base: 100%;
+	--bg-brightness-mute: 3%;
+	--bg-brightness-mute-start: 2;
+	--bg-brightness-mute-factor: -1;
+	--text-brightness: 15%;
+	--text-mute-factor: 3;
+	--scrollbar-mute-factor: 3;
+	--bg-sign: -;
+	--text-sign: *;
+
+	/* new
+	accent hsl(359, 77%, 69%)
+	hl     hsl(251, 78%, 70%)
+	--bg-hue: 57;
+	--bg-saturation: 34%;
+	--bg-brightness-base: 87%;
+	--bg-brightness-mute: 3%;
+	--text-brightness: 29%;
+	--text-mute-factor: 3;*/
+
+	--colors-saturation: 11%;
+	--colors-saturation-2: 7%;
+	--colors-brightness: 43%;
+	--colors-brightness-2: 8%;
+	/* */
+	--color1-hue: 357;
+	--color2-hue: 180;
+	--color3-hue: 55;
+	--color4-hue: 248;
+	--color5-hue: 300;
+	--color6-hue: 180;
+
+	/* s, l -20% */
+	--accent: #cae4f4;
+	--accent-border: #73b8e2;
+	--border: hsl(var(--bg-hue), var(--bg-saturation), calc(var(--bg-brightness-base) var(--bg-sign) var(--bg-brightness-mute) * 4));
+	/*--border: var(--shadow-clr);*/
+	--shadow-clr: rgba(149,157,165,.2);
+}}
+
+@media (prefers-color-scheme: dark) { :root {
+	--bg-hue: 224;
+	--bg-saturation: 52%;
+	--bg-brightness-base: 6%;
+	--bg-brightness-mute: 6%;
+	--bg-brightness-mute-start: 1.5;
+	--bg-brightness-mute-factor: 1.25;
+	--text-brightness: 80%;
+	--text-mute-factor: 2;
+	--scrollbar-mute-factor: 2;
+	--bg-sign: +;
+	--text-sign: /;
+
+	--colors-saturation: 17%;
+	--colors-saturation-2: 7%;
+	--colors-brightness: 61%;
+	--colors-brightness-2: 8%;
+	/* 7 8 15 16 missing */
+	--color1-hue: 357;
+	--color2-hue: 122;
+	--color3-hue: 55;
+	--color4-hue: 248;
+	--color5-hue: 300;
+	--color6-hue: 182;
+
+	--accent: #212;
+	--accent-border: #44264b;
+	--border: hsl(var(--bg-hue), var(--bg-saturation), calc(var(--bg-brightness-base) var(--bg-sign) var(--bg-brightness-mute) * (var(--bg-brightness-mute-start) var(--bg-sign) calc(var(--bg-brightness-mute-factor) * 2))));
+	--shadow-clr: rgba(0,0,0,.2);
+}}
+
+:root {
+	--bg: hsl(var(--bg-hue), var(--bg-saturation), var(--bg-brightness-base));
+	--bg2: hsl(var(--bg-hue), var(--bg-saturation), calc(var(--bg-brightness-base) var(--bg-sign) var(--bg-brightness-mute)));
+	--bg3: hsl(var(--bg-hue), var(--bg-saturation), calc(var(--bg-brightness-base) var(--bg-sign) var(--bg-brightness-mute) * var(--bg-brightness-mute-start)));
+	--bg4: hsl(var(--bg-hue), var(--bg-saturation), calc(var(--bg-brightness-base) var(--bg-sign) var(--bg-brightness-mute) * (var(--bg-brightness-mute-start) var(--bg-sign) var(--bg-brightness-mute-factor))));
+
+	--bg-tr: hsla(var(--bg-hue), var(--bg-saturation), var(--bg-brightness-base), calc(var(--bg-opacity) * 3));
+	--bg-tr2: hsla(var(--bg-hue), var(--bg-saturation), var(--bg-brightness-base), calc(var(--bg-opacity) * 2));
+	--bg-tr3: hsla(var(--bg-hue), var(--bg-saturation), var(--bg-brightness-base), var(--bg-opacity));
+
+	--text: hsl(0, 0%, var(--text-brightness));
+	--text-muted: hsl(0, 0%, calc(var(--text-brightness) var(--text-sign) var(--text-mute-factor)));
+	--text-muted2: hsl(0, 0%, calc(var(--text-brightness) var(--text-sign) (var(--text-mute-factor) * 1.5)));
+
+	--colorscheme-saturation: calc(var(--saturation-factor) * var(--colors-saturation));
+	--colorscheme-saturation-2: calc(var(--colorscheme-saturation) + var(--colors-saturation-2));
+	--colorscheme-brightness: var(--colors-brightness);
+	--colorscheme-brightness-2: calc(var(--colorscheme-brightness) + var(--colors-brightness-2));
+	--color1:  hsl(var(--color1-hue),	var(--colorscheme-saturation),		var(--colorscheme-brightness));
+	--color9:  hsl(var(--color1-hue),	var(--colorscheme-saturation-2),	var(--colorscheme-brightness-2));
+	--color2:  hsl(var(--color2-hue),	var(--colorscheme-saturation),		var(--colorscheme-brightness));
+	--color10: hsl(var(--color2-hue),	var(--colorscheme-saturation-2),	var(--colorscheme-brightness-2));
+	--color3:  hsl(var(--color3-hue),	var(--colorscheme-saturation),		var(--colorscheme-brightness));
+	--color11: hsl(var(--color3-hue),	var(--colorscheme-saturation-2),	var(--colorscheme-brightness-2));
+	--color4:  hsl(var(--color4-hue),	var(--colorscheme-saturation),		var(--colorscheme-brightness));
+	--color12: hsl(var(--color4-hue),	var(--colorscheme-saturation-2),	var(--colorscheme-brightness-2));
+	--color5:  hsl(var(--color5-hue),	var(--colorscheme-saturation),		var(--colorscheme-brightness));
+	--color13: hsl(var(--color5-hue),	var(--colorscheme-saturation-2),	var(--colorscheme-brightness-2));
+	--color6:  hsl(var(--color6-hue),	var(--colorscheme-saturation),		var(--colorscheme-brightness));
+	--color14: hsl(var(--color6-hue),	var(--colorscheme-saturation-2),	var(--colorscheme-brightness-2));
+
+	--scrollbar-track: var(--bg2);
+	--scrollbar-track-button: var(--bg4);
+	--scrollbar-thumb: var(--text-muted2);
+	--scrollbar-thumb-hover: var(--text-muted);
+	--scrollbar-thumb-active: var(--text);
+}
+
+::selection {
+	background-color: var(--hl) !important;
+	color: var(--hl-text) !important;
+}
+
+/* Font */
+::placeholder, * {
+	font-family: var(--font-normal) !important;
+	font-size: var(--font-size) !important;
+}
+b, strong {
+	font-weight: 600 !important;
+}
+code, pre, code *, pre *,
+#stylus * {
+	font-family: var(--font-code) !important;
+}
+
+/* Scrollbar (stolen from Vivaldi) */
+:root {
+	--scrollbar-width: 15px;
+}
+::-webkit-scrollbar {
+	width: var(--scrollbar-width);
+}
+::-webkit-scrollbar-button {
+	display: flex;
+	width: var(--scrollbar-width);
+	height: var(--scrollbar-width);
+}
+::-webkit-scrollbar-button:vertical {
+	border-left: 1px solid var(--scrollbar-track);
+}
+::-webkit-scrollbar-button:vertical:decrement {
+	background-image: linear-gradient(transparent 68%, var(--scrollbar-track) 68%), linear-gradient(135deg, var(--scrollbar-track) 45%, transparent 45%), linear-gradient(45deg, var(--scrollbar-thumb-active) 53%, var(--scrollbar-track) 53%);
+}
+::-webkit-scrollbar-button:vertical:decrement:hover {
+	background-image: linear-gradient(transparent 68%, var(--scrollbar-track-button) 68%), linear-gradient(135deg, var(--scrollbar-track-button) 45%, transparent 45%), linear-gradient(45deg, var(--scrollbar-thumb-active) 53%, var(--scrollbar-track-button) 53%);
+}
+::-webkit-scrollbar-button:vertical:decrement:active {
+	background-image: linear-gradient(transparent 68%, var(--scrollbar-thumb-active) 68%), linear-gradient(135deg, var(--scrollbar-thumb-active) 45%, transparent 45%), linear-gradient(45deg, var(--scrollbar-track) 53%, var(--scrollbar-thumb-active) 53%);
+}
+::-webkit-scrollbar-button:vertical:increment {
+	background-image: linear-gradient(45deg, var(--scrollbar-track) 45%, transparent 45%), linear-gradient(-225deg, transparent 53%, var(--scrollbar-track) 53%), linear-gradient(-180deg, var(--scrollbar-track) 31%, var(--scrollbar-thumb-active) 31%);
+}
+::-webkit-scrollbar-button:vertical:increment:hover {
+	background-image: linear-gradient(45deg, var(--scrollbar-track-button) 45%, transparent 45%), linear-gradient(-225deg, transparent 53%, var(--scrollbar-track-button) 53%), linear-gradient(-180deg, var(--scrollbar-track-button) 31%, var(--scrollbar-thumb-active) 31%);
+}
+::-webkit-scrollbar-button:vertical:increment:active {
+	background-image: linear-gradient(45deg, var(--scrollbar-thumb-active) 45%, transparent 45%), linear-gradient(-225deg, transparent 53%, var(--scrollbar-thumb-active) 53%), linear-gradient(-180deg, var(--scrollbar-thumb-active) 31%, var(--scrollbar-track) 31%);
+}
+::-webkit-scrollbar-button:horizontal {
+	border-top: 1px solid var(--scrollbar-track);
+}
+::-webkit-scrollbar-button:horizontal:decrement {
+	background-image: linear-gradient(-135deg, transparent 53%, var(--scrollbar-track) 53%), linear-gradient(-45deg, transparent 53%, var(--scrollbar-track) 53%), linear-gradient(90deg, var(--scrollbar-thumb-active) 70%, var(--scrollbar-track) 70%);
+}
+::-webkit-scrollbar-button:horizontal:decrement:hover {
+	background-image: linear-gradient(-135deg, transparent 53%, var(--scrollbar-track-button) 53%), linear-gradient(-45deg, transparent 53%, var(--scrollbar-track-button) 53%), linear-gradient(90deg, var(--scrollbar-thumb-active) 70%, var(--scrollbar-track-button) 70%);
+}
+::-webkit-scrollbar-button:horizontal:decrement:active {
+	background-image: linear-gradient(-135deg, transparent 53%, var(--scrollbar-thumb-active) 53%), linear-gradient(-45deg, transparent 53%, var(--scrollbar-thumb-active) 53%), linear-gradient(90deg, var(--scrollbar-track) 70%, var(--scrollbar-thumb-active) 70%);
+}
+::-webkit-scrollbar-button:horizontal:increment {
+	background-image: linear-gradient(135deg, transparent 53%, var(--scrollbar-track) 53%), linear-gradient(45deg, transparent 53%, var(--scrollbar-track) 53%), linear-gradient(-90deg, var(--scrollbar-thumb-active) 70%, var(--scrollbar-track) 70%);
+}
+::-webkit-scrollbar-button:horizontal:increment:hover {
+	background-image: linear-gradient(135deg, transparent 53%, var(--scrollbar-track-button) 53%), linear-gradient(45deg, transparent 53%, var(--scrollbar-track-button) 53%), linear-gradient(-90deg, var(--scrollbar-thumb-active) 70%, var(--scrollbar-track-button) 70%);
+}
+::-webkit-scrollbar-button:horizontal:increment:active {
+	background-image: linear-gradient(135deg, transparent 53%, var(--scrollbar-thumb-active) 53%), linear-gradient(45deg, transparent 53%, var(--scrollbar-thumb-active) 53%), linear-gradient(-90deg, var(--scrollbar-track) 70%, var(--scrollbar-thumb-active) 70%);
+}
+::-webkit-scrollbar-track {
+	background-color: var(--scrollbar-track) !important;
+	background-clip: border-box;
+}
+::-webkit-scrollbar-track:vertical {
+	border-left: 1px solid transparent;
+	border-right: 1px solid transparent;
+}
+::-webkit-scrollbar-track:horizontal {
+	border-top: 1px solid transparent;
+	border-bottom: 1px solid transparent;
+}
+::-webkit-scrollbar-thumb {
+	background-color: var(--scrollbar-thumb) !important;
+	background-clip: padding-box;
+	border-radius: 0 !important;
+}
+::-webkit-scrollbar-thumb:hover {
+	background-color: var(--scrollbar-thumb-hover) !important;
+}
+::-webkit-scrollbar-thumb:active {
+	background-color: var(--scrollbar-thumb-active) !important;
+}
+::-webkit-scrollbar-thumb:vertical {
+	border-left: 1px solid transparent;
+	border-right: 1px solid transparent;
+}
+::-webkit-scrollbar-thumb:horizontal {
+	border-top: 1px solid transparent;
+	border-bottom: 1px solid transparent;
+}
+::-webkit-scrollbar-corner,
+::-webkit-scrollbar-resize {
+	background-color: var(--scrollbar-track);
+}

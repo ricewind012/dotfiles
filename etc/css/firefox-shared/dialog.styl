@@ -1,0 +1,50 @@
+.dialog {
+	&Overlay {
+		background-color: transparent $i;
+	}
+	&Box {
+		brd(,accent-border);
+		shd(big);
+	}
+	#window-modal-dialog > &Overlay {
+		min-width: 100vw;
+		min-height: 100vh;
+	}
+	/#titleContainer,
+	&TitleBar {
+		accent();
+		pad();
+		brd(bottom);
+	}
+	&Frame {
+		mar(0);
+	}
+
+	&-button-box {
+		bg(2);
+		pad();
+		brd(top);
+
+		& > button {
+			normalise-button();
+			mar(left);
+
+			&, &:hover {
+				bg();
+			}
+		}
+	}
+}
+dialog {
+	pad(0);
+
+	&::backdrop {
+		display: none;
+	}
+}
+
+#titleContainer {
+	mar(0);
+	max-width: unset $i;
+	justify-content: center;
+}

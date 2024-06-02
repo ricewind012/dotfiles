@@ -1,0 +1,57 @@
+#!/bin/sh
+eval "$(xresvars)"
+
+rgb() {
+	c=$1
+	[ "${c%"${c#?}"}" = '#' ] && c=${c#?}
+	r=${c%????}
+	g=${c#??}; g=${g%??}
+	b=${c#????}
+
+	color=$(printf '%d %d %d' "0x$r" "0x$g" "0x$b")
+}
+
+apply_color() {
+	case $1 in
+		AppWorkSpace|Background|ButtonFace|Menu|MenuBar|\
+		InfoText)
+			rgb "$background"
+		;;
+
+		ActiveTitle|ButtonText|GradientActiveTitle|\
+		HotTrackingColor|InfoWindow|MenuText|Scrollbar|\
+		TitleText|WindowText)
+			rgb "$foreground"
+		;;
+
+		ButtonHilight|Window|WindowFrame)
+			rgb "$bg2"
+		;;
+
+		ButtonDkShadow|ButtonShadow)
+			rgb "$border"
+		;;
+
+		GrayText|InactiveTitleText) rgb "$fg2" ;;
+		ActiveBorder|HilightText) rgb "$hf" ;;
+		Hilight) rgb "$hl" ;;
+	esac
+
+	printf '"%s"="%s"\n' "$p" "$color"
+}
+
+main() {
+	colors='ActiveBorder ActiveTitle AppWorkSpace Background ButtonAlternateFace ButtonDkShadow ButtonFace ButtonHilight ButtonLight ButtonShadow ButtonText GradientActiveTitle GradientInactiveTitle GrayText Hilight HilightText HotTrackingColor InactiveBorder InactiveTitle InactiveTitleText InfoText InfoWindow Menu MenuBar MenuHilight MenuText Scrollbar TitleText Window WindowFrame WindowText'
+
+	printf 'Windows Registry Editor Version 5.00
+
+[HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\ThemeManager]
+"DllName"=""
+
+[HKEY_CURRENT_USER\\Control Panel\\Colors]\n'
+	for p in $colors; do
+		apply_color "$p"
+	done
+}
+
+main "$@"

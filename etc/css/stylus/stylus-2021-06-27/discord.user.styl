@@ -1,0 +1,834 @@
+/* ==UserStyle==
+@name           Discord
+@namespace      github.com/openstyles/stylus
+@version        1.0.0
+@description    A new userstyle
+@author         Me
+
+@preprocessor stylus
+
+
+==/UserStyle== */
+
+@-moz-document domain("discord.com") {
+	/**
+	 * Colors
+	**/
+	// TODO: no nitro elements, steal gk's avatar css and add revert & channels (vivaldi)
+	@css { [data-popout-root].newBrand, html.newBrand {
+		--brand-experiment: hsl(227,calc(var(--saturation-factor, 1)*58.4%),65.1%);
+		--brand-experiment-100: hsl(228,calc(var(--saturation-factor, 1)*55.6%),98.2%);
+		--brand-experiment-130: hsl(228,calc(var(--saturation-factor, 1)*62.5%),96.9%);
+		--brand-experiment-160: hsl(228,calc(var(--saturation-factor, 1)*60%),95.1%);
+		--brand-experiment-200: hsl(229,calc(var(--saturation-factor, 1)*60%),93.1%);
+		--brand-experiment-230: hsl(227,calc(var(--saturation-factor, 1)*57.4%),90.8%);
+		--brand-experiment-260: hsl(226,calc(var(--saturation-factor, 1)*58.6%),88.6%);
+		--brand-experiment-300: hsl(227,calc(var(--saturation-factor, 1)*57.7%),86.1%);
+		--brand-experiment-330: hsl(227,calc(var(--saturation-factor, 1)*59.1%),81.8%);
+		--brand-experiment-360: hsl(227,calc(var(--saturation-factor, 1)*57.9%),77.6%);
+		--brand-experiment-400: hsl(226,calc(var(--saturation-factor, 1)*58%),72%);
+		--brand-experiment-430: hsl(227,calc(var(--saturation-factor, 1)*58.2%),70%);
+		--brand-experiment-460: hsl(227,calc(var(--saturation-factor, 1)*58.5%),67.8%);
+		--brand-experiment-500: hsl(227,calc(var(--saturation-factor, 1)*58.4%),65.1%);
+		--brand-experiment-530: hsl(227,calc(var(--saturation-factor, 1)*45.2%),59.2%);
+		--brand-experiment-560: hsl(227,calc(var(--saturation-factor, 1)*35.3%),52.7%);
+		--brand-experiment-600: hsl(227,calc(var(--saturation-factor, 1)*31%),44.3%);
+		--brand-experiment-630: hsl(226,calc(var(--saturation-factor, 1)*31.3%),38.2%);
+		--brand-experiment-660: hsl(226,calc(var(--saturation-factor, 1)*31%),33.5%);
+		--brand-experiment-700: hsl(227,calc(var(--saturation-factor, 1)*30.8%),26.1%);
+		--brand-experiment-730: hsl(228,calc(var(--saturation-factor, 1)*31.2%),24.5%);
+		--brand-experiment-760: hsl(227,calc(var(--saturation-factor, 1)*31.6%),22.4%);
+		--brand-experiment-800: hsl(226,calc(var(--saturation-factor, 1)*31.3%),19.4%);
+		--brand-experiment-830: hsl(225,calc(var(--saturation-factor, 1)*31.6%),14.9%);
+		--brand-experiment-860: hsl(225,calc(var(--saturation-factor, 1)*32%),9.8%);
+		--brand-experiment-900: hsl(228,calc(var(--saturation-factor, 1)*29.4%),3.3%);
+		--brand-experiment-05a: hsla(227,calc(var(--saturation-factor, 1)*58.4%),65.1%,0.05);
+		--brand-experiment-10a: hsla(227,calc(var(--saturation-factor, 1)*58.4%),65.1%,0.1);
+		--brand-experiment-15a: hsla(227,calc(var(--saturation-factor, 1)*58.4%),65.1%,0.15);
+		--brand-experiment-20a: hsla(227,calc(var(--saturation-factor, 1)*58.4%),65.1%,0.2);
+		--brand-experiment-25a: hsla(227,calc(var(--saturation-factor, 1)*58.4%),65.1%,0.25);
+		--brand-experiment-30a: hsla(227,calc(var(--saturation-factor, 1)*58.4%),65.1%,0.3);
+		--brand-experiment-35a: hsla(227,calc(var(--saturation-factor, 1)*58.4%),65.1%,0.35);
+		--brand-experiment-40a: hsla(227,calc(var(--saturation-factor, 1)*58.4%),65.1%,0.4);
+		--brand-experiment-45a: hsla(227,calc(var(--saturation-factor, 1)*58.4%),65.1%,0.45);
+		--brand-experiment-50a: hsla(227,calc(var(--saturation-factor, 1)*58.4%),65.1%,0.5);
+		--brand-experiment-55a: hsla(227,calc(var(--saturation-factor, 1)*58.4%),65.1%,0.55);
+		--brand-experiment-60a: hsla(227,calc(var(--saturation-factor, 1)*58.4%),65.1%,0.6);
+		--brand-experiment-65a: hsla(227,calc(var(--saturation-factor, 1)*58.4%),65.1%,0.65);
+		--brand-experiment-70a: hsla(227,calc(var(--saturation-factor, 1)*58.4%),65.1%,0.7);
+		--brand-experiment-75a: hsla(227,calc(var(--saturation-factor, 1)*58.4%),65.1%,0.75);
+		--brand-experiment-80a: hsla(227,calc(var(--saturation-factor, 1)*58.4%),65.1%,0.8);
+		--brand-experiment-85a: hsla(227,calc(var(--saturation-factor, 1)*58.4%),65.1%,0.85);
+		--brand-experiment-90a: hsla(227,calc(var(--saturation-factor, 1)*58.4%),65.1%,0.9);
+		--brand-experiment-95a: hsla(227,calc(var(--saturation-factor, 1)*58.4%),65.1%,0.95)
+	}}
+
+	:root {
+		--background-primary: var(--bg) !important;
+		--background-secondary: var(--bg2) !important;
+		--background-tertiary: var(--bg3) !important;
+		--background-accent: var(--accent) !important;
+	}
+	.theme-dark {
+		--background-primary: #030306 !important;
+		--background-secondary: #111122 !important;
+		--background-secondary-alt: #17172f !important;
+		--background-tertiary: #1f1d3e !important;
+		--background-accent: var(--background-secondary-alt) !important;
+		--background-floating: var(--background-secondary) !important;
+		--channeltextarea-background: var(--background-primary) !important;
+		/* Custom */
+		--background-left-sidebar: #000;
+		--background-transparent-primary: #03030680;
+		--background-secondary-gradient: /*#111622*/#16122b;
+		/* Scrollbar */
+		--scrollbar-background-primary: #101010;
+		--scrollbar-background-hover: #202020;
+		--scrollbar-background-active: #404040;
+	}
+
+	.theme-light {
+		--background-floating: #fff !important;
+		--background-secondary: #f7f8f9/*fafbfc*/ !important;
+		--background-secondary-alt: #f1f2f4 !important;
+		--background-tertiary: #f0f0f0 !important;
+		--interactive-normal: #4f5c6a !important;
+		--text-normal: #0f1113 !important;
+		/* Custom */
+		--background-left-sidebar: #c4c5c8;
+		--background-transparent-primary: #ffffff80;
+		--background-secondary-gradient: #fff4fa;
+		/* Scrollbar */
+		--scrollbar-background-primary: var(--background-secondary-alt);
+		--scrollbar-background-hover: rgb(204,204,204);
+		--scrollbar-background-active: rgb(180,180,180);
+	}
+
+	/* Partial Mountaineer colorscheme */
+	.theme-dark {
+		--hljs-color-0: #050505;
+		--hljs-color-1: #ac8a8c;
+		--hljs-color-2: #8aac8b;
+		--hljs-color-3: #aca98a;
+		--hljs-color-4: #8f8aac;
+		--hljs-color-5: #ac8aac;
+		--hljs-color-6: #8aabac;
+		--hljs-color-7: #e7e7e7;
+		--hljs-color-8: #676767;
+		--hljs-color-9: #ac8a8c;
+		--hljs-color-10: #8aac8b;
+		--hljs-color-11: #aca98a;
+		--hljs-color-12: #8f8aac;
+		--hljs-color-13: #ac8aac;
+		--hljs-color-14: #8aabac;
+		--hljs-color-15: #f0f0f0;
+	}
+	.theme-light {
+		--hljs-color-0: #363636;
+		--hljs-color-1: #786162;
+		--hljs-color-2: #617878;
+		--hljs-color-3: #787661;
+		--hljs-color-4: #646178;
+		--hljs-color-5: #786178;
+		--hljs-color-6: #617878;
+		--hljs-color-7: #e7e7e7;
+		--hljs-color-8: #676767;
+		--hljs-color-9: #786162;
+		--hljs-color-10: #617878;
+		--hljs-color-11: #787661;
+		--hljs-color-12: #646178;
+		--hljs-color-13: #786178;
+		--hljs-color-14: #617878;
+		--hljs-color-15: #f0f0f0;
+	}
+	.hljs-comment,
+	.hljs-quote {
+		color: var(--hljs-color-8) !important;
+	}
+	.hljs-addition,
+	.hljs-built_in,
+	.hljs-deletion,
+	.hljs-meta,
+	.hljs-meta .hljs-keyword,
+	.hljs-name,
+	.hljs-section,
+	.hljs-selector-class,
+	.hljs-selector-id,
+	.hljs-selector-tag,
+	.hljs-title,
+	.hljs-keyword {
+		color: var(--hljs-color-1) !important;
+	}
+	.hljs-bullet,
+	.hljs-doctag,
+	.hljs-literal,
+	.hljs-link,
+	.hljs-meta .hljs-meta-string,
+	.hljs-number,
+	.hljs-regexp,
+	.hljs-string,
+	.hljs-subst,
+	.hljs-symbol {
+		color: var(--hljs-color-2) !important;
+	}
+	.c .hljs-keyword,
+	.css .hljs-built_in {
+		color: var(--hljs-color-3) !important;
+	}
+	.hljs-selector-pseudo {
+		color: var(--hljs-color-4) !important;
+	}
+	.c .hljs-number,
+	.hljs-variable {
+		color: var(--hljs-color-5) !important;
+	}
+	.c .hljs-literal,
+	.hljs-attr,
+	.hljs-attribute,
+	.hljs-selector-attr,
+	.hljs-class .hljs-title,
+	.hljs-template-variable,
+	.hljs-type {
+		color: var(--hljs-color-6) !important;
+	}
+
+	/* These don't use variables */
+	div[class^="backdrop"] + div[class^="layer"] div[class^="root"] {
+		background-color: var(--background-primary);
+	}
+	.theme-dark [class*="colorWhite"] {
+		color: var(--text-normal) !important;
+	}
+	.theme-dark div[class^="slider"] > div[class^="bar"] {
+		background-color: var(--interactive-muted) !important;
+	}
+	/*.theme-dark div[class^="message"]:not([class*="ErrorBar"]),*/
+	div[class^="peopleColumn"],
+	div[class^="uploadModal"] {
+		background-color: var(--background-primary) !important;
+	}
+	.theme-dark div[class*="footer"] {
+		box-shadow: inset 0 1px 0 var(--background-secondary) !important;
+		background-color: var(--background-secondary) !important;
+	}
+	.theme-light div[class^="jumpToPresentBar"],
+	.theme-light div[class^="headerPlaying"] {
+		background-color: var(--logo-primary) !important;
+	}
+
+	/* Scrollbar */
+	::-webkit-scrollbar-thumb {
+		background-color: var(--scrollbar-background-primary) !important;
+	}
+	::-webkit-scrollbar-thumb:hover {
+		background-color: var(--scrollbar-background-hover) !important;
+	}
+	::-webkit-scrollbar-thumb:active {
+		background-color: var(--scrollbar-background-active) !important;
+	}
+
+	/**
+	 * Start
+	**/
+
+	/* Remove elements */
+	#message-tts,
+	#user-context-message-user,
+	#user-context-call,
+	#user-context-note,
+	#user-context-invite-to-server,
+	a[href="/store"],
+	a[href="https://support.discord.com"],
+	#channels div[aria-label="Invite to Server"],
+	button[aria-label="Send a gift"],
+	div[aria-label^="Mute channel"],
+	/* */
+	form::before,
+	div[class^="option"]::after,
+	div[class^="option"][class*="selected"]::before,
+	div[class^="children"]::after,
+	//div[class^="resultsGroup"] svg,
+	/* */
+	div[class^="menu"] div[role="group"][class^="wrapper"],
+	div[class^="protip"],
+	div[class^="socialLinks"],
+	div[class^="emptyChannelIcon"],
+	div[class^="userPopout"] div[class^="footer"],
+	div[class^="infoScroller"] div[class^="userInfoSection"]:first-child,
+	div[class^="channelNotice"],
+	div[class^="peopleColumn"] h2,
+	div[class^="nowPlayingColumn"],
+	div[aria-hidden="true"] div[class^="attachment"],
+	#chat-messages > div[class^="wrapper"] div[class*="blob"]
+	{
+			display: none !important;
+	}
+
+	/* ACTUALLY stop animations */
+	/* {
+			-webkit-animation: none !important;
+			animation: none !important;
+			-webkit-transition: none !important;
+			transition: none !important;
+	}
+	[class*="animating"] {
+			all: unset !important;
+	}
+
+	/* Hide sidebar on small windows */
+	@media only screen and (max-width: 768px) {
+		// Chat
+		div[class^="sidebar"] {
+			width: 0 !important;
+
+			nav[class^="wrapper"]:hover + div &,
+			nav[class^="wrapper"] + div &:hover {
+				width: 240px !important;
+			}
+
+			@media (prefers-reduced-motion: no-preference) {
+				transition: var(--trans-dur);
+			}
+		}
+		nav[class^="wrapper"] div[class^="scroller"] {
+			box-shadow: inset -1px 0 var(--background-left-sidebar);
+		}
+
+		// Settings
+		div[aria-label="USER_SETTINGS"] div[class^="sidebarRegion"]:not(:hover) {
+			flex: 1 0 13px !important;
+		}
+	}
+
+	/* Stolen from Metro for Discord (Windows titlebar) */
+	/*div[class^="titleBar"] {
+		background-color: var(--background-primary);
+
+		div[class^="wordmarkWindows"] {
+			color: var(--text-normal);
+
+			&::after {
+				content: 'Discord';
+				top: 9px;
+				left: 12px;
+				display: block;
+				position: absolute;
+				font-size: 12px;
+				font-weight: 400;
+				line-height: 15px;
+			}
+			svg {
+				display: none;
+			}
+		}
+		&[class*="withFrame"] {
+			height: 28px;
+		}
+		div[role="button"] {
+			width: 45px;
+			height: 32px;
+			color: var(--text-normal);
+		}
+		div[class^="winButtonClose"]:hover {
+			background-color: #E81123;
+		}
+	}*/
+
+	/* No border radius */
+	:not([class*="bottomControls"]) button:not([class^="add"]),
+	video,
+	div[class^="imageWrapper"],
+	div[class^="attachment"],
+	div[class^="audioControls"],
+	div[class*="auditLog"],
+	/*div[class^="autocomplete"],*/
+	div[class^="unread"] div[class^="bar"],
+	div[class^="blockquote"],
+	div[class*="card"],
+	div[class^="checkbox"],
+	a[class*="container"],
+	div[class^="content"],
+	div[class^="connection"],
+	div[class*="connectedAccount"],
+	div[class^="css"],
+	div[class*="cursorDefault"],
+	[class*="embed"]:not(img),
+	a[class*="embedImage"] img,
+	a[class*="embedImage"] video,
+	a[class*="embedThumbnail"] img,
+	a[class*="embedThumbnail"] video,
+	a[class*="embedVideo"] img,
+	a[class*="embedVideo"] video,
+	div[class^="ghostPill"],
+	div[class^="hasMore"],
+	div[class^="invite"],
+	div[class*="item"],
+	div[class^="jumpButton"],
+	div[class^="layout"],
+	div[class^="markup"] code.inline,
+	div[class^="menu"],
+	div[class^="messageContainer"],
+	div[class^="messageGroup"],
+	div[class*="notDetected"],
+	div[class*="nowPlaying"],
+	div[class^="option"],
+	div[class^="reaction"],
+	div[class^="search"],
+	div[class^="selector"],
+	div[class^="ui-tab-bar-item"],
+	div[class^="userPopout"],
+	div[class^="message"] div[class^="markup"] div[class^="wrapper"],
+	.wrapper-2TxpI8,
+	.mention,
+	.hljs {
+		border-radius: 0 !important;
+	}
+
+	/* Borders */
+	div[class^="sidebar"] > section > div[class^="wrapper"] > div {
+		border-bottom: 1px solid var(--background-tertiary) !important;
+	}
+	h2[class^="privateChannelsHeader"] {
+		border-top: 1px solid var(--background-modifier-accent);
+	}
+	div[class^="searchLearnMore"] {
+		border: none !important;
+	}
+	input[class^="input"] {
+		border: 1px solid var(--background-tertiary) !important;
+	}
+	div[class^="embedWrapper"] {
+		border-left-width: 2px !important;
+	}
+	div[class^="ghostPill"] {
+		border: 1px solid !important;
+	}
+
+	/* More/less compact view */
+	div[class^="accountList"],
+	div[class^="connectionHeader"],
+	div[class^="userInfoViewing"],
+	div[class^="modal"] header,
+	div[class^="modal"] div[class^="activity"] {
+		padding: 16px !important;
+	}
+	div[class^="modal"] div[class^="tabBarContainer"] {
+		padding-left: 16px !important;
+	}
+	div[class^="connectionDelete"] {
+		top: 16px !important;
+		right: 16px !important;
+	}
+	div[class^="ghostPill"] {
+		padding: 6px 8px !important;
+	}
+	#bd-settings-sidebar .ui-tab-bar-item {
+		margin-bottom: 2px;
+	}
+	div[class*="auditLog"] > div[class^="header"] {
+		padding: 10px !important;
+	}
+	div[class^="sidebarRegion"] nav[class^="sidebar"] {
+		padding: 28px 6px 20px 20px !important;
+	}
+	div[class^="sidebar"] a[href^="/channels/@me"] {
+		padding: 0 !important;
+		margin: 1px 0 0 8px !important;
+	}
+	h2[class^="privateChannelsHeader"] {
+		padding: 12px 6px 4px 12px !important;
+		margin: 8px 0 0 8px;
+	}
+	section[aria-label="User area"] div[class^="container"] + div {
+		height: 50px !important;
+		margin-bottom: 0 !important;
+	}
+	div[class^="peopleColumn"] > div {
+		padding-top: 24px;
+	}
+	div[class^="infoScroller"] {
+		padding: 0 16px !important;
+	}
+	div[class^="grid"] {
+		padding: 0 10px 10px !important;
+	}
+	div[id^="popout"] div[class^="container"]:not([id="search-results"]) {
+		padding: 0 !important;
+		margin-top: 16px !important;
+		margin-left: 16px;
+		margin-right: 9px;
+	}
+	div[class^="toolbar"] > div[class^="search"] {
+		margin: 0 2px !important;
+	}
+	button[class*="barButtonBase"] {
+		padding: 0 8px !important;
+	}
+	div[class^="messagesErrorBar"] {
+		padding-bottom: 0 !important;
+	}
+	div[class^="userPopout"] div[class^="body"] {
+		padding: 0 !important;
+	}
+	div[class^="userPopout"] div[class^="bodyInnerWrapper"],
+	div[class^="userPopout"] div[class*="headerTop"],
+	div[class^="userPopout"] div[class^="activity"] {
+		padding: 12px !important;
+	}
+	/*div[class^="userPopout"] div[class*="buttonsWrapper"] {
+		margin-top: 8px !important;
+	}*/
+
+	/**
+	 * etc
+	**/
+
+	/* Menu children in parent */
+	div[aria-activedescendant] {
+		div[class^="layer"] {
+			&[style*="position: fixed"] {
+				position: unset !important;
+
+				div[role="menu"] {
+					box-shadow: none !important;
+					background: none !important;
+					width: calc(100% + 8px);
+				}
+				& > div[role="menu"] > div,
+				& > div {
+					padding: 0 !important;
+				}
+				& > div {
+					padding-left: 8px;
+				}
+				& > div[class^="submenuPadding"] div[class^="scroller"] {
+					padding: 6px 0 !important;
+				}
+				div[class^="scroller"] {
+					div[class^="item"] {
+						width: calc(100% - 12px);
+						left: 6px;
+					}
+					div[class^="separator"] {
+						margin: 8px !important;
+					}
+				}
+			}
+			&[style*="position: absolute"] div[class^="submenuContainer"] + div {
+				border-top: 2px solid var(--background-modifier-accent);
+				padding-top: 16px;
+			}
+			div[class^="item"] + & {
+				background-color: var(--background-transparent-tertiary);
+
+				&::before {
+					content: '';
+					display: block;
+					width: 100%;
+					margin-top: 8px;
+					border-top: 2px solid;
+					border-image: linear-gradient(
+						to right,
+						var(--background-secondary-gradient),
+						var(--background-secondary)
+					) 1;
+				}
+			}
+		}
+	}
+	#guild-header-popout {
+		top: 52px;
+	}
+
+	/* Header blur */
+	.theme-light {
+		--background-header-primary: #fafbfc80;
+		--background-header-secondary: #f7f8f980;
+	}
+	.theme-dark {
+		--background-header-primary: #11112280;
+		--background-header-secondary: #1f1d3e80;
+	}
+
+	/*div[class^="sidebar"] > nav > div[class^="search"] {
+		display: none;
+	}*/
+	div[class^="sidebar"] header,
+	div[class^="chat"] > section {
+		position: absolute !important;
+		background-color: var(--background-header-primary) !important;
+		backdrop-filter: blur(36px);
+	}
+	div[class^="sidebar"] {
+		header {
+			width: 100%;
+		}
+		[class*="hasBanner"] {
+			div[class^="container"]:not(&) ~ #channels div[style="height: 84px;"] {
+				height: 135px !important;
+			}
+			& ~ #channels > div,
+			& > nav > div& {
+				& > header {
+					background-color: transparent !important;
+					backdrop-filter: none;
+				}
+				& > div {
+					margin-top: 0 !important;
+				}
+			}
+		}
+	}
+	div[class^="sidebar"] #channels > div,
+	div[class^="sidebar"] div:not([class*="hasBanner"]) > header + div,
+	div[class^="sidebar"] div[class^="unreadTop"],
+	#messagesNavigationDescription + div,
+	main + section,
+	div[class^="chat"] > div > div:not([class^="root"]) {
+		margin-top: 48px;
+	}
+	div[class^="newMessagesBar"] {
+		top: 48px !important;
+		border-radius: 0 0 4px 4px !important;
+	}
+	div[class^="chat"] > div::before {
+		top: 47px !important;
+	}
+
+	/* Channels */
+	#channels {
+		&::-webkit-scrollbar {
+			display: none;
+		}
+	}
+
+	/* Shadows */
+	div[class^="container"] > header,
+	section[class^="title"],
+	div[class^="searchHeader"] {
+		box-shadow: var(--elevation-stroke),var(--elevation-medium);
+	}
+	div[class^="chat"] > div[class^="content"]::before {
+		display: none !important;
+	}
+
+	div[class^="embedWrapper"] {
+		box-shadow: 0 1px 2px rgba(0,0,0,.1);
+	}
+	div[class^="messageGroupWrapper"] {
+		box-shadow: 0 1px 2px rgba(0,0,0,.1);
+	}
+	div[class^="userPopout"] > div[class^="body"],
+	div[class^="userPopout"] div[class^="activity"] {
+		box-shadow: 0 2px 4px 0 rgba(0,0,0,.2), 0 0 0 1px rgba(185,187,190,.1);
+	}
+	div[id^="popout"] div[class^="container"] {
+		box-shadow: 0 4px 8px rgba(0,0,0,.25);
+	}
+
+	/* Gradient */
+	#user-settings div[class^="sidebarRegionScroller"],
+	#server-settings div[class^="sidebar"],
+	div[class^="sidebar"] > nav[aria-label],
+	main[class^="chatContent"] + div[class^="members"] {
+		background-image: linear-gradient(
+			145deg,
+			var(--background-secondary),
+			var(--background-secondary-gradient)
+		);
+	}
+	div[class^="menu"] > div {
+		border-top: 2px solid;
+		border-image: linear-gradient(
+			to right,
+			var(--background-secondary-gradient),
+			var(--background-secondary)
+		) 1;
+	}
+
+	/* Transparent background and blur, mostly eye candy */
+	.theme-light {
+		--background-floating: var(--background-transparent-primary) !important;
+		--background-transparent-primary: rgba(255,255,255,.8);
+		--background-transparent-secondary: rgba(255,255,255,.75);
+		--background-transparent-secondary-alt: rgba(255,255,255,.7);
+		--background-transparent-tertiary: rgba(255,255,255,.25);
+	}
+	.theme-dark {
+		--background-floating: var(--background-transparent-primary) !important;
+		--background-transparent-primary: rgba(0,0,0,.8);
+		--background-transparent-secondary: rgba(0,0,0,.75);
+		--background-transparent-secondary-alt: rgba(0,0,0,.7);
+		--background-transparent-tertiary: rgba(0,0,0,.25);
+	}
+
+	div[role="dialog"]:not([class]) > div,
+	div[aria-label="Pinned Messages"] div[class^="header"],
+	div[aria-label="Recent Mentions"] div[class^="header"] {
+		background-color: var(--background-transparent-primary) !important;
+	}
+	div[class^="messageGroupWrapper"],
+	div[class^="messageContainer"],
+	div[class^="channelTextArea"] > div[class^="autocomplete"] {
+		background-color: var(--background-transparent-secondary) !important;
+	}
+	div[class^="channelHeader"] {
+		background-color: var(--background-transparent-secondary-alt) !important;
+	}
+	div[class^="messageGroupWrapper"] {
+		border-color: var(--background-transparent-secondary) !important;
+	}
+	div[class^="unreadTop"] > div,
+	div[class*="tooltipPrimary"] {
+		opacity: 1 !important;
+		background-color: var(--background-floating) !important;
+		backdrop-filter: blur(6px);
+	}
+	div[class^="unreadTop"] > div {
+		color: var(--text-normal) !important;
+	}
+	div[class^="autocomplete"],
+	div[class^="root"],
+	div[class^="menu"] {
+		backdrop-filter: blur(24px);
+	}
+
+	/* Active item */
+	div[class*="modeSelected"] div[class^="content"],
+	a[class*="container"][class*="selected"],
+	div[class^="side"] [class^="item"][class*="selected"],
+	div[class*="selected"] div[class^="layout"],
+	#bd-settings-sidebar .ui-tab-bar-item.selected {
+		background-color: var(--background-modifier-selected) !important;
+		color: var(--interactive-active) !important;
+		box-shadow: inset 2px 0 0 var(--logo-primary);
+	}
+
+	/* Recent mentions */
+	.theme-dark div[aria-label="Inbox"] svg {
+		background-size: 24px !important;
+
+		&:hover {
+			filter: brightness(1.25);
+		}
+
+		path {
+			display: none;
+		}
+	}
+	/*.theme-light div[aria-label="Inbox"] svg {
+		background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/Pgo8IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDIwMDEwOTA0Ly9FTiIKICJodHRwOi8vd3d3LnczLm9yZy9UUi8yMDAxL1JFQy1TVkctMjAwMTA5MDQvRFREL3N2ZzEwLmR0ZCI+CjxzdmcgdmVyc2lvbj0iMS4wIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciCiB3aWR0aD0iMzIuMDAwMDAwcHQiIGhlaWdodD0iMzIuMDAwMDAwcHQiIHZpZXdCb3g9IjAgMCAzMi4wMDAwMDAgMzIuMDAwMDAwIgogcHJlc2VydmVBc3BlY3RSYXRpbz0ieE1pZFlNaWQgbWVldCI+CjxtZXRhZGF0YT4KQ3JlYXRlZCBieSBwb3RyYWNlIDEuMTYsIHdyaXR0ZW4gYnkgUGV0ZXIgU2VsaW5nZXIgMjAwMS0yMDE5CjwvbWV0YWRhdGE+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDAuMDAwMDAwLDMyLjAwMDAwMCkgc2NhbGUoMC4xMDAwMDAsLTAuMTAwMDAwKSIKZmlsbD0iIzAwMDAwMCIgc3Ryb2tlPSJub25lIj4KPC9nPgo8L3N2Zz4K);
+	}
+	.theme-dark div[aria-label="Inbox"] svg {
+		background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAOSSURBVFhH7ZbLTxNBHMfRblu2D6iglJaXhrcEjcEHiaDESDwYDyY+jhr04NFXoiaeNR4k/gFqOJkIFy960YOKGiQaIQR5lShSCi0CbbfvBzjfcQfX7i4tBk7ySZrfzG+38/vO7G9+M1kb/PdsEm1GjI6Nl8VisduCEDiVTCb1wVCIh99oMIS1Oq2Xz87u0ev17dVVFe/oHzIgIwEI7Pf7X83NL1SIrhXJz9viyMnJOVpVWT4hulRJK2BgcOihx+NpSySS9F2LJXfGYDA813Lcy5rqyqfwDY+MnY0nEq2hUOi41+srhI/jNEt2W+HV2prqB+irsaIABHe5pi+gjcCW3NzT6ZZ3ZNTR5PX5upgQu932qL6u9iJ9qICqgMGvw3edU66baKcbRIm+/oHXbs/sYbRLS4quqK2EogB880mn8xuW3VZofbarvu6k+GhVMBH4HCXFxTuUckJRwKfPXxwk4cqx7Af2NdhE9zIYOByO7PYLggU7wGQyfiSBWvDsWOuRv8b80NO7QHaNhSTm+N6GPbIk3izaZTB7BEcb35w6JXS/7wlhVgiOPrYiC65Efl7eCViMibGpU4JMQCQSod8Ks09NOMycZDqv0WiW8F0xW1j0xVdkYAyMhTYbW4pMQDgSaYQ1GY0d1CFBCAT3wxbZ/2wvWJIn99BWA9sWNhAMylZKLiAc3gpLZtVHHRIwe9jUjK7bWXNLbCqCmgG7mFzUU4cEmYBoNMbBsiKzFrCxWOmWIhOwHiglH0MmQK/XJWBRXqljDYjH45dgSS6EqUOCTIBOpwvAorZThwQ2wNDwyGXqEEHVFJuy2aI/+3PuOtpkNzyhTgkyAQae74eNRiKyjDWbjL2wrumZdiYCdsbtvoE2mJub78N5gB8Rdoe864hGoxzEK5VzWSXEH79P/OhGe3tZaXNqLUAhYrtBCgKQQNnkniAbE8+sBdtqlUqxbAWkhYOcap3UKaH5YKOBDPbGbDZ50UfOoA9/SXHRIZRc+iIBgXGQ4Zna3UDxLMAqTDqn3mI2/3ISrgbFbYhVsFoLHqON+wDuBfTBOqC4AoyUC8k0OZzOpOZEKuKFpDMei1uayNKLblVWFAAgwu32tLHkwn2P5/kujuNeMDEISvb6OXLYtLB7Iw4o6ZmhRloBAAEEQehgx3Q6kIhms/l8utUCGQlgQAjZatdwYpJLhpWtCrJdp9P6xGv5/UwCb7DBb7KyfgEl+bkEE7CzgAAAAABJRU5ErkJggg==)
+	}*/
+
+	div[aria-label="Recent Mentions"] {
+		div[class^="tab"][class*="active"] {
+			height: unset !important;
+			margin: 0 !important;
+			padding: 0 !important;
+			letter-spacing: -9999px;
+			color: transparent !important;
+			background-color: transparent !important;
+
+			&::after {
+				content: 'Recent Mentions';
+				letter-spacing: 0 !important;
+				color: var(--header-primary);
+			}
+		}
+		div[class^="tabBar"] div[class^="tab"]:last-child {
+			display: none;
+		}
+		div[class^="header"] {
+			box-shadow: var(--elevation-low) !important;
+		}
+	}
+	div[class^="channelHeader"] {
+		box-shadow: var(--elevation-low);
+		padding-right: 16px;
+		position: unset !important;
+	}
+
+	/* Enable outline */
+	/*a,button,div,input,select,span,strong,textarea {
+		outline: revert !important;
+	}
+
+	/* Emojis (cozy) */
+	.emoji.jumboable {
+		width: 1.975em;
+		height: 1.975em;
+		min-height: 1.975em;
+	}
+
+	/* No connection */
+	#app-mount > div[class^="app"] > div[class^="container"][class*="fixClipping"] {
+		backdrop-filter: blur(36px);
+	}
+	video + div[class^="text"] > div:first-child {
+		visibility: hidden;
+
+		&::before {
+			content: 'stfu lol';
+			margin-left: 78px;
+			color: var(--logo-primary);
+			visibility: visible;
+		}
+	}
+
+	/* header test */
+	.theme-light div[role="dialog"]:not([class]) div[class^="header"] {
+		background-image: linear-gradient(
+			125deg,
+			#fff4fa,
+			#ffe7ff
+		);
+	}
+
+	/**
+	 * Chat
+	**/
+
+	/* Member list */
+	/*h2[class^="membersGroup"] {
+		padding: 0 !important;
+		padding-top: 16px !important;
+		height: 38px !important;
+		border-top: 1px solid var(--background-secondary-alt);
+		margin-left: 16px;
+		margin-top: 12px;
+
+		&:first-of-type {
+			border-top: 0;
+			margin-top: 0;
+		}
+	}
+
+	/* Message box */
+	form div[class^="channelTextArea"] {
+		box-shadow: var(--elevation-low);
+	}
+	/*button[class^="attachButton"] {
+		height: 100% !important;
+		padding: 10px !important;
+		margin-right: 10px;
+		border-right: 1px solid transparent;
+	}
+	button[aria-label^="Open"] div {
+		padding: 10px;
+		padding-right: 0;
+		border-left: 1px solid transparent;
+	}
+	button[class^="attachButton"],
+	button[aria-label^="Open"] div {
+		border-image: linear-gradient(
+				transparent 15%,
+				var(--background-primary) 15%,
+				var(--background-primary) 85%,
+				transparent 85%
+		) 1;
+	}*/
+}
+

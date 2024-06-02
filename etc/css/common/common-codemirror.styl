@@ -1,0 +1,104 @@
+.CodeMirror {
+	lnh();
+
+	&-gutters {
+		bg(2);
+		brd(right);
+	}
+	&-lines {
+		padding: var(--body-pad) 0 $i;
+	}
+	&-line {
+		padding: 0 var(--body-pad) $i;
+		
+		&::before {
+			content: '';
+			position: absolute;
+			left: 80ch;
+			box(1px, 100%);
+			background-color: var(--border);
+		}
+
+		&number {
+			fg(2);
+			font-family: var(--font-code) $i;
+
+			&:hover {
+				fg();
+			}
+		}
+	}
+	&-activeline-background,
+	&-selected {
+		bg(2);
+	}
+	&-cursor {
+		border-left-color: var(--fg) $i;
+	}
+	&-matchingbracket {
+		hl();
+	}
+	&-nonmatchingbracket {
+		background-color: color-a(1) $i;
+		fg();
+	}
+}
+.cm {
+	&-header,
+	&-def,
+	&-negative,
+	&-qualifier,
+	&-error,
+	&-attribute,
+	&-link {
+		clr(9);
+	}
+	&-quote,
+	&-positive,
+	&-number,
+	&-variable-3,
+	&-builtin,
+	&-atom {
+		clr(10);
+	}
+	&-operator {
+		clr(11);
+	}
+	&-keyword,
+	&-tag {
+		clr(12);
+	}
+	&-string,
+	&-string-2,
+	&-property {
+		clr(13);
+	}
+	&-variable,
+	&-variable-2 {
+		clr(14);
+	}
+	&-comment,
+	&-bracket,
+	&-punctuation,
+	&-meta {
+		fg(2);
+	}
+	&-matchhighlight {
+		hl();
+	}
+
+	&-tab {
+		position: relative;
+
+		&::before {
+			content: '.';
+			position: absolute;
+			bottom: 50%;
+			left: 5%;
+			width: 90%;
+			display: block;
+			color: transparent;
+			border-bottom: 1px solid var(--fg3);
+		}
+	}
+}

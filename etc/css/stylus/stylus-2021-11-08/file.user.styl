@@ -1,0 +1,74 @@
+/* ==UserStyle==
+@name						file://
+@namespace      github.com/openstyles/stylus
+@version        1.0.0
+@description    A new userstyle
+@author         Me
+
+@preprocessor stylus
+==/UserStyle== */
+
+replace-text(content, text-color = var(--text), pos = after) {
+	& {
+		letter-spacing: -9999px;
+		color: transparent !important;
+		background-color: transparent !important;
+
+		&::{pos} {
+			content: content;
+			letter-spacing: 0;
+			color: text-color;
+		}
+	}
+}
+
+@-moz-document regexp("file://.*"), regexp("https?://.*(jpe?g|png|web.)$") {
+	:root:not(#startpage) {
+		body {
+			background-color: var(--bg) !important;
+			color: var(--text);
+			margin: 0 !important;
+			padding: 0 !important;
+		}
+
+		a {
+			display: block;
+			padding-top: 3px;
+
+			&:not(:visited) {
+				color: var(--text-link);
+			}
+
+			&:visited {
+				color: var(--color13);
+			}
+		}
+
+		#parentDirLink {
+			color: var(--text-link) !important;
+
+			& > span {
+				replace-text("Parent directory", var(--text-link));
+			}
+		}
+
+		#listingParsingErrorBox + h1 {
+			background-color: var(--accent);
+			border-color: var(--accent-border);
+			box-shadow: var(--shadow-mid);
+			margin-top: 0;
+			padding: var(--pad);
+		}
+
+		#parentDirLinkBox, table {
+			display: block;
+			padding: var(--pad);
+			padding-right: 0;
+			margin-bottom: 0 !important;
+		}
+
+		td[data-value="0"] {
+			color: var(--color9);
+		}
+	}
+}

@@ -1,0 +1,39 @@
+#!/bin/sh
+eval "$(xresvars)"
+
+# WM-specific options
+sed -i "s|<theme><name>.*<|<theme><name>flower<|" \
+	"${XDG_CONFIG_HOME:=$HOME/.config}/openbox/rc.xml"
+openbox --reconfigure
+
+case $wm in
+	bspwm)
+		_() bspc config "$@"
+		for i in top bottom left right; do _ ${i}_padding 0; done
+		_ window_gap 24
+		_ border_width 4
+		_ normal_border_color "$bg"
+		_ focused_border_color '#a88a7f'
+	;;
+
+	berry)
+		_() berryc "$@"
+
+		_ title_height 24
+		_ draw_text false
+		_ set_font "$fn"
+		_ border_width 0
+		_ inner_border_width 0
+		_ focus_color "$ab"
+		_ inner_focus_color "$ac"
+		_ text_focus_color "$fg"
+		_ unfocus_color "$bg"
+		_ inner_unfocus_color "$bg"
+		_ text_unfocus_color "$fg2"
+	;;
+esac
+
+# Wallpaper
+. "${XDG_CONFIG_HOME:=$HOME/.config}/user-dirs.dirs"
+xwallpaper --stretch "$XDG_PICTURES_DIR/wal/dark/66797186_p0.jpg"
+xsetroot -solid "$background"

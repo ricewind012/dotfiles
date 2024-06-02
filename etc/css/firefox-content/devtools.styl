@@ -1,0 +1,699 @@
+@-moz-document regexp("^(about:|chrome://)devtools.*") {
+	// Global
+	:root {
+		--theme-body-background: var(--bg) $i;
+		--theme-body-emphasized-text: var(--fg2) $i;
+		--theme-body-alternate-emphasized-background: var(--bg2) $i;
+		--theme-sidebar-background: var(--bg2) $i;
+
+		// Toolbar
+		--theme-tab-toolbar-background: var(--bg2) $i;
+		--theme-toolbar-background: var(--bg2) $i;
+		--theme-toolbar-color: var(--fg) $i;
+		--theme-toolbar-selected-color: var(--hl-fg) $i;
+		--theme-toolbar-highlighted-color: var(--hl) $i;
+		--theme-toolbar-background-hover: var(--bg2) $i;
+		--theme-toolbar-background-alt: var(--bg2) $i;
+		--theme-toolbar-hover: transparent $i;
+
+		// Toolbar buttons
+		--toolbarbutton-background: var(--bg) $i;
+		--toolbarbutton-hover-background: var(--bg2) $i;
+		--toolbarbutton-focus-background: var(--bg) $i;
+		--toolbarbutton-focus-color: var(--fg) $i;
+		--toolbarbutton-checked-background: var(--bg2) $i;
+		--toolbarbutton-checked-focus-background: var(--bg2) $i;
+		--toolbarbutton-checked-color: var(--hl) $i;
+
+		// Buttons
+		--theme-button-background: var(--bg) $i;
+		--theme-button-activebackground: var(--bg) $i;
+
+		// Selection
+		--theme-selection-background: var(--hl) $i;
+		--theme-selection-background-hover: var(--bg2) $i;
+		--theme-selection-focus-background: var(--bg3) $i;
+		--theme-selection-color: var(--hl-fg) $i;
+
+		// Borders
+		--theme-splitter-color: var(--border) $i;
+		--theme-emphasized-splitter-color: var(--border) $i;
+		--theme-emphasized-splitter-color-hover: var(--border) $i;
+
+		// Icons
+		--theme-icon-color: var(--fg2) $i;
+		--theme-icon-dimmed-color: var(--fg2) $i;
+		--theme-icon-checked-color: var(--color10) $i;
+		--theme-icon-error-color: var(--color9) $i;
+		--theme-icon-warning-color: var(--color11) $i;
+
+		// Text color
+		--theme-comment: var(--fg2) $i;
+		--theme-body-color: var(--fg) $i;
+		--theme-text-color-alt: var(--fg2) $i;
+		--theme-text-color-inactive: var(--fg2) $i;
+		--theme-text-color-strong: var(--fg) $i;
+		--theme-stack-trace-text: var(--color9) $i;
+
+		// HTML syntax highlighting
+		--theme-highlight-green: var(--color10) $i;
+		--theme-highlight-blue: var(--color14) $i;
+		--theme-highlight-purple: var(--color12) $i;
+		--theme-highlight-red: var(--color9) $i;
+		--theme-highlight-yellow: var(--color11) $i;
+
+		// Warning colors
+		--theme-warning-background: color-a(3) $i;
+		--theme-warning-border: var(--color3) $i;
+		--theme-warning-color: var(--fg) $i;
+
+		// Popup
+		--theme-popup-background: var(--bg) $i;
+		--theme-popup-color: var(--fg) $i;
+
+		// lmao
+		for i in header footer {
+			--editor-{i}-height: calc(var(--font-size) * var(--line-height) + var(--pad) * 2) $i;
+		}
+	}
+
+	// Remove elements
+	// I. Inspector buttons
+	#inspector-toolbar > .devtools-separator,
+	#inspector-element-add-button,
+	#inspector-eyedropper-toggle,
+
+	// II. Bottom pane buttons
+	#print-simulation-toggle,
+	//#class-panel-toggle,
+	.sidebar-toggle,
+
+	// III. etc.
+	#toolbox-close,
+	.tag-line:not([id]), // closing tags
+	.chrome-debug-toolbar,
+	#inspector-breadcrumbs-toolbar,
+	.notification[data-key="styleeditor-error"],
+	//.ruleview-rule[uneditable="true"],
+	.ruleview-header[aria-level] ~ *,
+	.ruleview-header {
+		display: none $i;
+	}
+
+	for i in light dark {
+		@media (prefers-color-scheme: i) {
+			#color-scheme-simulation-{i}-toggle {
+				display: none $i;
+			}
+		}
+	}
+
+	.devtools {
+		// Global
+		&-separator {
+			brd(left);
+			mar(0);
+			height: 100% $i;
+		}
+
+		&-toolbar {
+			bg(2);
+			pad(0);
+			brd(bottom);
+			height: unset $i;
+
+			#style-editor-chrome & {
+				gap: 1ch;
+			}
+
+			&button {
+				pad(0);
+				border-radius: var(--border-radius) $i;
+				mar(0);
+				cursor: pointer $i;
+			}
+		}
+
+		&-togglebutton,
+		&-button {
+			pad(0);
+			cursor: pointer;
+
+			&,
+			&::before {
+				mar(0);
+			}
+			&,
+			^[0]-toolbarbutton {
+				&:hover::before {
+					fg();
+				}
+			}
+
+			&.checked {
+				&,
+				&::before {
+					hl();
+				}
+			}
+		}
+		&-togglebutton {
+			normalise-button();
+		}
+		&-search {
+			&box {
+				--bg2: var(--bg);
+				pad();
+				brd(0);
+				mar(0);
+				height: unset $i;
+
+				#style-editor-chrome & {
+					pad(right, 0);
+					order: -1;
+				}
+			}
+			&input {
+				normalise-input();
+				background-image: none $i;
+
+				&-clear {
+					position: absolute;
+					right: calc(var(--pad) * 2);
+					box(var(--font-size));
+					mar(0);
+					cursor: pointer;
+
+					&:hover {
+						fg();
+					}
+				}
+			}
+		}
+		&-filterinput {
+			normalise-input();
+			background-image: none $i;
+		}
+		/#ruleview-toolbar-container {
+			lnh();
+		}
+
+		&-monospace {
+			&,
+			* {
+				font-family: var(--font-code) $i;
+			}
+		}
+
+		// Tabs
+		&-tab {
+			pad();
+			cursor: pointer;
+
+			&bar {
+				bg(2);
+				header-focus();
+				brd(bottom);
+				min-height: var(--header-h) $i;
+
+				&-button {
+					lnh();
+					pad();
+					gap: 1ch;
+					min-width: unset $i;
+					cursor: pointer;
+
+					&::before {
+						background-size: cover;
+						mar(0);
+						box(var(--font-size));
+					}
+
+					&.checked,
+					&[aria-expanded="true"] {
+						hl();
+						--fg2: var(--hl-fg);
+					}
+				}
+			}
+			&,
+			&bar-button {
+				fg(2);
+
+				&:hover {
+					background-color: transparent $i;
+					fg();
+				}
+			}
+			&-line {
+				display: none;
+			}
+			&-label {
+				mask-image: none $i;
+				pad(0);
+			}
+
+			&:hover {
+				bg(2);
+			}
+
+			& > img {
+				mar(0);
+				margin-right: 1ch $i;
+				box(var(--font-size));
+				display: none;
+			}
+			&.selected {
+				hl();
+				cursor: default;
+			}
+		}
+	}
+	.tabs {
+		.devtools-sidebar-tabs > & {
+			brd(left, 0);
+		}
+
+		&-navigation {
+			brd(bottom);
+			min-height: var(--header-h) $i;
+			display: none $i;
+		}
+		&-menu-item {
+			&:not(:hover) {
+				fg(2);
+			}
+
+			&.is-active {
+				hl();
+			}
+		}
+
+		a {
+			lnh();
+			pad();
+			brd(0);
+			cursor: pointer $i;
+		}
+	}
+	#toolbox-meatball-menu-button {
+		brd(left);
+	}
+
+	// HTML
+	.inspector-sidebar-splitter {
+		flex-direction: row-reverse $i;
+
+		/*& > [style*="width: "] {
+			width: var(--sidebar-width) $i;
+		}
+		& > .splitter {
+			pointer-events: none;
+		}*/
+	}
+	#root {
+		pad(left, 0);
+	}
+	.child {
+		padding-left: calc(10000px + 1ch) $i;
+	}
+	.tag-line {
+		lnh();
+		pad(0);
+		min-height: unset $i;
+	}
+	.uncontrolled {
+		scrollbar-width: none;
+	}
+	.editor.comment {
+		fg(2);
+	}
+	.doctype {
+		font-style: unset $i;
+	}
+	.inspector-badge,
+	.editor.text .whitespace::before,
+	.unavailable-children::before {
+		background-color: transparent $i;
+		fg(-link);
+		lnh();
+		pad(0);
+		brd(0);
+		mar(0);
+		margin-left: 1ch $i;
+		height: unset $i;
+
+		.tag-line[selected] & {
+			&,
+			&::before {
+				color: var(--hl-fg) $i;
+			}
+		}
+
+		&:hover {
+			text-decoration: underline $i;
+		}
+	}
+	.editor.text .whitespace::before {
+		content: '('attr(data-label)')' $i;
+		fg(2);
+		font-size: var(--font-size) $i
+		text-decoration: none $i;
+	}
+	.markup-expand-badge {
+		margin: -2px 2px $i;
+		vertical-align: unset $i;
+	}
+	.expander {
+		background-size: calc(
+			var(--font-size) - var(--pad) / 2
+		) $i;
+		box(var(--font-size));
+		vertical-align: unset $i;
+
+		.tag-line:not([selected]) &:hover {
+			fill: var(--fg) $i;
+		}
+	}
+
+	// Rules
+	.ruleview {
+		&-header {
+			lnh();
+		}
+		&-header,
+		&-rule {
+			pad();
+			brd(bottom);
+		}
+		&-enableproperty {
+			bg();
+		}
+		&-rule {
+			pad();
+			brd(bottom);
+
+			&-source-label {
+				&[title^="file://"], // user
+				&[title^="data:text/css"] { // extension
+					hl();
+				}
+			}
+		}
+		&-selectorhighlighter {
+			mar(0);
+			box(var(--font-size));
+		}
+		&-overridden {
+			text-decoration-color: var(--fg) $i;
+		}
+		&-property {
+			&name {
+				clr(12);
+			}
+			&value {
+				fg();
+			}
+		}
+	}
+	#ruleview-command-toolbar {
+		mar(right);
+		gap: 1ch;
+	}
+
+	// Styles
+	.stylesheet {
+		&-more,
+		&-name > label,
+		&-more > h3 {
+			mar(0);
+		}
+		&-system,
+		&-toggle,
+		&-title,
+		&-linked-file,
+		&-saveButton {
+			display: none $i;
+		}
+		&-info {
+			mar();
+			flex-direction: row $i;
+		}
+		&-more {
+			margin-right: -7ch $i;
+
+			li:not(.splitview-active) & > h3 {
+				fg(2);
+			}
+		}
+	}
+
+	// Split
+	.splitview {
+		&-nav {
+			& > li {
+				pad(0);
+				brd(bottom);
+			}
+		}
+	}
+
+	// Editor
+	@import 'common-codemirror';
+
+	#devtools-webconsole .CodeMirror-line {
+		&,
+		&s {
+			pad(0);
+		}
+	}
+
+	// Console
+	.webconsole {
+		&-app,
+		&-filteringbar-wrapper {
+			--primary-toolbar-height: min-content $i;
+		}
+		&-filterbar {
+			&-primary {
+				--pad: calc(var(--reserve-pad) / 2);
+				lnh();
+
+				.devtools-button {
+					pad();
+				}
+			}
+			&-secondary {
+				gap: var(--pad);
+				brd(0);
+
+				.devtools-button {
+					--bg2: var(--bg);
+				}
+			}
+		}
+	}
+
+	// Debugger
+	.source {
+		// Sidebar
+		&-outline-tabs {
+			bg(2);
+			brd(bottom);
+		}
+
+		// Editor
+		&-header {
+			brd(bottom);
+		}
+		&-tab {
+			background-color: transparent $i;
+			fg(2);
+			pad();
+
+			&::before {
+				display: none;
+			}
+
+			&:hover {
+				fg();
+			}
+
+			&.active {
+				hl();
+			}
+
+			&s {
+				pad(0);
+				brd(left);
+				brd(right);
+			}
+		}
+		.source-icon,
+		.filename {
+			pad(0);
+			margin-right: 1ch $i;
+		}
+		&-footer {
+			bg(2);
+			brd(top);
+
+			&-start {
+				pad();
+			}
+
+			.commands {
+				gap: 1ch;
+			}
+			button {
+				@extend .devtools-toolbarbutton;
+
+				&:hover > .img {
+					background-color: var(--fg) $i;
+				}
+			}
+			.cursor-position {
+				pad();
+			}
+		}
+	}
+	.tab {
+		@extend .source-tab;
+	}
+	.command-bar-button {
+		@extend .source-footer button;
+		pad();
+		min-width: unset $i;
+		center();
+	}
+	.search {
+		&-bar {
+			bg(2);
+			pad();
+			brd(top);
+
+			&::before {
+				display: none;
+			}
+
+			.img:not(.close),
+			.pipe-divider {
+				display: none $i;
+			}
+			input {
+				/*
+				 * Can't style the border for some reason,
+				 * so fuck that.
+				 */
+				bg();
+			}
+			button {
+				@extend .devtools-toolbarbutton;
+
+				& > span {
+					vertical-align: unset $i;
+				}
+			}
+		}
+		&-field,
+		&-buttons-bar,
+		&-modifiers {
+			gap: 1ch;
+		}
+		&-field {
+			outline: none $i;
+		}
+	}
+
+	// Storage
+	#storage-searchbox {
+		--bg2: var(--bg);
+		mar();
+	}
+
+	// Popup
+	.tooltip {
+		&-container {
+			shd(big);
+			filter: none $i;
+
+			&[type="doorhanger"] {
+				& > ^[0]-panel,
+				& > ^[0]-arrow::before {
+					brd();
+				}
+				& > ^[0]-panel {
+					shd(big);
+					fade(drop);
+				}
+				for i in top bottom {
+					^[0]-{i} > ^[0]-arrow {
+						margin-{i}: calc(var(--border-width) * -1) $i;
+					}
+				}
+
+				.menu-standard-padding {
+					pad(0);
+				}
+				.command:hover {
+					hl();
+					cursor: pointer;
+				}
+				hr {
+					brd(top);
+					mar(0);
+				}
+			}
+
+			.autocomplete-item {
+				--pad: calc(var(--reserve-pad) / 2);
+				pad();
+			}
+		}
+	}
+
+	// Options
+	#options-panel {
+		padding: var(--body-pad);
+	}
+	.options {
+		&-vertical-pane,
+		&-groupbox {
+			pad(0);
+			mar(0);
+			min-width: 100% $i;
+
+			& + & {
+				margin-top: calc(var(--pad) * 2) $i;
+			}
+		}
+
+		&-groupbox {
+			legend {
+				normalise-header();
+				width: 100%;
+			}
+			select {
+				normalise-select();
+				mar(0);
+			}
+			input {
+				&[type="checkbox"] {
+					normalise-checkbox();
+				}
+				&[type="radio"] {
+					normalise-radio();
+				}
+			}
+			label {
+				pad(0);
+				mar(left, 0);
+				margin-top: calc(var(--pad) / 2) $i;
+
+				& > span {
+					pad(0);
+				}
+			}
+		}
+	}
+}

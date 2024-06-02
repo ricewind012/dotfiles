@@ -1,0 +1,115 @@
+@-moz-document domain('soundcloud.com') {
+	:root {
+		--page-width: 1180px;
+	}
+
+	/* Colors */
+	@media (prefers-color-scheme: light) {
+		:root {
+			--background: #fff;
+			--background-secondary: #f2f2f2;
+			--background-inverted: #0d0d0d;
+			--background-border: #e8e8e8;
+			--text: #333;
+		}
+	}
+
+	/* Header */
+	.header {
+		background-color: var(--background) !important;
+	}
+	.header__navMenu > li > a {
+		border-right-color: var(--background-border) !important;
+		color: var(--text) !important;
+	}
+	.header > li > a:focus,
+	.header__navMenu > li > a.selected {
+		color: var(--text) !important;
+		background-color: var(--background-secondary) !important;
+	}
+	.header__navMenu > li > a:not(.selected):focus,
+	.header__navMenu > li > a:not(.selected):hover {
+		box-shadow: inset 0 -1px var(--text);
+		color: var(--text) !important;
+	}
+	.header__navMenu > li > a.selected:hover {
+		cursor: default;
+	}
+	.header__right > div > a {
+		color: var(--text) !important;
+	}
+	.header__right > div > a.selected {
+		background-color: var(--background-secondary) !important;
+	}
+	.header__right > div > a:not(.selected):focus,
+	.header__right > div > a:not(.selected):hover {
+		box-shadow: 0 1px var(--text);
+	}
+	.header__userNavUsernameButton::after,
+	.header .notificationIcon::before,
+	.header__navMenu > li > .header__moreButton {
+		filter: invert(1);
+		opacity: 0.5 !important;
+	}
+	.header__userNavUsernameButton:hover::after,
+	.header .notificationIcon:hover::before,
+	.header__navMenu > li > .header__moreButton:hover,
+	.header__navMenu > li > .header__moreButton.selected {
+		opacity: 0.8 !important;
+	}
+	.header__navMenu > li > .header__moreButton:hover {
+		box-shadow: none !important;
+	}
+	.header__userNavButton.selected,
+	.header__userNavItem.selected {
+		background-color: var(--background-secondary) !important;
+	}
+	.header__navMenu > li > .header__moreButton.selected {
+		background-color: var(--background-inverted) !important;
+	}
+
+	/* Content width */
+	body.sc-classic {
+		background: var(--background-secondary) !important;
+	}
+	.sc-classic .l-container {
+		background-color: var(--background);
+		width: var(--page-width);
+	}
+	.l-fluid-fixed .l-main {
+		padding-top: 0 !important;
+		margin: 0 330px 0 auto;
+		/*width: calc(var(--page-width) - 355px);*/
+		width: calc(100% - 355px);
+	}
+
+	/* Remove right sidebar on small resolutions */
+	@media (max-width: 1079px) {
+		.l-sidebar-right {
+			display: none !important;
+		}
+		.l-main {
+			border-right: none !important;
+			padding-right: 0 !important;
+			margin: 0 auto !important;
+			width: calc(var(--page-width) - 28%) !important;
+		}
+	}
+
+	/* etc. */
+	.searchOptions__navigationItem:not(.active):hover {
+		background-color: var(--background-secondary);
+	}
+	.l-collection > .l-nav {
+		margin: 20px 0 !important;
+	}
+	.spotlight:empty + h3 {
+		padding-top: 0 !important;
+	}
+	.userstream__header {
+		margin: 20px 0 !important;
+	}
+	a[title="Pro Unlimited"] > span {
+		border-radius: 0 !important;
+	}
+}

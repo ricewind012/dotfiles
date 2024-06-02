@@ -1,0 +1,26 @@
+# background
+background_color = #2a2320 100
+background_color_hover = #201916 100
+
+# panel
+panel_items = TC
+panel_size = 100% 60
+
+# task
+task_text = 1
+task_centered = 1
+task_padding = 0
+task_font = CozetteVector 9
+task_font_color = #575757 100
+task_active_font_color = #e0efea 100
+mouse_left = toggle_iconify
+taskbar_mode = multi_desktop
+taskbar_padding = 0
+taskbar_hide_if_empty = 1
+taskbar_distribute_size = 1
+
+# clock
+time1_format = %H:%M
+time1_font = CozetteVector 9
+clock_font_color = #cccccc 100
+clock_padding = 24

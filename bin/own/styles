@@ -1,0 +1,37 @@
+#!/bin/sh
+while getopts d:h opt; do case $opt in
+	d) dir=$OPTARG ;;
+
+	[h?])
+		printf 'Usage: %s [-d dir]\n' "${0##*/}" >&2
+		exit 2
+	;;
+esac; done; shift $(( OPTIND - 1 ))
+
+[ -d "${dir:=${1%.json}}" ] || mkdir -p "$dir"
+
+while IFS= read -r l; do case $l in '    "name": "'*)
+	l=${l##*[[:space:]]'"name": "'}
+	l=${l%\",}
+	filename=$(printf '%s' "$l" |
+		tr '[:space:]' '-' | tr '[:upper:]' '[:lower:]')
+
+	# Strip characters
+	filename=${filename%%/*}
+	filename=${filename%%--*}
+	filename=${filename%%[/:]*}
+
+	content=$(printf "$(jq -M --arg l "$l" \
+		'.[] | select(.name == $l) | .sourceCode' < "$1" |
+		sed -e 's/\\"/"/g' -e 's/%/%%/g')")
+	content=${content#\"}
+	content=${content%\"}
+
+	case $content in
+		*'@preprocessor'[[:space:]]*stylus*) ending=styl ;;
+		*'@preprocessor'[[:space:]]*less*) ending=less ;;
+		*) ending=css ;;
+	esac
+
+	printf '%s\n' "$content" > "$dir/$filename.user.$ending"
+esac; done < "${1:?No filename}"

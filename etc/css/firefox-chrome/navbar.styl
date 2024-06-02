@@ -1,0 +1,57 @@
+#navigator-toolbox {
+	brd(0);
+}
+#PanelUI-menu-button {
+	list-style-image: url("chrome://browser/skin/menu.svg") $i;
+
+	.toolbarbutton-badge {
+		display: none $i;
+	}
+}
+#nav-bar {
+	background-color: var(--wm-border) $i;
+	header-focus();
+	padding: 0 1ch $i;
+	margin-top: calc(var(--border-width) * -1); // ?
+
+	&,
+	&-customization-target {
+		gap: 1ch;
+	}
+
+	toolbar {
+		&tabstop { // wtf is that for ?
+			display: none;
+		}
+		&spring {
+			flex-grow: 0 $i;
+
+			:root[customizing] & {
+				min-width: 100% $i;
+			}
+		}
+		&button {
+			background-color: transparent $i;
+
+			&:not([disabled]):not(:hover) {
+				fg(2);
+			}
+		}
+	}
+	&:not([customizing]) toolbarbutton[disabled] {
+		visibility: hidden;
+	}
+}
+
+.notification {
+	&box-stack {
+		width: calc(100% - var(--tab-sidebar-width)) $i;
+		left: var(--tab-sidebar-width);
+	}
+	&-button {
+		normalise-button();
+	}
+	&-close {
+		order: 1;
+	}
+}

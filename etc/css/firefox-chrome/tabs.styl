@@ -1,0 +1,313 @@
+// Make them transparent
+#TabsToolbar {
+	//&,
+	/#main-window,
+	/#navigator-toolbox {
+		appearance: none $i;
+		background-color: transparent $i;
+	}
+	/*& { // I am here to overwrite it
+		background-color: var(--wm-border) $i;
+	}
+	:root:-moz-window-inactive & {
+		--fg2: var(--fg);
+		--accent-border: var(--border);
+	}*/
+}
+
+// Vertical tabs
+:root {
+	--navbar-size: calc(
+		var(--font-size) * var(--line-height) \
+		+ var(--pad) * 2 + var(--border-width) * 2
+	);
+	--tab-size: calc(var(--font-size) + var(--pad) * 2);
+	--tab-sidebar-width: var(--tab-size);
+
+	&[inFullscreen] {
+		--navbar-size: 0px;
+		--tab-sidebar-width: 1px;
+	}
+	&:not([chromehidden~="toolbar"]) {
+		#browser,
+		#customization-container {
+			padding-left: var(--tab-sidebar-width);
+		}
+	}
+}
+
+#TabsToolbar {
+	brd(0);
+	brd(right);
+	overflow: hidden;
+	position: fixed;
+	top: calc(var(--navbar-size) - var(--border-width));
+	z-index: 2;
+	box(
+		var(--tab-sidebar-width),
+		calc(100% - var(--navbar-size) + var(--border-width))
+	);
+
+	&:hover {
+		--tab-sidebar-width: 225px; // max tab width
+
+		#tabs-newtab-button > .toolbarbutton-text::before {
+			content: 'New Tab';
+			display: block;
+		}
+	}
+
+	&-customization-target {
+		flex-direction: column;
+
+		.toolbarbutton-1 {
+			fg(2);
+			pad();
+			display: flex $i;
+			gap: 1ch;
+
+			&:hover {
+				--fg2: var(--fg);
+			}
+
+			& > stack {
+				pad(0);
+			}
+		}
+		.toolbarbutton {
+			&-1 {
+				bg(3);
+			}
+			&-icon,
+			&-text {
+				pad(0);
+			}
+			&-icon {
+				box(var(--font-size));
+			}
+			&-text {
+				min-height: unset $i;
+				display: flex;
+			}
+		}
+	}
+}
+.scrollbox-clip > scrollbox[orient="horizontal"] > slot {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden auto; // this lets it scroll
+}
+
+#tabbrowser {
+	&-arrowscrollbox {
+		/#TabsToolbar-customization-target,
+		& {
+			//height: 100%;
+		}
+
+		&-periphery {
+			display: none;
+		}
+	}
+	&-tabpanels {
+		bg();
+
+		&[tiling] {
+			background-color: var(--wm-border) $i;
+		}
+	}
+	&-tabs {
+		pad(0);
+		brd(bottom);
+		mar(0);
+		// Line #100
+		height: calc(
+			100vh - var(--navbar-size) \
+			- (
+				var(--font-size) * var(--line-height) \
+				+ var(--pad) * 2
+			) * 2
+		) $i;
+		@css { flex: unset !important; }
+		order: -1; // move all buttons to the bottom
+
+		&[haspinnedtabs]:not([positionpinnedtabs]) > ^[0]-arrowscrollbox > .tabbrowser-tab[first-visible-unpinned-tab] {
+			mar(0);
+		}
+
+		// doesnt work LOL
+		&:not(:-moz-window-inactive)::after {
+			//content: '';
+			position: absolute;
+			bottom: 0;
+			z-index: 1;
+			box(100%, var(--tab-size));
+			mask-image: linear-gradient(
+				-180deg,
+				transparent,
+				black var(--tab-size)
+			);
+			background-color: var(--wm-border);
+			pointer-events: none;
+		}
+	}
+}
+
+.tab {
+	&-background,
+	&-icon-sound,
+	&-icon-overlay,
+	/#scrollbutton-up,
+	/#scrollbutton-down,
+	/#TabsToolbar #alltabs-button,
+	/.private-mask[enabled="true"],
+	/.titlebar-buttonbox-container
+	{
+		display: none $i;
+	}
+	&browser-tab {
+		--tab-min-width: var(--tab-size) $i;
+		pad();
+		width: var(--tab-sidebar-width) $i;
+		// Can't close if uncommented
+		//max-width: unset $i;
+		min-height: calc(
+			var(--font-size) * var(--line-height) \
+			+ var(--pad) * 2
+		) $i;
+		max-height: var(--tab-size) $i;
+
+		&:hover {
+			--fg2: var(--fg);
+		}
+
+		&[visuallyselected] {
+			--fg2: var(--hl-fg);
+			hl();
+		}
+		&[pending] {
+			opacity: 0.5;
+		}
+		&[soundplaying] {
+			--tab-image: url("chrome://browser/skin/tabbrowser/tab-audio-playing-small.svg");
+		}
+		&[pinned] {
+			--tab-image: url("chrome://userchrome/content/material/pin-315.svg");
+
+			#tabbrowser-tabs[positionpinnedtabs] > #tabbrowser-arrowscrollbox > & {
+				position: relative $i;
+				display: flex $i;
+			}
+
+			// Firefox uses an inline !important margin for pins
+			// Up to 10 tabs
+			for i in range(32, 320, 32) {
+				&{s('[style="margin-inline-start: -%spx !important;"]', i)} {
+					left: unit(i, px);
+				}
+			}
+		}
+		&[usercontextid="6"] { // private tab
+			--tab-image: url("chrome://browser/skin/privateBrowsing.svg");
+
+			.tab {
+				&-icon-image {
+					brd(0);
+				}
+				&-label {
+					text-decoration: none $i;
+				}
+			}
+		}
+		&:not([visuallyselected]) {
+			&,
+			& ^[0]-label {
+				cursor: pointer $i;
+			}
+		}
+
+		&:not(:hover) .tab-close-button,
+		&:hover .tab-icon-stack {
+			display: none $i;
+		}
+	}
+	&-stack {
+		min-height: unset $i;
+	}
+	&browser-tab,
+	&-close-button:hover {
+		fg(2);
+	}
+	&-content {
+		pad(0);
+		gap: 1ch;
+
+		&::after {
+			content: '';
+			box(var(--font-size));
+			background-image: var(--tab-image);
+			background-size: var(--font-size);
+			-moz-context-properties: fill, stroke;
+			fill: var(--fg2);
+			stroke: transparent;
+		}
+	}
+	&-close-button {
+		display: flex $i;
+		order: -1;
+	}
+	&-icon {
+		&-stack,
+		&-image {
+			box(var(--font-size));
+		}
+		&-image {
+			mar(0);
+
+			for k in $extensions {
+				{s('
+					.tabbrowser-tab[label%s="%s"]',
+					unquote($extensions[k][tab][place]),
+					unquote($extensions[k][tab][name])
+				)} & {
+					content: s(
+						'url("%s/%s.svg")',
+						unquote($icons-path),
+						unquote(k)
+					);
+					fill: currentColor $i;
+				}
+			}
+		}
+	}
+	&-label {
+		lnh();
+
+		&-container {
+			height: unset $i;
+		}
+	}
+}
+
+// Thumbnail tooltip
+#tabpreviewpanel {
+	margin-left: 228px;
+	margin-top: calc((var(--font-size) * var(--line-height) + var(--pad) * 2) * -1);
+}
+
+.tab-preview {
+	&-container {
+		bgc();
+		lnh();
+		brd();
+	}
+	&-text-container {
+		pad();
+	}
+	&-title {
+		normalise-header();
+	}
+	&-uri {
+		fg(2);
+	}
+}

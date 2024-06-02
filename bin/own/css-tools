@@ -1,0 +1,149 @@
+#!/usr/bin/env zsh
+
+warn()
+	printf '%s:%d: %s: %s\n' ${1#css::} ${(%):-%i} $3 $2 >&2
+
+die() {
+	warn $@
+	exit 1
+}
+
+usage() {
+	<<-EOF >&2
+	Usage: ${ZSH_ARGZERO##*/} [-$progopts] $funcs
+
+	-f CSS file
+	-h Print this message
+
+	deobfuscate:
+	-F Format to [less|scss - default|stylus]
+
+	unminify:
+	-p Prettify output
+	EOF
+	exit 2
+}
+
+# Naive unminification detection
+is_minified() [[ $css == *[[:alnum:]]{[[:alpha:]]* ]]
+
+minify() {
+	css=$(<$opts[f])
+	css=${${${css//[[:space:]](#c2)/ }//(#b)[[:space:]]#([[:punct:]])[[:space:]]#/$match}//';}'/'}'}
+}
+
+find() {
+	is_minified || minify
+	# Quotes kill the performance (lol) here
+	css=(${(f)css//\}/$'}\n'})
+
+	css=(${${${${${(M)css:#*$~1${2:+:$~2}*}%%\{*}:#*(@(font-face|*keyframes|media)|<->%|from|to|/\*|\*/|\})*}//,/$'\n'}##[[:space:]]##})
+	css=("${(fu)$(printf '%s\n' $css)}")
+}
+
+css::deobfuscate() {
+	local -A sels
+	local format sel{,_norm} num
+	find
+
+	case $opts[F] {
+		less) format='@%s%s: %s;\n' ;;
+		stylus) format='$%s%s = "%s";\n' ;;
+		*) format='$%s%s: "%s";\n' ;;
+	}
+
+	for sel (${(M)css:#*-[[:alnum:]-_](#c6)}) {
+		unset num
+		sel_norm=${sel//\-[[:alnum:]-_](#c6)}
+		[[ $sels[$sel_norm] ]] &&
+			(( sels[$sel_norm]++ )) || sels[$sel_norm]=1
+		(( sels[$sel_norm] != 1 )) && num=-$sels[$sel_norm]
+
+		printf $format \
+			${${sel_norm#[#.]}//[![:alnum:]]/-} \
+			"$num" $sel
+	}
+}
+
+# css -> sh vars
+css::vars() {
+}
+
+css::find() {
+	find $@
+
+	printf '%s\n' $css
+}
+
+css::minify() {
+	minify
+
+	printf '%s\n' $css
+}
+
+css::unminify() {
+	local -i i
+	local l m
+	local r=(${(f)${${${${${${css//.*\{\}/}//\{/ \{$'\n\t'}//\}/$'\n'\}$'\n\n'}//;/;$'\n\t'}//,\[/,$'\n'\[}//$'\n\n'\}/\}}//\{$'\n\t'./\{$'\n'.})
+
+	if (( opts[p] )) {
+		p() printf '%s\n' $@
+
+		for (( i=1; i<=$#r; i++ )) {
+			l=$r[$i]; case $l {
+				'}')
+					printf '%s}\n' $m
+					if [[ $r[$((i+1))] != '}' ]] {
+						printf '\n'
+						unset m
+					}
+				;;
+
+				[#:.\[[:alpha:]]*' {') p $m${l//,./,$'\n'$m.} ;;
+				[[:space:]]content:*) p "$m${${l//nt:/nt: }%;};" ;;
+				*(border|transition|rgb|hsl)*) p "$m${${l//(#m)[:,]/$MATCH }%;};" ;;
+				@(media|keyframes)*) m=$'\t'; p ${l//:/: } ;;
+				[[:space:]]*:*) p "$m${${l//:/: }%;};" ;;
+				*) p $m$l ;;
+			}
+		}
+	} else {
+		printf '%s\n' $r
+	}
+}
+
+main() {
+	local -A opts
+	local -i OPTIND
+	local opt OPTARG
+	local progopts=f:F:hp
+	local funcs=(${${(Mokj.|.)functions:#css::*}//css::})
+	setopt extendedglob
+
+	while getopts $progopts opt; do case $opt in
+		[h?]) usage ;;
+		*) opts[$opt]=${OPTARG:-1} ;;
+	esac; done; shift $(( OPTIND - 1 ))
+
+	[[ $opts[f] ]] ||
+		usage
+	[[ -f $opts[f] ]] ||
+		msg='no such file or directory'
+	[[ -s $opts[f] ]] ||
+		msg='empty file'
+	[[ -r $opts[f] ]] ||
+		msg='permission denied'
+	[[ $msg ]] &&
+		die $0 $opts[f] $msg
+
+	# Avoid reading the file before execution
+	if [[ $1 != ($~funcs) ]] {
+		[[ $1 ]] && warn $0 $1 'command not found'
+		usage
+	}
+
+	css=("${(f)$(<$opts[f])}")
+	css::$@
+}
+
+main $@

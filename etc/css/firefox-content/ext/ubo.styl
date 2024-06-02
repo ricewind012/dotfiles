@@ -1,0 +1,274 @@
+/**
+ * Variables
+**/
+:root {
+	// Background
+	--surface-0: var(--bg) $i;
+	--surface-1: var(--bg) $i;
+	--surface-2: var(--bg2) $i;
+	--surface-3: var(--bg3) $i;
+	--popup-toolbar-surface: var(--bg2) $i;
+
+	// Foreground
+	--ink-1: var(--fg) $i;
+	--ink-2: var(--fg2) $i;
+	--ink-3: var(--fg2) $i;
+	--ink-4: var(--fg2) $i;
+
+	// Editor
+	--sf-value-ink: var(--color10) $i;
+	--sf-def-ink: var(--color12) $i;
+	--sf-variable-ink: var(--color11) $i;
+	--sf-keyword-ink: var(--color12) $i;
+
+	// Border
+	--border-0: var(--border) $i;
+	--border-1: var(--border) $i;
+	--border-2: var(--border) $i;
+	--border-3: var(--border) $i;
+
+	// Spacing
+	--default-gap-xxlarge: var(--pad) $i;
+	--default-gap-xlarge: var(--pad) $i;
+	--default-gap-large: var(--pad) $i;
+	--default-gap: var(--pad) $i;
+	--default-gap-small: var(--pad) $i;
+	--default-gap-xsmall: var(--pad) $i;
+	--default-gap-xxsmall: var(--pad) $i;
+
+	--popup-gap: var(--pad) $i;
+	--popup-gap-thin: var(--pad) $i;
+	--popup-gap-extra-thin: var(--pad) $i;
+}
+
+/**
+ * Global
+**/
+body {
+	lnh();
+	mar(bottom, 0);
+}
+
+a {
+	fg(-link);
+
+	&:hover {
+		text-decoration: underline $i;
+	}
+}
+p {
+	margin: var(--pad) 0 $i;
+}
+.fa-icon {
+	fg(2);
+	fill: var(--fg2) $i;
+	pad(0);
+	transform: unset $i;
+
+	button > &,
+	&:hover {
+		--fg2: var(--fg) $i;
+	}
+}
+
+input {
+	&,
+	/textarea {
+		appearance: none;
+		normalise-input();
+	}
+	&[type="color"] {
+		normalise-color();
+	}
+	&[type="checkbox"] {
+		normalise-checkbox();
+		opacity: 1 $i;
+	}
+}
+textarea {
+	mar(top);
+}
+.checkbox {
+	mar(0);
+	box($select-size);
+	align-self: start;
+
+	& > svg {
+		display: none $i;
+	}
+}
+select {
+	normalise-select();
+}
+button {
+	normalise-button();
+	min-height: unset $i;
+
+	&.iconified > .fa-icon + [data-i18n] {
+		padding-left: 1ch $i;
+	}
+	&.preferred {
+		--bg2: color-a(2);
+		--border: var(--color10);
+	}
+
+	& > .hover {
+		display: none $i;
+	}
+	& > [data-i18n] {
+		display: unset $i;
+	}
+}
+hr {
+	display: none $i;
+}
+
+/**
+ * Popup
+**/
+#main {
+	max-width: 18em $i;
+}
+#firewall {
+	background-color: var(--border) $i;
+	lnh();
+	brd(right);
+	mar(0);
+
+	& > div > span {
+		--pad: calc(var(--reserve-pad) / 2);
+		bg();
+		pad();
+
+		&:not(:first-of-type) {
+		}
+	}
+}
+.tool {
+	&Ribbon {
+		brd(top);
+		brd(bottom);
+	}
+	&Ribbon & {
+		min-width: unset $i;
+
+		&:hover {
+			hl();
+		}
+	}
+}
+#basic {
+	&Stats {
+		mar();
+		grid-template-columns: repeat(2, 1fr) $i;
+		gap: var(--pad);
+
+		& > span {
+			mar(0);
+			justify-self: unset $i;
+		}
+	}
+	&Tools > .fa-icon {
+		pad();
+	}
+}
+#moreOrLess {
+	mar(0);
+}
+
+/**
+ * Header
+**/
+#dashboard-nav {
+	bg(2);
+	header-focus();
+	brd(bottom);
+}
+.logo {
+	padding: 0 var(--pad) $i;
+}
+.tabButton {
+	pad();
+	brd(0);
+	min-height: unset $i;
+	transition: none $i;
+
+	&:not(:hover) {
+		fg(2);
+	}
+
+	&.selected {
+		hl();
+	}
+}
+
+/**
+ * Settings
+**/
+.fieldset {
+	mar();
+
+	&-header {
+		normalise-header(false);
+	}
+}
+.li {
+	margin: var(--pad) 0 $i;
+}
+
+/**
+ * Filter lists
+**/
+#actions,
+.iconbar {
+	display: inline-flex;
+	gap: var(--pad);
+	width: 100%;
+}
+.groupEntry,
+.listEntries {
+	mar(0);
+}
+.geDetails {
+	normalise-header(false);
+	flex(,,space-between);
+
+	[data-groupkey="user"] > &,
+	&::before {
+		display: none $i;
+	}
+}
+
+/**
+ * My filters
+**/
+/**
+ * My rules
+**/
+/**
+ * Support
+**/
+h3 {
+	normalise-header(false);
+}
+.supportEntry > div:first-of-type {
+	mar(right);
+}
+
+/**
+ * Editor
+**/
+@import 'common-codemirror';
+
+.codeMirrorContainer {
+	lnh();
+	brd(top);
+}
+.cm-search-widget {
+	pad();
+	brd(bottom);
+
+	input {
+		--bg2: var(--bg);
+	}
+}

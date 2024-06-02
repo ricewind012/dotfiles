@@ -1,0 +1,10 @@
+#!/bin/sh
+
+s=${bin:=$HOME/.local/bin}/${1:?}
+[ -d "$bin" ] || mkdir -p "$bin"
+case ${2:-sh} in
+	sh) b='/bin/sh' ;;
+	*) b="/usr/bin/env $2" ;;
+esac; printf '#!%s\n' "$b" > "$s"
+chmod +x "$s"
+"${EDITOR:-vi}" "$s"

@@ -1,0 +1,33 @@
+@import 'common';
+
+@import 'global';
+
+/**
+ * Pages
+**/
+@import 'info';
+@import 'addons';
+@import 'config';
+@import 'memory';
+@import 'debugging';
+@import 'downloads';
+@import 'userchrome';
+@import 'preferences';
+
+/**
+ * Windows
+**/
+@import 'devtools';
+
+/**
+ * Extensions
+**/
+@-moz-document url-prefix("moz-extension://3c84a511-c6df-4390-8fc9-79e27a3977e1") {
+	@import 'ext/ubo';
+}
+@-moz-document url-prefix("moz-extension://e1ef4d2e-61dd-4f06-9098-237b6c997342") {
+	@import 'ext/violentmonkey';
+}
+@-moz-document url-prefix("moz-extension://4afb3ad0-2dca-4b31-b506-5f0ab7c94490") {
+	@import 'ext/vimium';
+}

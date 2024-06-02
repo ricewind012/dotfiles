@@ -1,0 +1,26 @@
+findbar {
+	bgc();
+	pad(0);
+	brd(top);
+}
+.findbar {
+	&-container {
+		pad();
+		mar(0);
+		height: unset $i;
+	}
+	&-textbox {
+		normalise-input();
+		width: 20em $i;
+	}
+	&-highlight,
+	&-case-sensitive,
+	&-match-diacritics,
+	&-entire-word,
+	&-label {
+		mar(0);
+	}
+	&-find-status {
+		display: none;
+	}
+}

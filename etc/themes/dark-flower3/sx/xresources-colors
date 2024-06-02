@@ -1,0 +1,44 @@
+*.foreground: #cacaca
+*.background: #150f05
+
+*.color0:  #4c4c4c
+*.color8:  #575757
+
+*.color1:  #a27078
+*.color9:  #ca8b96
+
+*.color2:  #70a27b
+*.color10: #8bca99
+
+*.color3:  #9ba270
+*.color11: #c2ca8b
+
+*.color4:  #9770a2
+*.color12: #bc8bca
+
+*.color5:  #7091a2
+*.color13: #8bb5ca
+
+*.color6:  #9370a2
+*.color14: #b78bca
+
+*.color7:  #70a2a2
+*.color15: #8bcaca
+
+! other
+#define FONT tewi
+#define FONT_SIZE 9
+#define PAD 8
+*.bg: #150f05
+*.bg2: #2a1e0a
+*.fg: #cacaca
+*.fg2: #7a7a7a
+*.ac: #cae4f4
+*.ab: #86cbf4
+*.hl: #2a1e0a
+*.hf: #977a02
+*.ur: #cc4a4a
+*.fn: FONT
+*.fs: FONT_SIZE
+
+! vim: ft=xdefaults

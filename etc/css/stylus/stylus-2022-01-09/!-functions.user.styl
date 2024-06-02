@@ -1,0 +1,272 @@
+/* ==UserStyle==
+@name           ! Functions
+@namespace      github.com/openstyles/stylus
+@version        1.0.0
+@description    A new userstyle
+@author         Me
+
+@preprocessor stylus
+==/UserStyle== */
+
+@keyframes dropfade {
+	0% {
+		opacity: 0;
+		transform: translateY(-10px);
+	}
+
+	100% {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+// Stylus
+svar(var) {
+	s('var(--%s)', var);
+}
+
+// Appearance
+bg(n =) {
+	background-color: s('var(--bg%s)', n);
+}
+
+fg(n =) {
+	color: s('var(--fg%s)', n);
+}
+
+bgc(n1 =, n2 =) {
+	bg(n1);
+	fg(n2);
+}
+
+clr(n) {
+	color: s('var(--color%s)', n);
+}
+
+pad(n = 1) {
+	padding: n == 0 ? 0 : n is a 'unit' ? var(--pad) : s('calc(var(--pad) %s %s)', unquote(arguments[0]), arguments[1]);
+}
+
+brd(pos =, color = border, radius = false) {
+	{pos ? s('border-%s', pos) : 'border'}: var(--border-width) solid svar(color);
+
+	if (radius || !pos) {
+		border-radius: var(--border-radius);
+	}
+}
+
+shd(n) {
+	box-shadow: s('var(--shadow-%s)', n);
+}
+
+// Position
+box(w, h = w, i = false) {
+	i = (i || h == true) ? !important : null;
+	h = w == h ? w : h is a 'unit' or h is a 'string' ? unquote(h) : w;
+
+	width: w i;
+	height: h i;
+}
+
+pos(offset = 0) {
+	left: offset;
+	top: offset;
+	right: offset;
+	bottom: offset;
+}
+
+center() {
+	display: flex;
+	align-items: center;
+}
+
+// etc.
+anim(name =, func = ) {
+	@media (prefers-reduced-motion: no-preference) {
+		{name ? animation : transition}: name var(--trans-dur) func;
+	}
+}
+
+dropfade() {
+	anim(dropfade, cubic-bezier(.2, .9, .6, 1));
+}
+
+focus(i = null) {
+	i = i ? !important : null;
+
+	anim();
+
+	&:focus {
+		border-color: var(--hl) i;
+		box-shadow: var(--shadow-ins) var(--hl) i;
+		outline: none i;
+	}
+}
+
+replace-text(content =, text-color = fg, pos = after) {
+	letter-spacing: -9999px;
+	color: transparent;
+
+	if (content) { // Replace
+		&::{pos} {
+			content: content;
+			letter-spacing: 0;
+			color: svar(text-color);
+		}
+	} else { // Hide
+		* {
+			letter-spacing: 0;
+			color: svar(text-color);
+		}
+	}
+}
+
+// Input normalisation
+normalise-select(e = \&) {
+	{e} {
+		appearance: none;
+		bgc(2);
+		background-image:
+			linear-gradient(55deg, var(--bg2) 43%, transparent 45%),
+			linear-gradient(125deg, transparent 53%, var(--bg2) 55%),
+			linear-gradient(180deg, var(--bg2) 30%, var(--fg) 30%);
+		background-size: 20px 20px;
+		background-repeat: no-repeat;
+		background-position: right 4px;
+		padding: 0 20px 0 var(--pad);
+		brd();
+		height: 28px;
+		focus();
+	}
+}
+
+normalise-input(e = \&) {
+	{e} {
+		bgc(2);
+		padding: 0 var(--pad);
+		brd();
+		height: 28px;
+		focus();
+
+		&::placeholder {
+			color: var(--fg3);
+		}
+	}
+}
+
+normalise-button(e = \&) {
+	{e} {
+		bgc(2);
+		padding: 0 calc(var(--pad) * 2);
+		brd();
+		height: 28px;
+		cursor: pointer;
+		focus();
+
+		&:disabled {
+			opacity: .5;
+			pointer-events: none;
+		}
+	}
+}
+
+normalise-color(e = \&) {
+	{e} {
+		bg(2);
+		padding: 0;
+		brd();
+		box(16px);
+		focus();
+
+		&::-webkit-color-swatch {
+			border: none;
+			border-radius: calc(var(--border-radius) * .33);
+
+			&-wrapper {
+				padding: 0;
+			}
+		}
+	}
+}
+
+normalise-checkbox(e = \&) {
+	/label {
+		center();
+		gap: 1ch;
+	}
+
+	{e} {
+		appearance: none;
+		bg(2);
+		brd();
+		border-radius: calc(var(--border-radius) * .33);
+		box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+		margin: 0;
+		position: relative;
+		box(16px);
+		focus();
+
+		&::before, &::after {
+			content: '';
+			position: absolute;
+			pos();
+			background-color: var(--hl);
+			transform-origin: 0 0;
+		}
+
+		&::before {
+			transform: rotate(-45deg) translateY(45%) translateX(-30%) scaleX(0.25) scaleY(0);
+		}
+		&::after {
+			transform: rotate(225deg) translateY(-30%) translateX(-95%) scaleX(0.25) scaleY(0);
+		}
+		&:indeterminate::before {
+			transform: rotate(0) translateY(37.5%) translateX(10%) scaleX(0.8) scaleY(0.25);
+			transition-duration: 33.33333333ms;
+		}
+
+		&:checked {
+			&::before {
+				transform: rotate(-45deg) translateY(45%) translateX(-30%) scaleX(0.25) scaleY(0.4);
+				transition-duration: 33.33333333ms;
+			}
+			&::after {
+				transform: rotate(225deg) translateY(-30%) translateX(-95%) scaleX(0.25) scaleY(1.2);
+				transition-delay: 33.33333333ms;
+				anim();
+			}
+		}
+	}
+}
+
+normalise-radio(e = \&) {
+	{e} {
+		appearance: none;
+		bg(2);
+		brd();
+		border-radius: 50%;
+		box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+		margin: 0;
+		position: relative;
+		box(16px);
+		focus();
+
+		&::before {
+			content: '';
+			position: absolute;
+			pos(3px);
+			background-color: var(--hl);
+			border-radius: 50%;
+			transition: transform var(--trans-dur) linear;
+			transform: scale(0);
+		}
+		&:disabled::before {
+			background-color: var(--fg3);
+		}
+		&:checked::before {
+			transition-timing-function: cubic-bezier(0, 0, 0.3, 1.5);
+			transform: scale(1);
+			anim();
+		}
+	}
+}

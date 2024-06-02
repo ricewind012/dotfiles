@@ -1,0 +1,75 @@
+#!/bin/sh
+. "$bin/common.sh"
+
+check_pa() {
+	p=${1:-5}
+
+	if get_proc pulseaudio && [ "$proc" ]; then
+		vinc() pactl set-sink-volume @DEFAULT_SINK@ "+$p%"
+		vdec() pactl set-sink-volume @DEFAULT_SINK@ "-$p%"
+	else
+		vinc() amixer -q -M sset Master "$p%+"
+		vdec() amixer -q -M sset Master "$p%-"
+	fi
+}
+
+get_volume() {
+	while IFS='[]%: ' read -r k _ _ volume _ _ _ status; do case $k in
+		Mono|Left|Right) break
+	esac; done <<-EOF
+	$(amixer sget Master)
+	EOF
+}
+
+notify() {
+	get_volume
+
+	if command -v xob >/dev/null; then
+		fifo=${TMPDIR:=/tmp}/xob-pipe
+
+		[ -p "$fifo" ] ||
+			mkfifo "$fifo"
+		get_proc xob; ! [ "$proc" ] &&
+			tail -f "$fifo" | xob &
+
+		[ "$volume" -ne 0 ] && [ "$cmd" = inc ] &&
+			printf '%d' "$volume" > "$fifo"
+
+	elif command -v notify-send >/dev/null; then
+		case $volume in
+			[0-9]|[0-2][0-5]) icon=audio-volume-low ;;
+			[2-4][0-9]|50) icon=audio-volume-medium ;;
+			*) icon=audio-volume-high ;;
+		esac
+		[ "$status" = '[off]' ] && icon=audio-volume-muted
+
+		while IFS='=' read -r p v; do case $p in
+			gtk-icon-theme-name) icons=$v; break
+		esac; done < "${XDG_CONFIG_HOME:=$HOME/.config}/gtk-3.0/settings.ini"
+
+		case $(uname) in
+			Linux) osdir=/usr/share ;;
+			*BSD*) osdir=/usr/local/share ;;
+		esac
+
+		notify-send \
+			-h string:image-path:"$osdir/icons/$icons/symbolic/status/$icon-symbolic.svg" \
+			-h int:value:"$volume" \
+		Volume
+
+	else
+		return 1
+	fi
+}
+
+main() {
+	check_pa
+
+	case $1 in
+		inc|dec) "v$1" "$2" && notify ;;
+		mute) amixer -q sset Master toggle ;;
+		*) get_volume && printf '%d%%\n' "$volume" ;;
+	esac
+}
+
+main "$@"

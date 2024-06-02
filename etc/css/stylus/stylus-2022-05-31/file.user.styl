@@ -1,0 +1,68 @@
+/* ==UserStyle==
+@name						file://
+@namespace      github.com/openstyles/stylus
+@version        1.0.0
+@description    A new userstyle
+@author         Me
+
+@preprocessor stylus
+==/UserStyle== */
+
+replace-text(content, text-color = var(--fg), pos = after) {
+	& {
+		letter-spacing: -9999px;
+		color: transparent !important;
+		background-color: transparent !important;
+
+		&::{pos} {
+			content: content;
+			letter-spacing: 0;
+			color: text-color;
+		}
+	}
+}
+
+@-moz-document regexp("file://.*/"), regexp("https?://.*(jpe?g|png|web.)\\.$") {
+	body {
+		background-color: var(--bg) !important;
+		color: var(--fg);
+		margin: 0 !important;
+		padding: 0 !important;
+		line-height: var(--line-height);
+	}
+
+	a {
+		color: var(--fg-link);
+		display: block;
+		padding-left: calc(var(--icon-size) + 1ch) !important;
+		padding-top: 4px;
+	}
+
+	#parentDirLink {
+		color: var(--fg-link) !important;
+
+		& > span {
+			replace-text('Parent directory', var(--fg-link));
+		}
+	}
+
+	#header {
+		display: none;
+		background-color: var(--accent);
+		border-bottom: var(--border-width) solid var(--accent-border);
+		box-shadow: var(--shadow-mid);
+		margin-top: 0;
+		padding: var(--pad);
+	}
+
+	#parentDirLinkBox, table {
+		display: block;
+		padding: var(--pad);
+		padding-right: 0;
+		margin-bottom: 0 !important;
+	}
+
+	td[data-value="0"] {
+		color: var(--color9);
+	}
+}

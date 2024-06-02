@@ -1,0 +1,33 @@
+#!/bin/sh -e
+
+if [ -f "$1" ]; then
+	input=$(cat "$1")
+else
+	input=$(xrdb -query)
+fi
+
+while IFS= read -r l; do
+	l=${l#'*.'}
+	k=${l%%:*}
+	v=${l##*:[[:space:]]}
+
+	case $k in
+		foreground) cmd="10;$v" ;;
+		background) cmd="11;$v" ;;
+		cursorColor) cmd="12;$v" ;;
+		pointerColor) cmd="13;$v" ;;
+		colorBD) cmd="5;0;$v" ;;
+		colorUL) cmd="5;1;$v" ;;
+		colorBL) cmd="5;2;$v" ;;
+		colorRV) cmd="5;3;$v" ;;
+		color[0-9]*) cmd="4;${k#color};$v" ;;
+		[Uu][Rr]xvt*font) cmd="710;$v" ;;
+		[Xx][Tt]erm*faceName) cmd="50;${v%%;*}" ;;
+	esac
+
+	for i in /dev/pts/[0-9]*; do
+		printf '\033]%s\007' "$cmd" > "$i"
+	done
+done <<-EOF
+$input
+EOF

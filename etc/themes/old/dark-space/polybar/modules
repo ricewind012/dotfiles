@@ -1,0 +1,351 @@
+[module/alsa]
+type = internal/alsa
+
+format-volume = <ramp-volume> <label-volume>
+format-volume-underline = ${colors.blue}
+label-volume = %percentage%%
+
+format-muted-prefix = " "
+format-muted-underline = ${colors.blue}
+label-muted = Muted
+label-muted-foreground = ${colors.ac}
+
+ramp-volume-0 = 
+ramp-volume-1 = 
+ramp-volume-2 = 
+ramp-volume-3 = 
+ramp-volume-4 = 
+
+[module/battery]
+type = internal/battery
+
+; This is useful in case the battery never reports 100% charge
+full-at = 99
+
+; Use the following command to list batteries and adapters:
+; $ ls -1 /sys/class/power_supply/
+battery = BAT1
+adapter = ACAD
+
+; If an inotify event haven't been reported in this many
+; seconds, manually poll for new values.
+;
+; Needed as a fallback for systems that don't report events
+; on sysfs/procfs.
+;
+; Disable polling by setting the interval to 0.
+;
+; Default: 5
+poll-interval = 2
+
+time-format = %H:%M
+
+; Available tags:
+;   <label-charging> (default)
+;   <bar-capacity>
+;   <ramp-capacity>
+;   <animation-charging>
+format-charging = <animation-charging> <label-charging>
+;;format-charging-prefix = 
+; Available tags:
+;   <label-discharging> (default)
+;   <bar-capacity>
+;   <ramp-capacity>
+;   <animation-discharging>
+format-discharging = <ramp-capacity> <label-discharging>
+
+; Available tags:
+;   <label-full> (default)
+;   <bar-capacity>
+;   <ramp-capacity>
+;format-full = <ramp-capacity> <label-full>
+
+; Available tokens:
+;   %percentage% (default)
+;   %time%
+;   %consumption% (shows current charge rate in watts)
+
+label-charging = %percentage%%
+
+; Available tokens:
+;   %percentage% (default)
+;   %time%
+;   %consumption% (shows current discharge rate in watts)
+label-discharging = %percentage%%
+
+; Available tokens:
+;   %percentage% (default)
+label-full = Fully Charged
+
+; Only applies if <ramp-capacity> is used
+ramp-capacity-0 = 
+ramp-capacity-1 = 
+ramp-capacity-2 = 
+ramp-capacity-3 = 
+ramp-capacity-4 = 
+ramp-capacity-5 = 
+ramp-capacity-6 = 
+ramp-capacity-7 = 
+ramp-capacity-8 = 
+ramp-capacity-9 = 
+
+; Only applies if <bar-capacity> is used
+;bar-capacity-width = 10
+
+; Only applies if <animation-charging> is used
+animation-charging-0 = 
+animation-charging-1 = 
+animation-charging-2 = 
+animation-charging-3 = 
+animation-charging-4 = 
+animation-charging-5 = 
+animation-charging-6 = 
+animation-charging-7 = 
+animation-charging-8 = 
+
+; Framerate in milliseconds
+animation-charging-framerate = 750
+
+; Only applies if <animation-discharging> is used
+;;animation-discharging-0 = 
+;;animation-discharging-1 = 
+;;animation-discharging-2 = 
+;;animation-discharging-3 = 
+;;animation-discharging-4 = 
+;;animation-discharging-5 = 
+;;animation-discharging-6 = 
+;;animation-discharging-7 = 
+;;animation-discharging-8 = 
+
+; Framerate in milliseconds
+;animation-discharging-framerate = 500
+
+[module/cpu]
+type = internal/cpu
+interval = 2.0
+
+format = <label>
+format-underline = ${colors.amber}
+format-prefix = 
+label = " %percentage%%"
+
+[module/date]
+type = internal/date
+interval = 1.0
+
+time =  %H:%M
+time-alt =  %Y-%m-%d%
+format = <label>
+format-underline = ${colors.cyan}
+label = %time%
+
+[module/filesystem]
+type = internal/fs
+interval = 3600
+
+mount-0 = /
+fixed-values = true
+
+format-mounted = <label-mounted>
+format-mounted-prefix = 
+format-mounted-underline = ${colors.teal}
+format-unmounted = <label-unmounted>
+format-unmounted-prefix = 
+format-unmounted-underline = ${colors.teal}
+label-mounted = " %percentage_used%%"
+label-unmounted = %mountpoint%: not mounted
+
+[module/memory]
+type = internal/memory
+interval = 2.0
+
+format = <label>
+format-prefix = 
+format-underline = #4bffdc
+label = " %percentage_used%%"
+
+[module/network]
+type = internal/network
+interval = 1.0
+
+interface = wlp5s0
+ping-interval = 5
+accumulate-stats = true
+unknown-as-up = true
+
+format-connected = <ramp-signal> <label-connected>
+format-disconnected = <label-disconnected>
+format-connected-underline = ${colors.purple}
+label-connected = "| %downspeed:8% %upspeed:8%"
+label-disconnected =  "Not connected"
+
+ramp-signal-0 = 
+ramp-signal-1 = 
+ramp-signal-2 = 
+ramp-signal-3 = 
+ramp-signal-4 = 
+
+[module/pulseaudio]
+type = internal/pulseaudio
+interval = 5
+
+sink = alsa_output.pci-0000_12_00.3.analog-stereo
+use-ui-max = true
+
+format-volume = <ramp-volume> <label-volume>
+format-volume-underline = ${colors.blue}
+label-volume = %percentage%%
+format-muted-prefix =  
+label-muted = " Muted"
+label-muted-foreground = ${colors.ac}
+
+ramp-volume-0 = 
+ramp-volume-1 = 
+ramp-volume-2 = 
+ramp-volume-3 = 
+ramp-volume-4 = 
+
+[module/temperature]
+type = internal/temperature
+interval = 1.0
+
+; Thermal zone to use
+; To list all the zone types, run 
+; $ for i in /sys/class/thermal/thermal_zone*; do echo "$i: $(<$i/type)"; done
+; Default: 0
+thermal-zone = 0
+
+; Full path of temperature sysfs path
+; Use `sensors` to find preferred temperature source, then run
+; $ for i in /sys/class/hwmon/hwmon*/temp*_input; do echo "$(<$(dirname $i)/name): $(cat ${i%_*}_label 2>/dev/null || echo $(basename ${i%_*})) $(readlink -f $i)"; done
+; to find path to desired file
+; Default reverts to thermal zone setting
+;;hwmon-path = /sys/devices/platform/coretemp.0/hwmon/hwmon2/temp1_input
+
+warn-temperature = 80
+units = true
+
+format = <ramp> <label>
+format-warn = <ramp> <label-warn>
+label = %temperature-c%
+label-warn = "%temperature-c%"
+label-warn-foreground = {colors.ur}
+
+ramp-0 = 
+ramp-1 = 
+ramp-2 = 
+ramp-3 = 
+ramp-4 = 
+;ramp-foreground = #55
+
+[module/keyboard]
+type = internal/xkeyboard
+
+blacklist-0 = num lock
+blacklist-1 = scroll lock
+
+format = <label-layout> <label-indicator>
+format-prefix = " "
+format-prefix-underline = ${colors.orange}
+
+label-layout = %layout%
+label-layout-underline = ${colors.orange}
+label-indicator-on = %name%
+label-indicator-background = ${colors.ur}
+
+[module/title]
+type = internal/xwindow
+
+format = <label>
+label = %title%
+label-maxlen = 30
+
+[module/mpd]
+type = internal/mpd
+
+format-online = <label-song>
+format-online-prefix = " "
+format-online-underline = #062f11
+
+;icon-prev = 
+;icon-stop = 
+;icon-play = 
+;icon-pause = 
+;icon-next = 
+
+;label-song-maxlen = 25
+;label-song-ellipsis = true
+
+[module/workspaces]
+type = internal/xworkspaces
+
+; Only show workspaces defined on the same output as the bar
+pin-workspaces = false
+
+enable-click = true
+enable-scroll = true
+
+icon-0 = 1;
+icon-1 = 2;
+icon-2 = 3;
+icon-3 = 4;
+icon-4 = 5;
+icon-default = 
+
+format = <label-state>
+format-padding = 0
+label-monitor = %name%
+label-active = %icon%
+label-active-foreground = ${colors.ac}
+label-active-background = ${colors.bg-alt}
+label-active-underline = ${colors.ac}
+label-occupied = %icon%
+label-occupied-foreground = ${colors.fg}
+label-occupied-underline = ${colors.fg:#252525}
+label-urgent = %icon%
+label-urgent-foreground = ${colors.red:#e53935}
+label-urgent-background = ${colors.bg:#cc202020}
+;;label-urgent-underline = ${color.red}
+label-empty = %icon%
+label-empty-foreground = ${colors.fg}
+label-active-padding = 2
+label-urgent-padding = 2
+label-occupied-padding = 2
+label-empty-padding = 2
+
+;;;;; CUSTOM MODULES ;;;;;
+
+[module/updates]
+type = custom/script
+interval = 3600
+
+format-prefix = " "
+format = <label>
+format-underline = #505050
+
+exec = $bin/polybar/updates
+
+[module/player]
+type = custom/script
+exec = player
+exec-if = player
+tail = true
+
+click-left = player previous
+click-middle = player toggle
+click-right = player next
+
+format-prefix = " "
+format = <label>
+format-underline = #062f11
+
+[module/hackspeed]
+type = custom/script
+exec = $bin/polybar/hackspeed
+tail = true
+
+format-prefix = " "
+format = <label>
+format-underline = ${colors.indigo}
+
+; vim:ft=dosini

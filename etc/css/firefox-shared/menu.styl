@@ -1,0 +1,88 @@
+menu {
+	/panel,
+	&popup {
+		--panel-background: var(--bg) $i;
+		--panel-color: var(--fg) $i;
+		--panel-padding: 0 $i;
+		--panel-subview-body-padding: 0 $i;
+		--panel-border-color: var(--border) $i;
+		--panel-border-radius: var(--border-radius) $i;
+		--panel-shadow: none $i;
+		--panel-shadow-margin: 0 $i;
+	}
+	&popup {
+		dropfade();
+	}
+	/:root {
+		--arrowpanel-padding: var(--pad) $i;
+		--arrowpanel-menuitem-padding: var(--pad) $i;
+		--arrowpanel-menuitem-border-radius: 0 $i;
+		--arrowpanel-menuitem-margin-block: 0 $i;
+		--arrowpanel-menuitem-margin-inline: 0 $i;
+	}
+	&,
+	&item {
+		appearance: none $i;
+		pad();
+		brd(0);
+
+		&[disabled] {
+			fg(2);
+		}
+		&:not([disabled]) {
+			cursor: pointer;
+
+			&[_moz-menuactive] {
+				hl();
+			}
+		}
+	}
+	&list {
+		normalise-select();
+	}
+	&separator {
+		pad(0);
+
+		&::before {
+			brd(top);
+		}
+	}
+}
+panel {
+	&view {
+		background-color: transparent $i;
+
+		toolbarbutton:hover {
+			hl();
+			transition: none $i;
+		}
+	}
+
+	.&-footer {
+		bg(2);
+		pad();
+		brd(top);
+		mar(0);
+
+		button {
+			--bg2: var(--bg);
+			normalise-button();
+
+			&[default]:not([disabled]) {
+				background-color: color-a(2) $i;
+				border-color: var(--color10) $i;
+			}
+		}
+	}
+	.&-button {
+		normalise-button();
+	}
+}
+.subviewbutton {
+	&[shortcut]:not(:hover)::after {
+		fg(2);
+	}
+	&-nav::after {
+		fill-opacity: 1 $i;
+	}
+}

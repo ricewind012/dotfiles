@@ -1,0 +1,12 @@
+@import "userContent-main.css";
+@import "userContent-vars.css";
+
+/* CSS for various websites */
+/*@import "websites/discordapp.css";*/
+@import "websites/github.css";
+@import "websites/gitlab.css";
+@import "websites/google.css";
+@import "websites/gtranslate.css";
+@import "websites/reddit.css";
+@import "websites/soundcloud.css";
+/*@import "websites/youtube.css";*/

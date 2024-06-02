@@ -1,0 +1,123 @@
+// Improve performance
+.miniprofile_nameplatecontainer source[src$="mp4"], // only block(?) 1/2 videos
+.playersection_avatar_frame, // do border?
+.profile_animated_background,
+.profile_avatar_frame > img {
+	display: none;
+}
+
+.profile_comment_area .commentthread_header,
+.miniprofile_backdropblur,
+.profile_leftcol_header,
+.profile_customization,
+.profile_rightcol,
+.recent_game {
+	backdrop-filter: none !important;
+}
+
+// Remove adult content filter and warning
+.ugc.has_adult_content {
+	.ugc_warning {
+		display: none;
+	}
+	img {
+		filter: none !important;
+	}
+}
+
+#global_header,
+#footer, #footer_spacer
+{
+	display: none;
+}
+
+// Colors
+body {
+	--gradient-background: #{$bg2} #{$i};
+	--color-showcase-header: #{$accent} #{$i};
+	--btn-background: #{$bg3} #{$i};
+	--btn-background-hover: #{$bg4} #{$i};
+}
+a, .whiteLink {
+	color: $text $i;
+}
+.bb_link {
+	color: $text-link $i;
+}
+.profile_comment_area .commentthread_entry_quotebox,
+.profile_comment_area .commentthread_header,
+.achievement_progress_bar_ctn,
+.manage_friends_max_block_ctn,
+.myguide_showcase_item_ctn,
+.sectionTab, a.sectionTab,
+.profile_leftcol_header,
+.profile_customization,
+.profile_header_badge,
+.showcase_content_bg,
+.profile_rightcol,
+.profile_paging,
+.recent_game {
+	background-color: $bg $i;
+	border: 1px solid $border $i;
+	border-radius: $border-radius $i;
+}
+.profile {
+	&_header {
+		&_bg_texture {
+			background-image: none $i;
+			border-left: 1px solid $border;
+			border-right: 1px solid $border;
+		}
+		&_content, .persona_name {
+			color: $text $i;
+		}
+	}
+
+	&_content {
+		background-image: none $i;
+		border-left: 1px solid $border;
+		border-right: 1px solid $border;
+	}
+	&_rightcol {
+		& > :last-child {
+			margin-bottom: 0 $i;
+		}
+	}
+	&_customization {
+		&_header {
+			background-image: none $i;
+			color: $text $i;
+		}
+	}
+}
+.btn_profile_action {
+	background-color: $bg2 $i;
+	padding: 4px $i;
+	border-radius: $border-radius $i;
+
+	&:hover, &.focus {
+		filter: none $i;
+	}
+}
+.persona,
+a.persona,
+.persona a,
+.friend_status_offline,
+.friend_status_offline div,
+.friend_status_offline a {
+	color: $text-muted;
+}
+body.profile_page, div.profile_page {
+	background: none $bg $i;
+	color: $text $i;
+}
+
+// Fix steam level alignment
+.friendPlayerLevel {
+	vertical-align: unset $i;
+
+	&Num {
+		height: 100%;
+		@include center;
+	}
+}

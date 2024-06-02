@@ -1,0 +1,18 @@
+#!/bin/sh
+eval "$(xrescolors "$XDG_CONFIG_HOME/sx/xresources-colors")"
+
+# WM specific options
+theme=aircraft
+sed -i "s/<name>.*/<name>${theme}<\/name>/" \
+	"${XDG_CONFIG_HOME:=$HOME/.config}/openbox/rc.xml"
+openbox --reconfigure
+
+# Wallpaper
+. "${XDG_CONFIG_HOME:=$HOME/.config}/user-dirs.dirs"
+xsetroot -solid "$bg"
+xwallpaper --stretch "$XDG_PICTURES_DIR/wal/light/aircraft2.png"
+
+# etc.
+killall -SIGUSR1 tint2 || tint2 &
+[ "$TERMINAL" = xterm ] && term-reload
+xrdb "$XDG_CONFIG_HOME/sx/xresources"

@@ -1,0 +1,122 @@
+/**
+ * Omnibar
+**/
+#vomnibar {
+	brd();
+	shd(big);
+
+	&Input {
+		shd(0);
+		height: unset $i;
+	}
+
+	ul {
+		bg();
+		pad(0);
+		brd(top);
+		mar(0);
+	}
+	li {
+		fg();
+		lnh();
+		pad();
+		brd(0);
+		display: grid $i;
+		grid-template-columns: repeat(2, 50%) $i;
+		gap: var(--pad) $i;
+	}
+}
+.vomnibar {
+	&SearchArea {
+		bg();
+		brd(0);
+	}
+	&Reset {
+		color: inherit $i;
+	}
+	&NoInsertText {
+		display: none $i;
+	}
+	&Selected,
+	&Match {
+		hl();
+	}
+	&Title,
+	&TopHalf,
+	&BottomHalf {
+		text-overflow: ellipsis $i;
+	}
+	&TopHalf {
+		display: flex $i;
+		flex-direction: row-reverse $i;
+		gap: var(--pad) $i;
+	}
+	&BottomHalf {
+		pad(0);
+		mar(0);
+	}
+	&Source {
+		fg(2);
+		text-align: right $i;
+		mar(0);
+		@css { flex: 1 0 auto !important; }
+	}
+	&Title {
+		color: inherit $i;
+		mar(0);
+	}
+	&Url {
+		color: inherit $i;
+	}
+}
+
+/**
+ * Help dialog
+**/
+td {
+	pad(0);
+}
+.closeButton {
+	fg(2);
+
+	&:hover {
+		fg();
+	}
+}
+#vimium {
+	&HelpDialog {
+		pad(0);
+
+		&Container {
+			bg();
+			brd();
+		}
+		&TopButtons > a {
+			pad(0);
+		}
+
+		a {
+			fg(-link);
+
+			&:not(:hover) {
+				text-decoration: none $i;
+			}
+		}
+	}
+	&Title {
+		lnh();
+	}
+}
+.vimium {
+	&Column {
+		lnh();
+	}
+	&Divider {
+		background-color: var(--border) $i;
+		margin: var(--pad) 0 $i;
+		height: var(--border-width) $i;
+	}
+	&HelpSectionTitle {
+		normalise-header();
+	}
+}

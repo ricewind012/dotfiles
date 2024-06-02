@@ -1,0 +1,133 @@
+/* Colors */
+/* Functions */
+html, body {
+  height: 100%;
+}
+
+body {
+  display: grid;
+  grid-template-columns: 10% 90%;
+  margin: 0;
+  background-color: var(--accent);
+  color: var(--text);
+}
+@-moz-document url-prefix() {
+  body::before {
+    content: "";
+    position: absolute;
+    height: 1px;
+    top: -1px;
+    width: 100%;
+    box-shadow: var(--shadow-low);
+  }
+}
+
+nav {
+  background-color: var(--bg);
+  border-right: 1px solid var(--border);
+  color: var(--text);
+  padding: 16px;
+}
+
+header {
+  background-color: var(--accent);
+  border: 1px solid var(--accent-border);
+  color: var(--text);
+  text-align: center;
+  padding: 16px;
+}
+
+div {
+  margin: 0 auto;
+  padding: 32px;
+}
+
+table, input, button {
+  background-color: var(--bg);
+  color: var(--text);
+}
+@media (prefers-reduced-motion: no-preference) {
+  table, input, button {
+    transition: 150ms;
+  }
+}
+table, input, button {
+  position: relative;
+  border: none;
+}
+table::before, table::after, input::before, input::after, button::before, button::after {
+  content: "";
+  position: absolute;
+  top: -1px;
+  bottom: 0;
+  left: -1px;
+  right: 0;
+  width: calc(100% + 2px);
+  height: calc(100% + 2px);
+}
+table::after, input::after, button::after {
+  background-color: var(--border);
+  z-index: -1;
+}
+@media (prefers-reduced-motion: no-preference) {
+  table::after, input::after, button::after {
+    transition: 150ms;
+  }
+}
+table:hover::after, input:hover::after, button:hover::after {
+  opacity: 0;
+}
+table::before, input::before, button::before {
+  background-image: linear-gradient(135deg, var(--hl), var(--border));
+  z-index: -2;
+}
+table:hover, input:hover, button:hover {
+  box-shadow: var(--shadow-low);
+}
+@media (prefers-reduced-motion: no-preference) {
+  table:hover, input:hover, button:hover {
+    transition: 150ms;
+  }
+}
+
+input {
+  width: 98px;
+  padding: 4px;
+  margin-bottom: 32px;
+}
+
+button {
+  padding: 4px;
+  margin-left: 2px;
+}
+
+input:focus, button:focus {
+  border-color: var(--text);
+  outline: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  input:focus, button:focus {
+    transition: 150ms;
+  }
+}
+
+table {
+  padding: 16px;
+  margin-bottom: 32px;
+}
+
+th {
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 16px;
+}
+
+a {
+  color: var(--text-link);
+}
+a:not(:hover) {
+  text-decoration: none;
+}
+
+ul {
+  list-style-type: lower-roman;
+}

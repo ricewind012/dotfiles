@@ -1,0 +1,1176 @@
+/* ==UserStyle==
+@name           Discord
+@namespace      github.com/openstyles/stylus
+@version        1.0.0
+@description    A new userstyle
+@author         Me
+
+@preprocessor stylus
+
+@var checkbox solid-color "Solid color" 0
+@var text sidebar-width "Sidebar - width" 240px
+@var checkbox sidebar-overlay "Sidebar - overlay" 1
+@var text channels-padding "Channels - padding" 4px
+@var checkbox channels-compact "Channels - compact" 1
+
+@var text avatar-border-radius "Avatar border radius" 8px
+@var text stroke-size "Stroke size" 3px
+
+@var text textarea-button-space "Text area button space" 10px
+==/UserStyle== */
+
+@keyframes dropfade {
+	0% {
+		opacity: 0;
+		transform: translateY(-10px);
+	}
+
+	100% {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+dropfade(e = \&) {
+	@media (prefers-reduced-motion: no-preference) {
+		{e} {
+			animation: dropfade var(--trans-dur) cubic-bezier(0.2, 0.9, 0.6, 1);
+		}
+	}
+}
+
+anim(e = \&) {
+	@media (prefers-reduced-motion: no-preference) {
+		{e} {
+			transition: var(--trans-dur);
+		}
+	}
+}
+
+pos(top = 0, left = 0, bottom = 0, right = 0) {
+	top: top;
+	left: left;
+	bottom: bottom;
+	right: right;
+}
+
+box(w, h = w) {
+	width: w;
+	height: h;
+}
+
+@-moz-document domain("discord.com") {
+	/* Variables */
+	:root {
+		// Settings
+		settings = \
+			'sidebar-width',
+			'channels-padding',
+			'avatar-border-radius',
+			'stroke-size',
+			'textarea-button-space'
+
+		for i in settings {
+			\-\-{i}: convert(i);
+		}
+
+		// Background
+		--background-primary: var(--bg) !important;
+		--background-secondary: var(--bg2) !important;
+		--background-secondary-alt: var(--bg3) !important;
+		--background-tertiary: var(--bg4) !important;
+		--background-accent: var(--accent) !important;
+		--background-floating: var(--bg) !important;
+		--channeltextarea-background: var(--bg) !important;
+
+		--background-modifier-selected: var(--bg) !important;
+		--background-modifier-accent: var(--border) !important;
+
+		// Text
+		--text-normal: var(--text) !important;
+		//--text-muted: var(--text-muted2) !important;
+		--channels-default: var(--text-muted) !important;
+		--interactive-normal: var(--text-muted) !important;
+		--interactive-muted: var(--text-muted2) !important;
+		--interactive-active: var(--text) !important;
+		--interactive-hover: var(--text) !important;
+
+		// Shadows
+		--elevation-stroke: 0 0 0 1px var(--border) !important;
+		--elevation-low: var(--shadow-low) !important;
+		--elevation-medium: var(--shadow-mid) !important;
+		--elevation-high: var(--shadow-big) !important;
+	}
+
+	// Solid color
+	if solid-color { :root {
+		--background-floating: var(--bg) !important;
+		--background-secondary: var(--bg) !important;
+		--background-secondary-alt: var(--bg) !important;
+		--background-tertiary: var(--bg) !important;
+		--elevation-low: none !important;
+	}} else {
+		nav[aria-label="Servers sidebar"] div[class^="scroller"] {
+			//background-color: var(--accent) !important;
+		}
+	}
+
+	// Mountaineer colorscheme
+	.hljs-comment,
+	.hljs-quote {
+		color: var(--text-muted) !important;
+	}
+	.hljs-addition,
+	.hljs-built_in,
+	.hljs-deletion,
+	.hljs-meta,
+	.hljs-meta .hljs-keyword,
+	.hljs-name,
+	.hljs-section,
+	.hljs-selector-class,
+	.hljs-selector-id,
+	.hljs-selector-tag,
+	.hljs-title,
+	.hljs-keyword {
+		color: var(--color9) !important;
+	}
+	.hljs-bullet,
+	.hljs-doctag,
+	.hljs-literal,
+	.hljs-link,
+	.hljs-meta .hljs-meta-string,
+	.hljs-number,
+	.hljs-regexp,
+	.hljs-string,
+	.hljs-subst,
+	.hljs-symbol {
+		color: var(--color10) !important;
+	}
+	.c .hljs-keyword,
+	.css .hljs-built_in {
+		color: var(--color11) !important;
+	}
+	.hljs-selector-pseudo {
+		color: var(--color12) !important;
+	}
+	.c .hljs-number,
+	.hljs-variable {
+		color: var(--color13) !important;
+	}
+	.c .hljs-literal,
+	.hljs-attr,
+	.hljs-attribute,
+	.hljs-selector-attr,
+	.hljs-class .hljs-title,
+	.hljs-template-variable,
+	.hljs-type {
+		color: var(--color10) !important;
+	}
+
+	// Hardcoded variables
+	.theme-dark [class*="colorWhite"] {
+		color: var(--text-normal) !important;
+	}
+	.theme-dark div[class^="slider"] > div[class^="bar"] {
+		background-color: var(--interactive-muted) !important;
+	}
+	div[class^="autocompleteRowVertical"] > div[class*="selected-"],
+	div[class^="peopleColumn"],
+	div[class^="uploadModal"] {
+		background-color: var(--background-primary) !important;
+	}
+	div[aria-modal] > div[class*="root-"] div[class^="message"] {
+		background-color: var(--background-primary) !important;
+		box-shadow: var(--elevation-stroke), var(--elevation-medium) !important;
+	}
+	div[class^="autocomplete-"] {
+		background-color: var(--background-secondary) !important;
+	}
+	div[class*="footer"] {
+		box-shadow: inset 0 1px 0 var(--background-tertiary) !important;
+		background-color: var(--background-secondary) !important;
+	}
+	div[aria-modal] > div[class*="root-"] {
+		background-color: var(--background-primary) !important;
+		box-shadow: var(--elevation-stroke), var(--elevation-high) !important;
+	}
+	.theme-light div[class^="jumpToPresentBar"],
+	.theme-light div[class^="headerPlaying"] {
+		background-color: var(--logo-primary) !important;
+	}
+
+	/* Scrollbar */
+	:root {
+		--scrollbar-auto-thumb: var(--colorBorder) !important;
+		--scrollbar-auto-track: var(--colorBg) !important;
+		--scrollbar-thin-thumb: var(--colorBorder) !important;
+		--scrollbar-thin-track: var(--colorBg) !important;
+	}
+	[class*="auto-"]::-webkit-scrollbar { // to remove others
+		div[class^="messagesWrapper"] > &,
+		div[class^="contentRegionScroller"]& {
+			&-thumb, &-track {
+				border-top: none !important;
+				border-bottom: none !important;
+				border-radius: 0 !important;
+				margin-bottom: 0 !important;
+			}
+		}
+	}
+	[class*="thin-"]::-webkit-scrollbar {
+		&-button {
+			display: none;
+		}
+		&-track {
+			background-color: transparent;
+			border: none;
+		}
+		&-thumb {
+			border-radius: 8px;
+		}
+	}
+
+	/**
+	 * Start
+	**/
+
+	/* Remove elements */
+	// I. Buttons
+	#message-actions-tts,
+	#user-context-message-user,
+	#user-context-call,
+	#user-context-note,
+	#user-context-invite-to-server,
+	#guild-header-popout-invite-people,
+	a[href="/discovery"],
+	a[href="https://support.discord.com"],
+	div[aria-label^="Mute channel"],
+	#channels div[aria-label="Invite to Server"],
+	#channels div[aria-label="Create Invite"],
+	div[class^="sidebar"] div[class^="unread"],
+	div[class^="sidebar"] div[class^="actionButtons"],
+	nav[aria-label="Private channels"] div[class^="searchBar"],
+	div[aria-label="Search Result"] div[class^="buttonsContainer"],
+
+	// II. Nitro
+	a[href="/store"],
+	button[aria-label="Send a gift"],
+	button[class^="shinyButton"],
+	div[class^="premiumIconWrapper"],
+	div[class^="userProfileCustomizationSection"] div[class^="customizationSection"]:nth-child(3),
+	#user-settings-cog-Discord_Nitro,
+	#user-settings-cog-Nitro_Server_Boost,
+	#user-settings-cog-Library_Inventory,
+	#user-settings-cog-Billing,
+	#guild-context-guild-settings--GUILD_PREMIUM,
+	#guild-header-popout div[role="group"]:first-child,
+	#guild-header-popout div[role="group"]:first-child + div,
+	div[aria-controls="GUILD_PREMIUM-tab"],
+	div[aria-controls="GUILD_PREMIUM-tab"] + div,
+	button[aria-label="Open sticker picker"],
+	div[aria-controls="sticker-picker-tab-panel"],
+	div[aria-controls="Connections-tab"] + div + div,
+	div[class^="premiumTabItem"][aria-label="Discord Nitro"],
+	div[aria-controls="Nitro Server Boost-tab"],
+	div[aria-controls="Library Inventory-tab"],
+	div[aria-controls="Billing-tab"],
+	div[aria-controls="Billing-tab"] + div,
+
+	// III. Obsolete-made gradients
+	form::before,
+	a[class^="mainContent"]::before, // wtf
+	div[class^="option"]::after,
+	div[class^="option"][class*="selected"]::before,
+	div[class^="children"]::after,
+	div[class^="resultsGroup"] svg,
+
+	// IV. Other elements
+	ul[data-list-id="guildsnav"] > div[class^="scroller"] > div:nth-last-child(2),
+	ul[data-list-id="guildsnav"] > div[class^="scroller"] > div:nth-last-child(3),
+	ul[data-list-id="guildsnav"] > div[class^="scroller"] > div:nth-last-child(4),
+	div[class^="protip"],
+	div[class^="socialLinks"],
+	div[class^="emptyChannelIcon"],
+	div[class^="userPopout"] div[class^="footer"],
+	div[class^="infoScroller"] div[class^="userInfoSection"]:first-child,
+	div[class^="root"] div[class^="message"] + div[class^="spacingTop"],
+	div[class^="channelNotice"],
+	div[class^="peopleColumn"] h2,
+	div[class^="nowPlayingColumn"],
+	div[aria-hidden="true"] div[class^="attachment"],
+	#chat-messages > div[class^="wrapper"] div[class*="blob"]
+	{
+			display: none !important;
+	}
+
+	/* Hide the sidebar on small windows */
+	@media only screen and (max-width: 768px) {
+		// Chat
+		div[class^="sidebar"] {
+			width: 0 !important;
+
+			if sidebar-overlay { // todo: fix scrolling and bottom box
+				background-color: var(--bg-tr) !important;
+				backdrop-filter: blur(36px);
+				box-shadow: var(--shadow-vrt);
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				z-index: 101;
+
+				& > * {
+					background-color: transparent !important;
+				}
+			}
+
+			nav[class^="wrapper"]:hover + div &,
+			nav[class^="wrapper"] + div &:hover {
+				width: var(--sidebar-width) !important;
+			}
+		}
+		nav[class^="wrapper"] div[class^="scroller"] {
+			box-shadow: inset -1px 0 var(--background-modifier-accent);
+		}
+
+		// Settings
+		div[aria-label$="SETTINGS"] div[class^="sidebarRegion"]:not(:hover) {
+			flex: 1 0 16px !important;
+		}
+	}
+	div[class^="sidebar"] { // todo above (media in media)
+		anim();
+	}
+
+	/* Windows titlebar (stolen from Metro for Discord) */
+	/*div[class^="titleBar"] {
+		background-color: var(--background-primary);
+
+		div[class^="wordmarkWindows"] {
+			color: var(--text-normal);
+
+			&::after {
+				content: 'Discord';
+				top: 9px;
+				left: 12px;
+				display: block;
+				position: absolute;
+				font-size: 12px;
+				font-weight: 400;
+				line-height: 15px;
+			}
+
+			svg {
+				display: none;
+			}
+		}
+		&[class*="withFrame"] {
+			height: 28px;
+		}
+		div[role="button"] {
+			width: 45px;
+			height: 32px;
+			color: var(--text-normal);
+		}
+		div[class^="winButtonClose"]:hover {
+			background-color: #e81123;
+		}
+	}*/
+
+	/* No border radius */
+	video,
+	div[class^="imageWrapper"],
+	div[class^="attachment"],
+	div[class^="audioControls"],
+	div[class*="auditLog"],
+	div[class^="unread"] div[class^="bar"],
+	div[class^="blockquote"],
+	div[class*="card"],
+	div[class^="checkbox"],
+	a[class*="container"],
+	div[class^="content"],
+	div[class^="connection"],
+	div[class*="connectedAccount"],
+	div[class^="css"],
+	div[class*="cursorDefault"],
+	[class*="embed"]:not(img),
+	a[class*="embedImage"] img,
+	a[class*="embedImage"] video,
+	a[class*="embedThumbnail"] img,
+	a[class*="embedThumbnail"] video,
+	a[class*="embedVideo"] img,
+	a[class*="embedVideo"] video,
+	div[class^="ghostPill"],
+	div[class^="hasMore"],
+	div[class^="invite"],
+	div[class*="item"],
+	div[class^="jumpButton"],
+	div[class^="layout"],
+	div[class^="markup"] code.inline,
+	div[class^="menu"],
+	div[class^="messageContainer"],
+	div[class^="messageGroup"],
+	div[class*="notDetected"],
+	div[class*="nowPlaying"],
+	div[class^="option"],
+	div[class^="reaction"],
+	div[class^="search"],
+	div[class^="selector"],
+	div[class^="ui-tab-bar-item"],
+	div[class^="userPopout"],
+	div[class^="message"] div[class^="markup"] div[class^="wrapper"],
+	.wrapper-2TxpI8,
+	.mention,
+	.hljs {
+		border-radius: 0 !important;
+	}
+
+	/* More/less compact view */
+	div[class^="connectionDelete"] {
+		top: 16px !important;
+		right: 16px !important;
+	}
+	div[class^="ghostPill"] {
+		padding: 6px 8px !important;
+	}
+	div[class*="auditLog"] > div[class^="header"] {
+		padding: 10px !important;
+	}
+	div[class^="sidebar"] a[href^="/channels/@me"] {
+		padding: 0 !important;
+		margin: 1px 0 0 8px !important;
+	}
+	h2[class^="privateChannelsHeader"] {
+		padding: 12px 6px 4px 12px !important;
+		margin: 8px 0 0 8px;
+	}
+	section[aria-label="User area"] div[class^="container"] + div {
+		height: 50px !important;
+		margin-bottom: 0 !important;
+	}
+	div[class^="peopleColumn"] > div {
+		padding-top: 24px;
+	}
+	div[class^="infoScroller"] {
+		padding: 0 16px !important;
+	}
+	div[class^="grid"] {
+		padding: 0 10px 10px !important;
+	}
+	div[id^="popout"]:not([class^="layer"]) div[class^="container"]:not(#search-results) {
+		padding: 0 !important;
+		margin-top: 16px !important;
+		margin-left: 16px;
+		margin-right: 9px;
+	}
+	div[class^="toolbar"] > div[class^="search"] {
+		margin: 0 2px !important;
+	}
+	button[class*="barButtonBase"] {
+		padding: 0 8px !important;
+	}
+	div[class^="messagesErrorBar"] {
+		padding-bottom: 0 !important;
+	}
+
+	/* Header blur */
+	/*.theme-light {
+		--background-header-primary: #fafbfc80;
+		--background-header-secondary: #f7f8f980;
+	}
+	.theme-dark {
+		--background-header-primary: #11112280;
+		--background-header-secondary: #1f1d3e80;
+	}
+
+	div[class^="sidebar"] header,
+	div[class^="chat"] > section {
+		position: absolute !important;
+		background-color: var(--background-header-primary) !important;
+		backdrop-filter: blur(36px);
+	}
+	div[class^="sidebar"] {
+		header {
+			width: 100%;
+		}
+		[class*="hasBanner"] {
+			div[class^="container"]:not(&) ~ #channels div[style="height: 84px;"] {
+				height: 135px !important;
+			}
+			& ~ #channels > div,
+			& > nav > div& {
+				& > header {
+					background-color: transparent !important;
+					backdrop-filter: none;
+				}
+				& > div {
+					margin-top: 0 !important;
+				}
+			}
+		}
+	}
+	div[class^="sidebar"] #channels > div,
+	div[class^="sidebar"] div:not([class*="hasBanner"]) > header + div,
+	div[class^="sidebar"] div[class^="unreadTop"],
+	#messagesNavigationDescription + div,
+	main + section,
+	div[class^="chat"] > div > div:not([class^="root"]) {
+		margin-top: 48px;
+	}
+	div[class^="newMessagesBar"] {
+		top: 48px !important;
+		border-radius: 0 0 4px 4px !important;
+	}
+	div[class^="chat"] > div::before {
+		top: 47px !important;
+	}
+
+	/* Channels */
+	/*div[class*="modeSelected"] div[class^="content"],
+	a[class*="container"][class*="selected"],
+	div[class^="side"] [class^="item"][class*="selected"],
+	div[class*="selected"] div[class^="layout"],
+	#bd-settings-sidebar .ui-tab-bar-item.selected {
+		background-color: var(--background-modifier-selected) !important;
+		color: var(--interactive-active) !important;
+		box-shadow: inset 2px 0 0 var(--logo-primary);
+	}*/
+	$chat-header = 0;
+	#private-channels,
+	div[class^="sidebar-"] > *,
+	div[class^="sidebarRegionScroller-"] {
+		box-shadow: inset -1px 0 var(--accent-border);
+	}
+
+	// Chat
+	#channels {
+		&::-webkit-scrollbar,
+		div[class^="unread"] {
+			display: none;
+		}
+
+		div[class^="iconVisibility"]:not([class*="clickable"]) {
+			padding: 0 !important;
+
+			& > div {
+				margin-left: 0 !important
+			}
+
+			div[class^="name"] {
+				font-size: 14px !important;
+			}
+
+			&:not([class*="mode"]) a:hover div[class^="name"] {
+				color: var(--interactive-normal) !important;
+			}
+
+			&[class*="modeSelected"] > div {
+				box-shadow:
+					inset 1px 0 var(--accent-border),
+					0 -1px var(--accent-border),
+					0 1px var(--accent-border);
+
+				a {
+					cursor: default !important;
+				}
+
+				svg {
+					color: var(--interactive-active) !important;
+				}
+			}
+
+			&[class*="modeUnread"] {
+				svg, div {
+					color: var(--hl) !important;
+				}
+			}
+		}
+
+		div[class^="voiceUser"][class*="selected"] > div {
+			box-shadow:
+				inset 1px 0 var(--accent-border),
+				0 -1px var(--accent-border),
+				0 1px var(--accent-border);
+		}
+
+		if channels-compact {
+			a {
+				padding: var(--channels-padding) 0 !important;
+			}
+
+			div[class^="list-"] {
+				padding-left: 16px !important;
+
+				& > div, & > div > div {
+					height: 28px !important;
+				}
+			}
+
+			div[class^="iconVisibility"]:not([class*="clickable"]) svg {
+				box(16px);
+			}
+		}
+	}
+
+	// Settings
+	div[aria-label$="SETTINGS"] div[class^="sidebarRegionScroller"] {
+		&::-webkit-scrollbar {
+			display: none;
+		}
+
+		& > nav {
+			padding-right: 0 !important;
+		}
+
+		div[class^="item"] {
+			if channels-compact {
+				margin-bottom: 0 !important;
+			}
+
+			&:hover, &:active {
+				color: var(--interactive-normal) !important;
+			}
+
+			&[aria-selected="true"] {
+				box-shadow:
+					inset 1px 0 var(--accent-border),
+					0 -1px var(--accent-border),
+					0 1px var(--accent-border);
+
+				&:hover {
+					background-color: var(--background-primary) !important;
+				}
+			}
+		}
+	}
+
+	/* Chat header (move?) */
+	div[class^="sidebar-"] {
+		& > nav {
+			box-shadow: none;
+		}
+		div[class^="scroller"] {
+			box-shadow: inset -1px 0 var(--accent-border);
+		}
+	}
+	div[class^="sidebar-"] + div > section {
+		background-color: var(--background-secondary) !important;
+		box-shadow: 0 1px var(--accent-border);
+	}
+
+	/**
+	 * Popup
+	**/
+
+	/* Transparent background and blur, to rewrite? */
+	/*:root {
+		--background-floating: var(--bg-tr) !important;
+	}
+
+	div[role="dialog"]:not([class]) > div,
+	div[aria-label="Pinned Messages"] div[class^="header"],
+	div[aria-label="Recent Mentions"] div[class^="header"] {
+		background-color: var(--background-transparent-primary) !important;
+	}
+	div[class^="messageGroupWrapper"],
+	div[class^="messageContainer"],
+	div[class^="channelTextArea"] > div[class^="autocomplete"] {
+		background-color: var(--background-transparent-secondary) !important;
+	}
+	div[class^="channelHeader"] {
+		background-color: var(--background-transparent-secondary-alt) !important;
+	}
+	div[class^="messageGroupWrapper"] {
+		border-color: var(--background-transparent-secondary) !important;
+	}
+	div[class^="unreadTop"] > div,
+	div[class*="tooltipPrimary"] {
+		opacity: 1 !important;
+		background-color: var(--background-floating) !important;
+		backdrop-filter: blur(12px);
+	}
+	div[class^="unreadTop"] > div {
+		color: var(--text-normal) !important;
+	}
+	div[class^="userPopout"],
+	div[class^="autocomplete"],
+	div[class^="root"]:not([class*="rolesList-"]),
+	div[class^="menu"] {
+		backdrop-filter: blur(24px);
+	}
+	div[class^="bodyInnerWrapper"] {
+		background-color: transparent !important;
+	}
+
+	/* Recent mentions */
+	/*.theme-dark div[aria-label="Inbox"] svg {
+		background-size: 24px !important;
+
+		&:hover {
+			filter: brightness(1.25);
+		}
+
+		path {
+			display: none;
+		}
+	}
+	.theme-light div[aria-label="Inbox"] svg {
+		background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/Pgo8IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDIwMDEwOTA0Ly9FTiIKICJodHRwOi8vd3d3LnczLm9yZy9UUi8yMDAxL1JFQy1TVkctMjAwMTA5MDQvRFREL3N2ZzEwLmR0ZCI+CjxzdmcgdmVyc2lvbj0iMS4wIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciCiB3aWR0aD0iMzIuMDAwMDAwcHQiIGhlaWdodD0iMzIuMDAwMDAwcHQiIHZpZXdCb3g9IjAgMCAzMi4wMDAwMDAgMzIuMDAwMDAwIgogcHJlc2VydmVBc3BlY3RSYXRpbz0ieE1pZFlNaWQgbWVldCI+CjxtZXRhZGF0YT4KQ3JlYXRlZCBieSBwb3RyYWNlIDEuMTYsIHdyaXR0ZW4gYnkgUGV0ZXIgU2VsaW5nZXIgMjAwMS0yMDE5CjwvbWV0YWRhdGE+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDAuMDAwMDAwLDMyLjAwMDAwMCkgc2NhbGUoMC4xMDAwMDAsLTAuMTAwMDAwKSIKZmlsbD0iIzAwMDAwMCIgc3Ryb2tlPSJub25lIj4KPC9nPgo8L3N2Zz4K);
+	}
+	.theme-dark div[aria-label="Inbox"] svg {
+		background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAOSSURBVFhH7ZbLTxNBHMfRblu2D6iglJaXhrcEjcEHiaDESDwYDyY+jhr04NFXoiaeNR4k/gFqOJkIFy960YOKGiQaIQR5lShSCi0CbbfvBzjfcQfX7i4tBk7ySZrfzG+38/vO7G9+M1kb/PdsEm1GjI6Nl8VisduCEDiVTCb1wVCIh99oMIS1Oq2Xz87u0ev17dVVFe/oHzIgIwEI7Pf7X83NL1SIrhXJz9viyMnJOVpVWT4hulRJK2BgcOihx+NpSySS9F2LJXfGYDA813Lcy5rqyqfwDY+MnY0nEq2hUOi41+srhI/jNEt2W+HV2prqB+irsaIABHe5pi+gjcCW3NzT6ZZ3ZNTR5PX5upgQu932qL6u9iJ9qICqgMGvw3edU66baKcbRIm+/oHXbs/sYbRLS4quqK2EogB880mn8xuW3VZofbarvu6k+GhVMBH4HCXFxTuUckJRwKfPXxwk4cqx7Af2NdhE9zIYOByO7PYLggU7wGQyfiSBWvDsWOuRv8b80NO7QHaNhSTm+N6GPbIk3izaZTB7BEcb35w6JXS/7wlhVgiOPrYiC65Efl7eCViMibGpU4JMQCQSod8Ks09NOMycZDqv0WiW8F0xW1j0xVdkYAyMhTYbW4pMQDgSaYQ1GY0d1CFBCAT3wxbZ/2wvWJIn99BWA9sWNhAMylZKLiAc3gpLZtVHHRIwe9jUjK7bWXNLbCqCmgG7mFzUU4cEmYBoNMbBsiKzFrCxWOmWIhOwHiglH0MmQK/XJWBRXqljDYjH45dgSS6EqUOCTIBOpwvAorZThwQ2wNDwyGXqEEHVFJuy2aI/+3PuOtpkNzyhTgkyAQae74eNRiKyjDWbjL2wrumZdiYCdsbtvoE2mJub78N5gB8Rdoe864hGoxzEK5VzWSXEH79P/OhGe3tZaXNqLUAhYrtBCgKQQNnkniAbE8+sBdtqlUqxbAWkhYOcap3UKaH5YKOBDPbGbDZ50UfOoA9/SXHRIZRc+iIBgXGQ4Zna3UDxLMAqTDqn3mI2/3ISrgbFbYhVsFoLHqON+wDuBfTBOqC4AoyUC8k0OZzOpOZEKuKFpDMei1uayNKLblVWFAAgwu32tLHkwn2P5/kujuNeMDEISvb6OXLYtLB7Iw4o6ZmhRloBAAEEQehgx3Q6kIhms/l8utUCGQlgQAjZatdwYpJLhpWtCrJdp9P6xGv5/UwCb7DBb7KyfgEl+bkEE7CzgAAAAABJRU5ErkJggg==)
+	}*/
+
+	div[aria-label="Recent Mentions"] {
+		// Remove elements
+		div[class^="tabBar"] div[class^="tab"]:last-child,
+		div[data-list-id="recents"] + div {
+			display: none;
+		}
+
+		// Return old header
+		div[class^="header"] {
+			box-shadow: var(--elevation-low) !important;
+		}
+		div[class^="tab"][class*="active"] {
+			height: unset !important;
+			margin: 0 !important;
+			padding: 0 !important;
+			letter-spacing: -9999px;
+			color: transparent !important;
+			background-color: transparent !important;
+
+			&::after {
+				content: 'Recent Mentions';
+				letter-spacing: 0 !important;
+				color: var(--header-primary);
+			}
+		}
+	}
+	/*div[class^="channelHeader"] {
+		box-shadow: var(--elevation-low);
+		padding-right: 16px;
+		position: unset !important;
+	}*/
+
+	/* Menu children in parent
+	 * causes massive lag..what ? ? */
+	/*div[aria-activedescendant] div[class^="layer"] {
+		&[style*="position: fixed"] {
+			position: unset !important;
+
+			div[role="menu"] {
+				box-shadow: none !important;
+				background: none !important;
+				width: calc(100% + 8px);
+			}
+			& > div[role="menu"] > div,
+			& > div {
+				padding: 0 !important;
+			}
+			& > div {
+				padding-left: 8px;
+			}
+			& > div[class^="submenuPadding"] div[class^="scroller"] {
+				padding: 6px 0 !important;
+			}
+			div[class^="scroller"] {
+				div[class^="item"] {
+					width: calc(100% - 12px);
+					left: 6px;
+				}
+				div[class^="separator"] {
+					margin: 8px !important;
+				}
+			}
+		}
+		&[style*="position: absolute"] div[class^="submenuContainer"] + div {
+			border-top: 2px solid var(--background-modifier-accent);
+			padding-top: 16px;
+		}
+	}
+	#guild-header-popout {
+		top: 52px;
+	}
+
+	/* Vivaldi-like modals (and menu) (quickswitcher for now) */
+	:root {
+		--deprecated-quickswitcher-input-background: var(--bg) !important;
+		--deprecated-quickswitcher-input-placeholder: var(--text-muted) !important;
+	} // #e5d7da def
+
+	div[id^="popout"], // recent mention etc
+	#app-mount > div[class^="popouts"] > div,
+	div[class^="layerContainer"] > div > div[role="menu"],
+	div[class^="layer"] div[class^="animatorRight"] {
+		dropfade();
+	}
+
+	div[class^="backdrop"] {
+		opacity: 0 !important;
+
+		& ~ div div[aria-modal]:not([class^="inner"]) > div,
+		& + div div[class^="quickswitcher"],
+		& + div div[class^="uploadModal"] {
+			background-color: var(--background-floating) !important;
+			box-shadow: var(--elevation-high) !important;
+			dropfade();
+		}
+		& + div div[style^="opacity: 0"],
+		& + div div[style^="opacity: 1"] {
+			opacity: 1 !important;
+		}
+	}
+
+	// fix for "open original"
+	div[class^="layer"] div[class^="imageWrapper"] + a {
+		color: var(--text-link) !important;
+		opacity: 1 !important;
+
+		&:not(:hover) {
+			text-decoration: none;
+		}
+	}
+
+	div[class^="quickswitcher"] {
+		$qs-result-height = 28px;
+		$qs-padding-h = 10px;
+
+		border-radius: 0 !important;
+		padding: 0 !important;
+
+		input {
+			border-bottom: 1px solid var(--background-tertiary);
+			border-radius: 0 !important;
+			box-shadow: none !important;
+			padding: 15px 12px 12px 40px;
+			text-overflow: ellipsis;
+
+			&:focus {
+				border-bottom-color: var(--hl) !important;
+				box-shadow: 0 1px var(--hl) !important;
+			}
+		}
+
+		div[class^="scroller"] {
+			margin: 0 !important;
+
+			& > div {
+				height: auto !important;
+			}
+		}
+
+		div[class^="result"] {
+			border-radius: 0 !important;
+			height: $qs-result-height !important;
+
+			& > div {
+				padding: 0 !important;
+				height: $qs-result-height !important;
+				line-height: $qs-result-height !important;
+			}
+
+			&[role="button"] > div {
+				div[class^="iconContainer"] {
+					margin-left: $qs-padding-h;
+				}
+
+				div[class^="misc-"] {
+					margin-right: $qs-padding-h;
+				}
+			}
+
+			div[class^="header"] {
+				border-bottom: 1px solid var(--background-tertiary);
+				padding: 6px 6px 5px 12px;
+				margin-top: 0 !important;
+				width: 100%;
+				line-height: ($qs-result-height - 12px) !important;
+				cursor: default;
+			}
+		}
+
+		div[class^="resultFocused"] {
+			background-color: var(--hl) !important;
+
+			svg, span, div[class^="misc-"] {
+				color: #fff !important; // for now
+			}
+		}
+
+		div[style="height: 15px;"] {
+			display: none;
+		}
+	}
+
+	/**
+	 * Chat
+	**/
+
+	/* Avatars */
+	// Custom rounded corners
+	div[class^="avatar"] > div[class^="wrapper"],
+	div[aria-modal] div[class^="avatar-"],
+	div[class^="avatarUploaderInner"]:not([class*="Square"]),
+	div[class^="avatarHintInner"],
+	img[class^="replyAvatar"],
+	img[class^="avatar-"] {
+		border-radius: var(--avatar-border-radius) !important;
+	}
+	foreignObject[mask^="url(#svg-mask-avatar-status-mobile"],
+	foreignObject[mask^="url(#svg-mask-avatar-status-round"],
+	foreignObject[mask="url(#svg-mask-avatar-default)"],
+	div[class^="avatar"] > svg[class^="mask"] > foreignObject {
+		mask: none !important;
+		border-radius: var(--avatar-border-radius);
+	}
+	div[class^="userPopout"] div[class^="avatarWrapperNormal"] {
+		& > div {
+			border-width: var(--stroke-size) !important;
+		}
+
+		& > svg {
+			top: var(--stroke-size) !important;
+			left: var(--stroke-size) !important;
+		}
+	}
+	rect[mask^="url(#svg-mask-status"]:not([mask$="mobile)"]),
+	div[class^="avatar"] rect { // GAY
+		rx: 50%; ry: 50%;
+		stroke: var(--background-floating);
+		stroke-width: var(--stroke-size);
+
+		div[class^="userPopout"] & {
+			x: 64; y: 64;
+			stroke-width: calc(var(--stroke-size) * 1.5);
+		}
+
+		div[aria-label="User Profile Modal"] & {
+			x: 98; y: 98;
+			stroke-width: calc(var(--stroke-size) * 2);
+		}
+	}
+
+	// Status border
+	if avatar-status-border {
+		div[class^="avatar-"], div[class^="avatar-"] > div[class^="wrapper"] {
+			// Size
+			div[aria-label="Members"] &, div[data-list-id="people"] &, #private-channels &, section & {
+				--avatar-border-size: 2px;
+			}
+			div[class^="userPopout"] &, div[aria-label="User Profile Modal"] &, div[class^="accountProfileCard"] & {
+				--avatar-border-size: 6px;
+			}
+
+			// Color
+			--avatar-border-color: @css { hsl(214, calc(var(--saturation-factor, 1) * 9.9%), 50.4%); }
+			&[aria-label$="Online"], &[aria-label$="mobile"] {
+				--avatar-border-color: @css { hsl(139, calc(var(--saturation-factor, 1) * 47.3%), 43.9%); }
+			}
+			&[aria-label$="Idle"] {
+				--avatar-border-color: @css { hsl(38, calc(var(--saturation-factor, 1) * 95.7%), 54.1%); }
+			}
+			&[aria-label$="Disturb"] {
+				--avatar-border-color: @css { hsl(38, calc(var(--saturation-factor, 1) * 95.7%), 54.1%); }
+			}
+
+			// Border
+			border: var(--avatar-border-size) solid var(--avatar-border-color);
+
+			rect {
+				display: none;
+			}
+		}
+
+		// Fixes
+		div[class^="avatar-"] {
+			div[aria-label="Members"] &, #private-channels & {
+				border: none !important;
+				width: 36px !important;
+			}
+			div[data-list-id="people"] &, section & {
+				border-radius: var(--avatar-border-radius) !important;
+			}
+		}
+	}
+
+	/* Timestamp (lol) / separator */
+	div[data-list-id="chat-messages"] > div[class^="message"],
+	div[class^="preview"] > div {
+		span[class*="timestampVisibleOnHover"]:not(:hover) {
+			opacity: .25 !important;
+		}
+
+		&[class*="groupStart"] {
+			span[class*="timestamp"]:not(:hover) {
+				opacity: 1 !important;
+			}
+
+			& + div:not([class*="groupStart"]) {
+				span[class*="timestampVisibleOnHover"]:not(:hover) {
+					opacity: .75 !important;
+				}
+
+				& + div:not([class*="groupStart"]) {
+					span[class*="timestampVisibleOnHover"]:not(:hover) {
+						opacity: .5 !important;
+					}
+
+					& + div:not([class*="groupStart"]) {
+						span[class*="timestampVisibleOnHover"]:not(:hover) {
+							opacity: .25 !important;
+						}
+					}
+				}
+			}
+		}
+
+		h2 span {
+			margin-right: 0 !important;
+
+			&:not(:hover) {
+				color: var(--text-muted) !important;
+				filter: none !important;
+			}
+		}
+
+		i {
+			position: unset !important;
+			opacity: unset !important;
+			display: unset !important;
+		}
+	}
+
+	/* Member list */
+	h2[class^="membersGroup"] {
+		padding: 0 !important;
+		padding-top: 16px !important;
+		height: 36px !important;
+		margin-left: 16px;
+
+		&:not(:first-of-type) {
+			border-top: 1px solid var(--background-secondary-alt);
+			margin-top: 12px;
+		}
+	}
+
+	/* Message box */
+	div[class^="channelTextArea"] > div {
+		padding-right: 8px;
+
+		&::-webkit-scrollbar {
+			display: none;
+		}
+	}
+	button[class^="attachButton"] {
+		height: 100% !important;
+		padding: 10px var(--textarea-button-space) !important;
+		margin-right: var(--textarea-button-space);
+		border-right: 1px solid transparent;
+	}
+	button[aria-label="Open GIF picker"] > div {
+		padding: 10px var(--textarea-button-space);
+		padding-right: 0;
+		margin-left: 0 !important;
+		border-left: 1px solid transparent;
+	}
+	button[class^="attachButton"],
+	button[aria-label="Open GIF picker"] div {
+		border-image: linear-gradient(
+				transparent 15%,
+				var(--background-primary) 15%,
+				var(--background-primary) 85%,
+				transparent 85%
+		) 1;
+	}
+
+	/**
+	 * etc
+	**/
+
+	/* Search */
+	div[class^="toolbar"] > div[class^="search"] {
+		order: -1;
+
+		div[class^="searchBar"] {
+			width: 240px !important;
+			anim();
+
+			&:not(:hover) {
+				background-color: transparent !important;
+				width: 28px !important;
+			}
+		}
+
+		div[class^="iconContainer"] {
+			box(20px);
+			stroke: var(--interactive-normal);
+
+			svg {
+				color: var(--interactive-normal) !important;
+			}
+		}
+	}
+
+	/* Gradient */
+	div[role="menu"] > div {
+		border-top: 2px solid;
+		border-image: linear-gradient(
+			to right,
+			var(--accent),
+			var(--accent-border)
+		) 1;
+	}
+
+	/* Codeblock information (stolen from gk) */
+	code.hljs:not(.inline)::before {
+		content: attr(class) !important;
+		float: right;
+		display: block;
+		width: auto;
+		max-width: 5.3rem !important;
+		min-width: auto;
+		margin-top: -8.2rem !important;
+		line-height: 1.6rem !important;
+		overflow-x: hidden;
+		text-align: right;
+		font-size: 0.8rem;
+	}
+
+	/* Calls */
+	div[class^="participantsWrapperAnimated"] {
+		display: none;
+	}
+	div[class^="callContainer"] > div > div {
+		padding-right: 8px !important;
+	}
+
+	/* Inconsistencies */
+	div[class^="sidebar"] > section > div[class^="wrapper"] > div {
+		border-bottom: 1px solid var(--background-tertiary) !important;
+	}
+	h2[class^="privateChannelsHeader"] {
+		border-top: 1px solid var(--background-modifier-accent);
+	}
+	div[class^="embedWrapper"] {
+		border-left-width: 2px !important;
+	}
+	main > div > div[class*="barBase"] {
+		left: 0 !important;
+		border-radius: 0 !important;
+	}
+	button[class^="button"][class*="enabled"]:hover {
+		background-color: unset !important;
+	}
+	div[class^="layer-"] > div[class^="tooltip"] {
+		box-shadow: var(--elevation-medium) !important;
+	}
+	div[class^="repliedMessage"]::before {
+		border-radius: 0 !important;
+	}
+	.emoji.jumboable {
+		$emoji-size = 1.975em;
+		width: $emoji-size;
+		height: $emoji-size;
+		min-height: $emoji-size;
+	}
+}

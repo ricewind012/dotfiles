@@ -1,0 +1,47 @@
+!! mountaineer
+*.background: #000000
+*.foreground: #cccccc
+
+*.color0:	#666666
+*.color8: #191919
+
+*.color1:  #AC8A8C
+*.color9:  #C49EA0
+
+*.color2:  #8AAC8B
+*.color10: #9EC49F
+
+*.color3:  #ACA98A
+*.color11: #C4C19E
+
+*.color4:  #8F8AAC
+*.color12: #A39EC4
+
+*.color5:  #AC8AAC
+*.color13: #C49EC4
+
+*.color6:  #8AABAC
+*.color14: #9ec3c4
+
+*.color7:  #e7e7e7
+*.color15: #f5f5f5
+
+! other
+#define FONT Yutapon coding Bold
+#define FONT_SIZE 12
+#define PAD 24
+
+*.fn: FONT
+*.fs: FONT_SIZE
+
+*.bg2: #000000
+*.fg2: #666666
+*.border: #3b3b3b
+
+*.hl: #1488ff
+*.hf: #ffffff
+
+*.ac: #cccccc
+*.ab: #cccccc
+
+! vim: ft=xdefaults

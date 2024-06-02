@@ -1,0 +1,48 @@
+! mountaineer light
+*.foreground: #000000
+*.background: #ffffff
+
+*.color0:  #808080
+*.color8:  #000000
+
+*.color1:  #a31515
+*.color9:  #a31515
+
+*.color2:  #098658
+*.color10: #098658
+
+*.color3:  #74531f
+*.color11: #74531f
+
+*.color4:  #0070c1
+*.color12: #0070c1
+
+*.color5:  #2b91af
+*.color13: #2b91af
+
+*.color6:  #8f08c4
+*.color14: #8f08c4
+
+*.color7:  #000000
+*.color15: #808080
+
+! other
+#define FONT Terminus
+#define FONT_SIZE 9
+#define PAD 8
+#define NO_AA
+
+*.fn: FONT
+*.fs: FONT_SIZE
+
+*.bg2: #f0f0f0
+*.fg2: #999999
+*.border: #bfbfbf
+
+*.hl: #252525
+*.hf: #ffffff
+
+*.ac: #e1e4e8
+*.ab: #252525
+
+! vim: ft=xdefaults

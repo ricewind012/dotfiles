@@ -1,0 +1,9 @@
+.view-line::before {
+	content: '';
+
+	position: absolute;
+	left: 80ch;
+	height: 100%;
+
+	border-left: 1px solid CanvasText;
+}

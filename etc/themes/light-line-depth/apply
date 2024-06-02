@@ -1,0 +1,69 @@
+#!/bin/sh
+eval "$(xrescolors)"
+
+# WM-specific options
+[ "$wm" ] || {
+	id=$(xprop -root -notype _NET_SUPPORTING_WM_CHECK)
+	id=${id##* }
+	wm=$(xprop -id "$id" -notype _NET_WM_NAME)
+	wm=${wm#*\"}
+	wm=${wm%\"*}
+}
+
+case $wm in
+	bspwm)
+		_() bspc config "$@"
+		for i in top bottom left right; do
+			_ ${i}_padding 0
+		done
+		_ window_gap 0
+		_ border_width 0
+		_ normal_border_color ""
+		_ focused_border_color ""
+	;;
+
+	berry)
+		_() berryc "$@"
+
+		_ title_height 24
+		_ draw_text false
+		_ set_font "$fn"
+		_ text_focus_color "$foreground"
+		_ text_unfocus_color "$fg2"
+
+		_ border_width 0
+		_ inner_border_width 0
+		_ focus_color "$ab"
+		_ unfocus_color "$background"
+		_ inner_focus_color "$ac"
+		_ inner_unfocus_color "$background"
+	;;
+
+	herbstluftwm)
+		_() herbstclient attr "$@"
+
+		_ theme.title_height 0
+		_ theme.title_color "#ffffff"
+		_ theme.title_font "LINE Seed JP_TTF:pixelsize=18"
+
+		_ theme.padding_left 0
+		_ theme.padding_top 19
+		_ theme.padding_right 0
+		_ theme.padding_bottom 0
+
+		_ theme.border_width 4
+		_ theme.inner_width 1
+		_ theme.outer_width 1
+		_ theme.normal.color "#25252540"
+		_ theme.active.color "#06c75580"
+		_ theme.normal.inner_color "#25252580"
+		_ theme.normal.outer_color "#25252580"
+		_ theme.active.inner_color "#048538"
+		_ theme.active.outer_color "#048538"
+	;;
+esac
+
+# Wallpaper
+. "$XDG_CONFIG_HOME/user-dirs.dirs"
+xwallpaper --zoom "$XDG_PICTURES_DIR/wal/light/nahida/b47100261f262c021e33bbd815fd2c977b69bb9c.jpg"
+xsetroot -solid "$background"

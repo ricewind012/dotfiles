@@ -1,0 +1,231 @@
+/* ==UserStyle==
+@name           Global rules
+@namespace      github.com/openstyles/stylus
+@version        1.0.0
+@description    A new userstyle
+@author         Me
+==/UserStyle== */
+
+/**
+ * Colors
+ * have to change transparent colors because stylus sucks
+ *
+ * I.   Settings
+ * II.  Background
+ * III. Text
+ * IV.  Scrollbar
+ * V.   Colorscheme
+ * VI.  Other
+ * VII. Global
+ *
+**/
+@media (prefers-color-scheme: light) { :root {
+	--bg-brightness: 3%;
+	--mute-factor: 3;
+
+	--bg: hsl(0, 0%, 100%);
+	--bg2: hsl(0, 0%, calc(100% - var(--bg-brightness)));
+	--bg3: hsl(0, 0%, calc(100% - (var(--bg-brightness) * 2)));
+	--bg4: hsl(0, 0%, calc(100% - (var(--bg-brightness) * 3)));
+	--bg-tr: hsla(0, 0%, 100%, .75);
+	--bg-tr2: hsla(0, 0%, 100%, .5);
+	--bg-tr3: hsla(0, 0%, 100%, .25);
+
+	--text: hsl(0, 0%, 15%);
+	--text-muted: hsl(0, 0%, calc(15% * var(--mute-factor)));
+	--text-muted2: hsl(0, 0%, calc(15% * (var(--mute-factor) * 2)));
+	--text-link: hsl(210, 100%, 54%);
+
+	--colorFg: var(--text);
+	--colorBg: var(--bg2);
+	--colorBgDark: hsl(0, 0%, calc(100% - (var(--bg-brightness) * 3)));
+	--colorBorder: hsl(0, 0%, calc(100% - (var(--bg-brightness) * 6)));
+	--colorBorderIntense: hsl(0, 0%, calc(100% - (var(--bg-brightness) * 10)));
+
+	--colorscheme-saturation: calc(var(--saturation-factor) * 11%);
+	--colorscheme-saturation-2: calc(var(--colorscheme-saturation) + 7%);
+	--colorscheme-brightness: 43%;
+	--colorscheme-brightness-2: calc(var(--colorscheme-brightness) + 8%);
+	/* */
+	--color1:  hsl(357, var(--colorscheme-saturation), var(--colorscheme-brightness));
+	--color9:  hsl(357, var(--colorscheme-saturation-2), var(--colorscheme-brightness-2));
+	--color2:  hsl(180, var(--colorscheme-saturation), var(--colorscheme-brightness));
+	--color10: hsl(180, var(--colorscheme-saturation-2), var(--colorscheme-brightness-2));
+	--color3:  hsl(55, var(--colorscheme-saturation), var(--colorscheme-brightness));
+	--color11: hsl(55, var(--colorscheme-saturation-2), var(--colorscheme-brightness-2));
+	--color4:  hsl(248, var(--colorscheme-saturation), var(--colorscheme-brightness));
+	--color12: hsl(248, var(--colorscheme-saturation-2), var(--colorscheme-brightness-2));
+	--color5:  hsl(300, var(--colorscheme-saturation), var(--colorscheme-brightness));
+	--color13: hsl(300, var(--colorscheme-saturation-2), var(--colorscheme-brightness-2));
+	--color6:  hsl(180, var(--colorscheme-saturation), var(--colorscheme-brightness));
+	--color14: hsl(180, var(--colorscheme-saturation-2), var(--colorscheme-brightness-2));
+
+	--accent: hsl(203, 66%, 87%);
+	--accent-border: hsl(202, 83%, 74%);
+	--border: hsl(0, 0%, calc(100% - (var(--bg-brightness) * 3)));
+	--hl: var(--text-link);
+	--shadow-clr: rgba(149,157,165,0.2);
+}}
+
+@media (prefers-color-scheme: dark) { :root {
+	--base-hue: 224;
+	--mute-factor: 2;
+
+	--bg: hsl(var(--base-hue), 52%, 6%);
+	--bg2: hsl(var(--base-hue), 52%, 12%);
+	--bg3: hsl(var(--base-hue), 52%, 15%);
+	--bg4: hsl(var(--base-hue), 52%, 19%);
+	--bg-tr: hsla(var(--base-hue), 52%, 6%, .75);
+	--bg-tr2: hsla(var(--base-hue), 52%, 6%, .5);
+	--bg-tr3: hsla(var(--base-hue), 52%, 6%, .25);
+
+	--text: hsl(0, 0%, 80%);
+	--text-muted: hsl(0, 0%, calc(80% / var(--mute-factor)));
+	--text-muted2: hsl(0, 0%, calc(80% / (var(--mute-factor) * 2)));
+	--text-link: hsl(calc(var(--base-hue) - 14), 100%, 54%);
+
+	--colorFg: var(--text);
+	--colorBg: var(--bg2);
+	--colorBgDark: hsl(var(--base-hue), 64%, 10%);
+	--colorBorder: hsl(var(--base-hue), 11%, 21%);
+	--colorBorderIntense: hsl(var(--base-hue), 9%, 27%);
+
+	--colorscheme-saturation: calc(var(--saturation-factor) * 17%);
+	--colorscheme-saturation-2: calc(var(--colorscheme-saturation) + 7%);
+	--colorscheme-brightness: 61%;
+	--colorscheme-brightness-2: calc(var(--colorscheme-brightness) + 8%);
+	/* 7 8 15 16 missing */
+	/*--color1:  hsl(5, 25%, 57%);
+	--color9:  hsl(5, 40%, 67%);*/
+	--color1:  hsl(356, var(--colorscheme-saturation), var(--colorscheme-brightness));
+	--color9:  hsl(357, var(--colorscheme-saturation-2), var(--colorscheme-brightness-2));
+	--color2:  hsl(122, var(--colorscheme-saturation), var(--colorscheme-brightness));
+	--color10: hsl(122, var(--colorscheme-saturation-2), var(--colorscheme-brightness-2));
+	--color3:  hsl(55, var(--colorscheme-saturation), var(--colorscheme-brightness));
+	--color11: hsl(55, var(--colorscheme-saturation-2), var(--colorscheme-brightness-2));
+	--color4:  hsl(249, var(--colorscheme-saturation), var(--colorscheme-brightness));
+	--color12: hsl(248, var(--colorscheme-saturation-2), var(--colorscheme-brightness-2));
+	--color5:  hsl(300, var(--colorscheme-saturation), var(--colorscheme-brightness));
+	--color13: hsl(300, var(--colorscheme-saturation-2), var(--colorscheme-brightness-2));
+	--color6:  hsl(182, var(--colorscheme-saturation), var(--colorscheme-brightness));
+	--color14: hsl(182, var(--colorscheme-saturation-2), var(--colorscheme-brightness-2));
+
+	--accent: hsl(calc(var(--base-hue) + 66), 33%, 10%);
+	--accent-border: hsl(calc(var(--base-hue) + 66), 33%, 22%);
+	--border: hsl(var(--base-hue), 52%, 25%);
+	--hl: var(--text-link);
+	--shadow-clr: rgba(0,0,0,.2);
+}}
+
+:root {
+	--saturation-factor: 1; /* TODO */
+	--trans-dur: 150ms;
+	--shadow-ins: 0 0 0 1px;
+	--shadow-vrt: 0 0 8px var(--shadow-clr);
+	--shadow-low: 0 1px 4px var(--shadow-clr);
+	--shadow-mid: 0 4px 8px var(--shadow-clr);
+	--shadow-big: var(--shadow-mid), 0 28px 48px var(--shadow-clr);
+}
+
+/* Font */
+::placeholder, :not(i) {
+	font-family: Rosemary !important;
+	//font-size: 12pt !important;
+}
+
+pre, #startpage * {
+	font-family: azuki_font !important;
+}
+#stylus * {
+	font-family: azuki_font !important;
+	font-size: 100%;
+}
+#stylus #header {
+	font-size: 90%;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+	width: 16px;
+}
+::-webkit-scrollbar-button {
+	display: flex;
+	width: 16px;
+	height: 16px;
+}
+::-webkit-scrollbar-button:vertical {
+	border-left: 1px solid var(--colorBg);
+}
+::-webkit-scrollbar-button:vertical:decrement {
+	background-image: linear-gradient(transparent 68%, var(--colorBg) 68%), linear-gradient(135deg, var(--colorBg) 45%, transparent 45%), linear-gradient(45deg, var(--colorFg) 53%, var(--colorBg) 53%);
+}
+::-webkit-scrollbar-button:vertical:decrement:hover {
+	background-image: linear-gradient(transparent 68%, var(--colorBgDark) 68%), linear-gradient(135deg, var(--colorBgDark) 45%, transparent 45%), linear-gradient(45deg, var(--colorFg) 53%, var(--colorBgDark) 53%);
+}
+::-webkit-scrollbar-button:vertical:decrement:active {
+	background-image: linear-gradient(transparent 68%, var(--colorFg) 68%), linear-gradient(135deg, var(--colorFg) 45%, transparent 45%), linear-gradient(45deg, var(--colorBg) 53%, var(--colorFg) 53%);
+}
+::-webkit-scrollbar-button:vertical:increment {
+	background-image: linear-gradient(45deg, var(--colorBg) 45%, transparent 45%), linear-gradient(-225deg, transparent 53%, var(--colorBg) 53%), linear-gradient(-180deg, var(--colorBg) 31%, var(--colorFg) 31%);
+}
+::-webkit-scrollbar-button:vertical:increment:hover {
+	background-image: linear-gradient(45deg, var(--colorBgDark) 45%, transparent 45%), linear-gradient(-225deg, transparent 53%, var(--colorBgDark) 53%), linear-gradient(-180deg, var(--colorBgDark) 31%, var(--colorFg) 31%);
+}
+::-webkit-scrollbar-button:vertical:increment:active {
+	background-image: linear-gradient(45deg, var(--colorFg) 45%, transparent 45%), linear-gradient(-225deg, transparent 53%, var(--colorFg) 53%), linear-gradient(-180deg, var(--colorFg) 31%, var(--colorBg) 31%);
+}
+::-webkit-scrollbar-button:horizontal {
+	border-top: 1px solid var(--colorBg);
+}
+::-webkit-scrollbar-button:horizontal:decrement {
+	background-image: linear-gradient(-135deg, transparent 53%, var(--colorBg) 53%), linear-gradient(-45deg, transparent 53%, var(--colorBg) 53%), linear-gradient(90deg, var(--colorFg) 70%, var(--colorBg) 70%);
+}
+::-webkit-scrollbar-button:horizontal:decrement:hover {
+	background-image: linear-gradient(-135deg, transparent 53%, var(--colorBgDark) 53%), linear-gradient(-45deg, transparent 53%, var(--colorBgDark) 53%), linear-gradient(90deg, var(--colorFg) 70%, var(--colorBgDark) 70%);
+}
+::-webkit-scrollbar-button:horizontal:decrement:active {
+	background-image: linear-gradient(-135deg, transparent 53%, var(--colorFg) 53%), linear-gradient(-45deg, transparent 53%, var(--colorFg) 53%), linear-gradient(90deg, var(--colorBg) 70%, var(--colorFg) 70%);
+}
+::-webkit-scrollbar-button:horizontal:increment {
+	background-image: linear-gradient(135deg, transparent 53%, var(--colorBg) 53%), linear-gradient(45deg, transparent 53%, var(--colorBg) 53%), linear-gradient(-90deg, var(--colorFg) 70%, var(--colorBg) 70%);
+}
+::-webkit-scrollbar-button:horizontal:increment:hover {
+	background-image: linear-gradient(135deg, transparent 53%, var(--colorBgDark) 53%), linear-gradient(45deg, transparent 53%, var(--colorBgDark) 53%), linear-gradient(-90deg, var(--colorFg) 70%, var(--colorBgDark) 70%);
+}
+::-webkit-scrollbar-button:horizontal:increment:active {
+	background-image: linear-gradient(135deg, transparent 53%, var(--colorFg) 53%), linear-gradient(45deg, transparent 53%, var(--colorFg) 53%), linear-gradient(-90deg, var(--colorBg) 70%, var(--colorFg) 70%);
+}
+::-webkit-scrollbar-track {
+	background-color: var(--colorBg);
+	background-clip: border-box;
+}
+::-webkit-scrollbar-track:vertical {
+	border-left: 1px solid var(--colorBg);
+	border-right: 1px solid var(--colorBg);
+}
+::-webkit-scrollbar-track:horizontal {
+	border-top: 1px solid var(--colorBg);
+	border-bottom: 1px solid var(--colorBg);
+}
+::-webkit-scrollbar-thumb {
+	background-color: var(--colorBorder);
+	background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+	background-color: var(--colorBorderIntense);
+}
+::-webkit-scrollbar-thumb:active {
+	background-color: var(--colorFg);
+}
+::-webkit-scrollbar-thumb:vertical {
+	border-left: 1px solid transparent;
+	border-right: 1px solid transparent;
+}
+::-webkit-scrollbar-thumb:horizontal {
+	border-top: 1px solid transparent;
+	border-bottom: 1px solid transparent;
+}
+::-webkit-scrollbar-corner,
+::-webkit-scrollbar-resize {
+	background-color: var(--colorBg);
+}

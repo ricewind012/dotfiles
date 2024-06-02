@@ -1,0 +1,13 @@
+#!/bin/sh
+
+case ${1##*.} in wav|aif|aiff) ;; *)
+	cmd='ffmpeg -v warning -i "$1" -f wav -acodec pcm_s16le - |'
+	input=-
+esac
+
+sr=$(ffprobe -v error -select_streams a \
+	-of default=noprint_wrappers=1:nokey=1 \
+	-show_entries stream=sample_rate "$1")
+
+eval $cmd aplay -c 2 -t raw -r "${sr:-44100}" -f s16_le \
+	"${input:-$1}"

@@ -1,0 +1,423 @@
+#!/bin/sh
+#
+# player - a wrapper for foobar2000/mpd/playerctl
+#
+# Depends on:
+# foobar2000 (in PATH)/mpd/playerctl
+# Notifications - sending: notify-send
+# Notifications - getting album: ffprobe/mediainfo/libsndfile
+# Notifications - player image: GTK 3.0
+# Notifications - cover image: 7z/unar and lsar
+# foobar2000 metadata:
+# 1) xdotool
+# 2a) window title: `$if(%ispaused%,Paused,Playing): [%artist% - ][%title]`
+# 2b) foo_np_simple: `$if(%ispaused%,Paused,Playing): [%artist% - ][%title]$crlf()%path%` to $TMPDIR/fb2kmetadata
+export LC_ALL=C
+. "$bin/common.sh"
+
+uppercase() str="$(printf '%c' "${1%${1#?}}" |
+	tr '[:lower:]' '[:upper:]')${1#?}"
+
+geticons() {
+	while IFS='=' read -r p v; do case $p in
+		gtk-icon-theme-name) icons="$v"; break
+	esac; done < "$confdir/gtk-3.0/settings.ini"
+
+	case "$(uname)" in
+		Linux) osdir='/usr/share';;
+		*BSD*) osdir='/usr/local/share';;
+	esac
+
+	image="$osdir/icons/$icons/64x64/apps/$player.svg"
+	[ -f "$image" ] || image="$osdir/pixmaps/$player.png"
+	echo $image
+}
+
+getfile() {
+	testglob "$file" = *\|* && file="${file%%\|*}"
+	file="$(printf '%s' "$file" | sed \
+		-e 's/\\/\//g' \
+		-e 's/C:\/users/\/home/' \
+		-e "s/Z:\/home\///"
+	)"
+
+	case $file in
+		*'My Documents'*) file="$HOME/${file##*Documents/}";;
+		$USER*) file="$HOME/${file#$USER/}";;
+	esac
+
+	: "${file:=$(winepath "$file" 2>/dev/null)}"
+}
+
+getstatus() {
+	case $player in
+		foobar2000)
+			if [ $component ]; then
+				status="${meta%%: *}"
+				status="${status#???}"
+			else
+				case $foobarwinname in
+					foobar2000) status=Stopped;;
+					Playing*) status=Playing;;
+					Paused*) status=Paused;;
+				esac
+			fi
+		;;
+
+		mpd)
+			while IFS='[]' read -r _ mstat _; do case $mstat in
+				playing|paused) status="P${mstat#?}"; break
+			esac; done <<-EOF
+			$(mpc)
+			EOF
+		;;
+
+		*) status="$(playerctl status 2>/dev/null)"
+	esac; : "${status:=Stopped}"
+}
+
+ncmd() {
+	if [ $notification ]; then
+		geticons
+		playerctl metadata mpris:artUrl 2>/dev/null && {
+			image="$(playerctl metadata mpris:artUrl)"
+			image="${image#*file://}"
+		}
+
+		if
+			[ "$musicdir" ] ||
+			[ "$player" = mpd ] ||
+			[ $component ]
+		then
+			# Get the music directory if not provided
+			# ..and if the player is mpd,
+			# or get the file instantly, if otherwise.
+			case $player in
+				mpd)
+					[ ! "$musicdir" ] && {
+						while IFS='"	' read -r p v _; do
+							# avoid eval
+							[ "$p" = music_directory ] && {
+								case $v in
+									'~'*) musicdir="$HOME/${v#??}";;
+									*) musicdir="$v";;
+								esac
+								break
+							}
+						done < "$confdir/mpd/mpd.conf"
+					}; file="$musicdir/$(mpc -f '%file%' current)"
+				;;
+
+				foobar2000) getfile;;
+
+				*)
+					file="$(playerctl metadata xesam:url)"
+					file="${file#*//}"
+				;;
+			esac
+
+			# If the file is an archive, get its cover art
+			mkdir -p "$sdir" 2>/dev/null
+			cd "$sdir" || return
+
+			case $file in *.zip*|*.rar*|*.tar*)
+				file="${file%/*}"
+				#testglob "${file#*/}" = */* && file="${file%/*}"
+				# TODO ^^^ if dir, get the file name again
+				echo $file
+
+				cmd=$(command -v 7z || command -v lsar)
+				case ${cmd##*/} in
+					lsar) cmd=lsar;;
+					7z) cmd='7z l';;
+					*) return
+				esac
+
+				while read -r line; do case $line in *.png|*.jpg)
+					# Unable to use a variable here
+					case $line in *[Cc]over*|*[Ff]ront*|*[Bb]ack*)
+						arimage="$line"
+					esac
+				esac; done <<-EOF
+				$($cmd "$file")
+				EOF
+				arimage=$(printf '%s' "$arimage" |
+					reverse_lines | head -n 1)
+
+				case ${cmd##*/} in
+					lsar) unar -f -D -o "$sdir" "$file" "$arimage";;
+					7z*)
+						arimage=${arimage#*[0-9]  }
+						arimage=${arimage#?????????????}
+						7z -y -o"$sdir" x "$file" "$arimage" >/dev/null
+					;;
+				esac
+
+				image="$sdir/$arimage"
+			esac
+
+			# Get the album
+			# NOTE: doesn't work with foobar and archives
+			for i in ffprobe mediainfo sndfile-info; do
+				mdcmd=$(command -v $i) && break
+			done && case ${mdcmd##*/} in
+				ffprobe)
+					output=$("$mdcmd" "$file" 2>&1)
+					album=$(printf '%s' "$output" | grep -i 'album  ')
+					date=$(printf '%s' "$output" | grep -i 'date  ')
+				;;
+
+				mediainfo)
+					output=$("$mdcmd" "$file")
+					album=$(printf '%s' "$output" | grep 'Album  ')
+					date=$(printf '%s' "$output" | grep 'date  ')
+				;;
+
+				sndfile-info)
+					case $file in
+						*.flac|*.opus|*.ogg|*.wav|*.aif*)
+							output=$("$mdcmd" "$file")
+							album=$(printf '%s' "$output" | grep 'ALBUM=')
+							date=$(printf '%s' "$output" | grep 'DATE=')
+							testglob "$album" = 'Error*' && album=
+						;;
+
+						*) log 'File is of an unimplemented type'
+					esac
+				;;
+			esac && {
+				album=${album#* : }
+				album=${album#*=}
+				date=${date##*[[:space:]]}
+				date=${date#*=}
+				date=${date%%[[:punct:]]*}
+				date=${date%${date#????}}
+			}
+
+			# Get the cover
+			if
+				[ ! "$arimage" ] &&
+				ffmpeg -y -i "$file" "$sdir/cover.jpg" 2>/dev/null
+			then
+				image="$sdir/cover.jpg"
+			elif [ ! "$image" ]; then
+				image="$(find "${file%/*}"/* \
+					-name '*.png' -o -name '*.jpg' | head -n 1)"
+			fi
+			echo $image
+		fi
+
+		[ "$player" != foobar2000 ] && [ "$player" != mpd ] &&
+			uppercase "$player" && player="$str"
+		notify-send -h "string:image-path:$image" "$player" -- \
+			"${metadata:-$artist - ${album:+$album${date:+ ($date)}\n}$title}"
+	else
+		printf '%s\n' "$@"
+	fi
+}
+
+formatmetadata() {
+	nmbr='[0-9]. '
+	prod='[Pp][Rr][Oo][Dd]'
+	desc='[Ii][Nn]?[Dd][Ee][Ss][Cc]'
+	omix='[Oo][Rr][Ii][Gg][Ii][Nn][Aa][Ll] [Mm][Ii][Xx]'
+
+	: '
+	case $player in
+		mpd)
+			case $metadata in *.mp3|*.flac|*.wav) m=${metadata##*/}; esac
+			m=${metadata%%\[$prod*\]}
+			m=${metadata%%\($prod*\)}
+			m=${metadata%%$prod*}
+			m=${metadata%%\[$omix\]}
+			m=${metadata%%\($omix\)}
+			metadata=$m
+		;;
+
+		foobar2000)
+			metadata=${metadata%%\[$prod*\]}
+			metadata=${metadata%%\($prod*\)}
+			metadata=${metadata%%$prod*}
+			metadata=${metadata%%\[$omix\]}
+			metadata=${metadata%%\($omix\)}
+		;;
+
+		*)
+			metadata=${metadata##$nmbr} # wtf
+			metadata=${metadata%%\[$prod*\]}
+			metadata=${metadata%%\($prod*\)}
+			metadata=${metadata%%$prod*}
+			metadata=${metadata%%\[*$desc*\]}
+			metadata=${metadata%%\(*$desc*\)}
+			metadata=${metadata%%\[$omix\]}
+			metadata=${metadata%%\($omix\)}
+			metadata=${metadata%%$omix*}
+		;;
+	esac
+'
+	
+	#case $player in
+	eval metadata=\${$m##nmbr} # wtf
+	eval metadata=\${$m%%\[$prod*\]}
+	eval metadata=\${$m%%\($prod*\)}
+	eval metadata=\${$m%%$prod*}
+	eval metadata=\${$m%%\[*$desc*\]}
+	eval metadata=\${$m%%\(*desc*\)}
+	eval metadata=\${$m%%\[$omix\]}
+	eval metadata=\${$m%%\($omix\)}
+	eval metadata=\${$m%%$omix*}
+	metadata=${metadata%[[:space:]]}
+	[ "$player" = mpd ] && [ "${m##*.}" -ge 3 ] &&
+		m=${m##*/}
+}
+
+getmetadata() {
+	#[ "$status" != Playing ] && die 'Not playing'
+
+	case $player in
+		firefox|chromium)
+			metadata="$(playerctl metadata title)"
+			testglob "$metadata" = "$c "* &&
+				metadata=${metadata#????}
+
+			case $metadata in
+				*' - '*' by '*) metadata="${metadata%% by *}";;
+				#*)
+				#	artist="${metadata##* by }"
+				#	title="${metadata%% by *}"
+				#	metadata="$artist - $title"
+				#;;
+			esac
+		;;
+
+		foobar2000)
+			[ $component ] &&
+				meta="${meta#*: }" ||
+				metadata="${foobarwinname#$status? }"
+
+			artist="${meta%% - *}"
+			title="${meta##* - }"
+		;;
+
+		mpd) metadata="$(mpc -f "$format" current)";;
+		*) metadata="$(playerctl -f '{{artist}} - {{title}}' metadata)"
+			#TODO above
+	esac
+
+	#formatmetadata
+	ncmd "$metadata"
+}
+
+cmd() {
+	[ $notification ] && {
+		geticons
+		ncmd="$ncmd $2"
+	}
+
+	case $player in
+		mpd) cmd=mpc;;
+		foobar2000) cmd=foobar2000;;
+		*) cmd=playerctl;;
+	esac; "$cmd" "$v$1" && $ncmd
+}
+
+args() case $1 in
+	play)
+		getstatus; case $status in
+			Stopped) b=Started;;
+			Paused) b=Resumed;;
+			Playing) die 'Already playing';;
+		esac
+
+		cmd "$1" "$b"
+	;;
+
+	toggle)
+		getstatus; case $status in
+			Stopped) b=Started;;
+			Playing) b=Paused;;
+			Paused) b=Resumed;;
+		esac
+
+		if [ "$player" = foobar2000 ]; then
+			set -e
+			oldwindow=$(xdotool getactivewindow)
+			xdotool search --class foobar2000.exe \
+				windowactivate key End \
+				windowactivate $oldwindow
+		else
+			cmd "$toggle" "$b"
+		fi
+	;;
+
+	pause)
+		getstatus
+		[ "$status" = Paused ] && die 'Already paused'
+		cmd "$1" 'Paused'
+	;;
+
+	prev*) cmd "$previous" 'Previous';;
+	stop) cmd "$1" 'Stopped';;
+	next) cmd "$1" 'Next';;
+	file) getfile && printf '%s\n' "$file";;
+	*) getmetadata
+esac
+
+check() {
+	if mpc 2>&1 | grep -q '^\[p'; then
+		player=mpd
+		toggle=toggle
+		previous=prev
+
+	elif pgrep -x foobar2000.exe >/dev/null; then
+		player=foobar2000
+		toggle=playpause
+		previous=prev
+		v=-
+		if [ -d "$fb2k/user-components/foo_np_simple" ]; then
+			component=1
+			read -r meta < "$TMPDIR/fb2kmetadata"
+			file="$(tail -n 1 "$TMPDIR/fb2kmetadata")"
+		else
+			for i in $(xdotool search --class foobar2000.exe); do
+				n="$(xdotool getwindowname $i)"
+				testglob "$n" = P[la]* && foobarwinname="$n"
+			done
+		fi
+
+	elif playerctl metadata 2>&1 | grep -Eq "$pattern"; then
+		player="$(playerctl -l 2>/dev/null)"
+		player="${player%%.*}"
+		toggle=play-pause
+		previous=previous
+
+	else
+		die 'No players available'
+	fi
+}
+
+main() {
+	: "${sdir:=${TMPDIR:=/tmp}/${0##*/}}"
+	confdir="${XDG_CONFIG_HOME:-$HOME/.config}"
+	datadir="${XDG_DATA_HOME:-$HOME/.local/share}"
+	format='[[%artist% - ]%title%]|%file%'
+	c="$(printf '\342\226\266')"
+	fb2k="$datadir/foobar2000"
+	pattern=".* - .*|^$c"
+
+	while getopts f:p:P:m:nvh opt; do case $opt in
+		f) format=$OPTARG;;
+		p) player=$OPTARG;;
+		P) pattern=$OPTARG;;
+		m) [ -d "$OPTARG" ] && musicdir=$OPTARG;;
+		n) command -v notify-send >/dev/null && notification=1;;
+		v) verbose=1;;
+		[h?]) printf 'Usage: %s [-f format] [-p player] [-P pattern] [-m musicdir] [-nvh] play|pause|toggle/play-pause|stop|next|metadata\n' "${0##*/}" >&2
+					exit 2;;
+	esac; shift $((OPTIND-1)); done
+
+	check && getstatus
+	args "${1:-metadata}"
+}
+
+main "$@"

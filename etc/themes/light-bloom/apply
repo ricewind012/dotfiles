@@ -1,0 +1,74 @@
+#!/bin/sh
+eval "$(xresvars)"
+
+# WM-specific options
+[ "$wm" ] || {
+	id=$(xprop -root -notype _NET_SUPPORTING_WM_CHECK)
+	id=${id##* }
+	wm=$(xprop -id "$id" -notype _NET_WM_NAME)
+	wm=${wm#*\"}
+	wm=${wm%\"*}
+}
+
+fs=$(printf '%d / 0.75\n' "$fs" | bc)
+th=$(printf '%d * %f\n' \
+	"$fs" "${XTerm_scaleHeight:-${URxvt_lineSpace:-1}}" | bc)
+th=${th%.*}
+border_width=4
+transparency=$(css-update-trans)
+
+case $wm in
+	bspwm)
+		_() bspc config "$@"
+		for i in top bottom left right; do _ ${i}_padding 0; done
+		_ window_gap "$internalBorder"
+		_ border_width "$border_width"
+		_ normal_border_color "$bg2"
+		_ focused_border_color "$foreground"
+	;;
+
+	berry)
+		_() berryc "$@"
+
+		_ title_height 24
+		_ draw_text false
+		_ set_font "azukifontBI"
+		_ text_focus_color "$foreground"
+		_ text_unfocus_color "$fg2"
+
+		_ border_width "$(( border_width * 2 )) "
+		_ inner_border_width "$border_width"
+		_ focus_color "$ab"
+		_ unfocus_color "$background"
+		_ inner_focus_color "$ac"
+		_ inner_unfocus_color "$background"
+	;;
+
+	herbstluftwm)
+		_() herbstclient attr "$@"
+
+		_ theme.title_height 0
+		_ theme.title_align center
+		_ theme.title_color "$background"
+		_ theme.title_font "azukifontBI:pixelsize=$fs"
+
+		_ theme.padding_left 24
+		_ theme.padding_top 0
+		_ theme.padding_right 0
+		_ theme.padding_bottom 0
+
+		_ theme.border_width "$border_width"
+		_ theme.inner_width 0
+		_ theme.outer_width "$border_width"
+		_ theme.outer_color "$background"
+		_ theme.normal.color "${foreground}$transparency"
+		_ theme.active.color "${foreground}ff"
+		_ theme.normal.inner_color "${foreground}$transparency"
+		_ theme.active.inner_color "${foreground}ff"
+	;;
+esac
+
+# Wallpaper
+. "$XDG_CONFIG_HOME/user-dirs.dirs"
+xwallpaper --zoom "$XDG_PICTURES_DIR/wal/unsplash/light/markus-spiske-8uYHcI8_jaE-unsplash.jpg"
+xsetroot -solid "$bg2"

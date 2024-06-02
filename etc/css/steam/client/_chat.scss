@@ -1,0 +1,65 @@
+/* Settings */
+$pad: 2px;
+
+// Remove elements
+div[class^="insetshadow"],
+.inviteAnotherFriendButton,
+.ChatMessageEntryVoice,
+div[class^="chatentry_chatEntryActionsContainer"],
+//.OneTab .chatTabSetContainer // The only tab
+{
+	display: none !important;
+}
+
+/* Remove avatars */
+/*.speakerAvatar,
+.speakerStatus {
+	display: none;
+}
+
+.MultiUserChat .msg {
+	padding: $pad 0 !important;
+
+	&:not(.ChatMsgSlashEmote),
+	.speaker {
+		padding-left: $pad !important;
+	}
+}*/
+
+// Tabs
+.ChatTabs {
+	padding-top: 0 !important;
+}
+[class^="chattabs_"] {
+	@include child-attr("CloseButton") {
+		display: none $i;
+		transform: none $i;
+
+		line {
+			stroke: $text-muted $i;
+		}
+	}
+
+	@include child-attr("CloseButton", "&:hover") {
+		display: flex $i;
+
+		line {
+			stroke: $text $i;
+		}
+	}
+
+	@include child-attr("ChatTab_") {
+		border-radius: 0 $i;
+		height: unset $i;
+
+		@include child-attr("ChatRoomName") {
+			color: $text $i;
+		}
+	}
+}
+.ChatRoomGroupAvatar.Smaller {
+	@include box(16px, true);
+}
+
+// fuck off
+//.avatarHolder { display: none $i; } .labelHolder { margin-left: 0 $i; }

@@ -1,0 +1,452 @@
+/* ==UserStyle==
+@name           stackexchange.com - 10/31/2021, 3:59:50 PM
+@namespace      github.com/openstyles/stylus
+@version        1.0.0
+@description    A new userstyle
+@author         Me
+
+@preprocessor stylus
+==/UserStyle== */
+
+@keyframes dropfade {
+	0% {
+		opacity: 0;
+		transform: translateY(-10px);
+	}
+
+	100% {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+$small-screen = 768px
+$select-size = 16px
+$input-h = 28px
+$i = !important
+
+// Stylus
+svar(var) {
+	s('var(--%s)', var);
+}
+
+color-a(n, bright = true) {
+	s = bright ? -2 : null;
+	n = n > 6 ? n - 8 : n;
+
+	s('hsla(var(--color%s-h),	var(--colorscheme-s%s),	var(--colorscheme-l%s), var(--bg-opacity))', n, s, s);
+}
+
+// Appearance
+bg(n =) {
+	background-color: s('var(--bg%s)', n) $i;
+
+	if (n == -tr) {
+		backdrop-filter: var(--popup-filter) $i;
+	}
+}
+
+fg(n =) {
+	color: s('var(--fg%s)', n) $i;
+}
+
+bgc(n1 =, n2 =) {
+	bg(n1);
+	fg(n2);
+}
+
+hl(n = ) {
+	background-color: n ? s('var(--hl-%s)', n) : var(--hl) $i;
+	color: var(--hl-fg) $i;
+}
+
+clr(n) {
+	color: s('var(--color%s)', n) $i;
+}
+
+lnh() {
+	line-height: var(--line-height) $i;
+}
+
+pad(pos =, n = 1) {
+	{pos ? s('padding-%s', pos) : 'padding'}: \
+		n == 0 ? 0 $i : pos == 0 ? 0 $i : var(--pad) $i;
+}
+
+mar(pos =, n = 1) {
+	{pos ? s('margin-%s', pos) : 'margin'}: \
+		n == 0 ? 0 $i : pos == 0 ? 0 $i : var(--pad) $i;
+}
+
+brd(pos =, color = border, radius = false) {
+	color = (typeof(color) == 'ident' || typeof(color) == 'string') ? \
+		svar(color) : color
+
+	{pos ? s('border-%s', pos) : 'border'}: \
+		var(--border-width) solid color $i;
+
+	if (radius || !pos) {
+		border-radius: var(--border-radius) $i;
+	}
+}
+
+shd(n) {
+	box-shadow: s('var(--shadow-%s)', n) $i;
+}
+
+// Position
+box(w, h = w) {
+	width: w $i;
+	height: h $i;
+}
+
+pos(offset = 0) {
+	left: offset $i;
+	top: offset $i;
+	right: offset $i;
+	bottom: offset $i;
+}
+
+center() {
+	display: flex $i;
+	align-items: center $i;
+}
+
+// etc.
+anim(name =, func = ) {
+	@media (prefers-reduced-motion: no-preference) {
+		{name ? animation : transition}: name var(--trans-dur) func $i;
+	}
+}
+
+dropfade() {
+	anim(dropfade, cubic-bezier(.2, .9, .6, 1));
+}
+
+focus(p = focus) {
+	anim();
+
+	&:{p} {
+		border-color: var(--hl) $i;
+		box-shadow: var(--shadow-ins) var(--hl) $i;
+		outline: none $i;
+	}
+}
+
+replace-text(content =, text-color = fg, pos = after) {
+	letter-spacing: -9999px $i;
+	color: transparent $i;
+
+	if (content) { // Replace
+		&::{pos} {
+			content: content $i;
+			letter-spacing: 0 $i;
+			color: svar(text-color) $i;
+		}
+	} else { // Hide
+		* {
+			letter-spacing: 0 $i;
+			color: svar(text-color) $i;
+		}
+	}
+}
+
+// Input normalisation
+normalise-select() {
+	appearance: none $i;
+	bgc(2)
+	background-image:
+		linear-gradient(55deg, var(--bg2) 43%, transparent 45%),
+		linear-gradient(125deg, transparent 53%, var(--bg2) 55%),
+		linear-gradient(180deg, var(--bg2) 30%, var(--fg) 30%) $i;
+	background-size: 20px 20px $i;
+	background-repeat: no-repeat $i;
+	background-position: right 4px $i;
+	padding: 0 20px 0 var(--pad) $i;
+	brd();
+	height: $input-h $i;
+	focus();
+}
+
+normalise-input() {
+	bgc(2);
+	padding: 0 var(--pad) $i;
+	brd();
+	height: $input-h $i;
+	focus();
+
+	&::placeholder {
+		fg(2);
+	}
+}
+
+normalise-button() {
+	bgc(2);
+	background-image: none $i;
+	padding: 0 calc(var(--pad) * 2) $i;
+	brd();
+	height: $input-h $i;
+	cursor: pointer $i;
+	focus();
+
+	&:disabled {
+		opacity: .5 $i;
+		pointer-events: none $i;
+	}
+}
+
+normalise-color() {
+	bg(2);
+	pad(0);
+	brd();
+	box($select-size);
+	focus();
+
+	&::-webkit-color-swatch {
+		border: none $i;
+		border-radius: calc(var(--border-radius) * .33) $i;
+
+		&-wrapper {
+			pad(0);
+		}
+	}
+}
+
+normalise-checkbox(label = true) {
+	if (label) {
+		/label {
+			center();
+			gap: 1ch $i;
+		}
+	}
+
+	appearance: none $i;
+	bg(2);
+	brd();
+	border-radius: calc(var(--border-radius) * .33) $i;
+	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1) $i;
+	mar(0);
+	position: relative $i;
+	box($select-size);
+	min-width: $select-size $i;
+	focus();
+
+	&::before, &::after {
+		content: '';
+		position: absolute $i;
+		pos();
+		background-color: var(--hl) $i;
+		transform-origin: 0 0 $i;
+	}
+
+	&::before {
+		transform: rotate(-45deg) translateY(45%) translateX(-30%) scaleX(0.25) scaleY(0) $i;
+	}
+	&::after {
+		transform: rotate(225deg) translateY(-30%) translateX(-95%) scaleX(0.25) scaleY(0) $i;
+	}
+	&:indeterminate::before {
+		transform: rotate(0) translateY(37.5%) translateX(10%) scaleX(0.8) scaleY(0.25) $i;
+		transition-duration: 33.33333333ms $i;
+	}
+
+	&:checked {
+		&::before {
+			transform: rotate(-45deg) translateY(45%) translateX(-30%) scaleX(0.25) scaleY(0.4) $i;
+			transition-duration: 33.33333333ms $i;
+		}
+	&::after {
+			transform: rotate(225deg) translateY(-30%) translateX(-95%) scaleX(0.25) scaleY(1.2) $i;
+			transition-delay: 33.33333333ms $i;
+			anim();
+		}
+	}
+}
+
+normalise-radio() {
+	appearance: none $i;
+	bg(2);
+	brd();
+	border-radius: 50% $i;
+	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1) $i;
+	mar(0);
+	position: relative $i;
+	box($select-size);
+	focus();
+
+	&::before {
+		content: '';
+		position: absolute $i;
+		pos(3px);
+		background-color: var(--hl) $i;
+		border-radius: 50% $i;
+		transition: transform var(--trans-dur) linear $i;
+		transform: scale(0) $i;
+	}
+	&:disabled::before {
+		background-color: var(--fg3) $i;
+	}
+	&:checked::before {
+		transition-timing-function: cubic-bezier(0, 0, 0.3, 1.5) $i;
+		transform: scale(1) $i;
+		anim();
+	}
+}
+
+normalise-header() {
+	fg();
+	text-transform: uppercase $i;
+	letter-spacing: 1px $i;
+	padding-top: calc(var(--pad) * 3) $i;
+	padding-bottom: calc(var(--pad) * 1.5) $i;
+	brd(bottom);
+	margin-bottom: calc(var(--pad) * 1.5) $i;
+}
+
+@-moz-document domain("stackexchange.com"), domain("stackoverflow.com"), domain("superuser.com") {
+	// Hide elements
+	// I. Header
+	.s-navigation,
+	.s-topbar--content,
+	#announcement-banner,
+
+	// II. Content
+	#post-form,
+	#left-sidebar,
+	#sidebar,
+	#footer,
+	.answers-subheader > :last-child,
+	[href="/questions/ask"],
+	.js-search-hints > .bt,
+	.js-bookmark-btn,
+	.js-post-comments-component,
+	.js-post-menu
+	{
+		display: none $i;
+	}
+
+	// Global
+	body {
+		--theme-background-color: var(--bg) $i;
+		--theme-content-background-color: var(--bg)  $i;
+		--theme-content-border-color: transparent  $i;
+		--theme-body-font-color: var(--fg)  $i;
+		--theme-link-color: var(--fg-link) $i;
+		--theme-topbar-background-color: var(--accent) $i;
+
+		// Shadows
+		--bs-sm: var(--shadow-low) $i;
+		--bs-md: var(--shadow-big) $i;
+		--bs-lg: var(--shadow-big) $i;
+
+		// Syntax highlighting
+		--highlight-bg: var(--bg2) $i;
+		--highlight-color: var(--fg) $i;
+		--highlight-punctuation: var(--fg2) $i;
+		--highlight-comment: var(--fg2) $i;
+		--highlight-attribute: var(--color9) $i;
+		--highlight-literal: var(--color10) $i;
+		--highlight-symbol: var(--color11) $i;
+		--highlight-keyword: var(--color12) $i;
+		--highlight-variable: var(--color13) $i;
+		--highlight-addition: var(--color2) $i;
+		--highlight-deletion: var(--color1) $i;
+
+		// etc.
+		--default-transition-duration: var(--trans-dur) $i;
+
+		--br-sm: var(--border-radius) $i;
+		--br-md: var(--border-radius) $i;
+		--br-lg: var(--border-radius) $i;
+
+		--lh-xs: var(--line-height) $i;
+		--lh-sm: var(--line-height) $i;
+		--lh-md: var(--line-height) $i;
+		--lh-lg: var(--line-height) $i;
+		--lh-xl: var(--line-height) $i;
+		--lh-xxl: var(--line-height) $i;
+		--lh-base: var(--line-height) $i;
+		--lh-6: var(--line-height) $i;
+
+		background-image: none;
+	}
+
+	// Header
+	.top-bar {
+		background-color: var(--accent);
+		brd(bottom, accent-border);
+		box-shadow: none;
+	}
+
+	// Content
+	#content {
+		padding: var(--body-pad);
+		border: none;
+	}
+	#mainbar {
+		width: 100%;
+	}
+	.s {
+		&-input {
+			normalise-input();
+
+			&-icon {
+				display: none;
+			}
+		}
+
+		&-popover {
+			bg(-tr);
+			brd();
+
+			.fc-dark {
+				fg();
+			}
+		}
+	}
+
+	.fs-headline1 {
+		font-size: var(--font-size) $i;
+	}
+	#question-header {
+		& + div {
+			display: none $i;
+		}
+		& > h1 {
+			normalise-header();
+
+			& > a {
+				fg();
+				line-height: var(--line-height) $i;
+			}
+		}
+	}
+	h1, h2, h3, h4, h5, h6, .question-hyperlink {
+		color: var(--fg2) $i;
+	}
+	.bc-black-2, .bc-black-075 {
+		border-color: var(--border) $i;
+	}
+	ul.comments-list .comment > *,
+	.answer {
+		brd(bottom);
+	}
+	.comment-date, .comment-date>a, .comment-date>a:hover {
+		fg(2);
+	}
+	.relativetime-clean {
+		&::before { content: '('; }
+		&::after { content: ')'; }
+	}
+
+	.s-prose {
+		pre:not(.s-code-block) {
+			pad();
+			brd();
+
+			& > code {
+				fg();
+			}
+		}
+	}
+}

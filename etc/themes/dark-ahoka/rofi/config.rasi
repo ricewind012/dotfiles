@@ -1,0 +1,66 @@
+configuration {
+	modi:						"window,drun,ssh,run";
+	display-drun:   "app";
+	display-window: "window";
+	display-run:    "run";
+	show-icons:     false;
+}
+
+* {
+	lines: 10;
+	background-color: #0c162c;
+	border-color: #122142;
+	text-color: #cacbcc;
+	font: "CozetteVector 9";
+}
+
+#window {
+	padding: 12px;
+	border: 16px;
+	width: 15%;
+}
+
+#mainbox {
+	children: [inputbar, listview];
+	spacing: 12px;
+}
+
+#listview {
+	spacing: 5px;
+	scrollbar: false;
+}
+
+#element {
+	background-color: #00000000;
+	padding: 4px;
+}
+
+#element selected {
+	background-color: #11223e;
+	text-color: #fff;
+}
+
+#inputbar {
+	children:   [ prompt,textbox-prompt-colon,entry,case-indicator ];
+	background-color: #00000000;
+}
+
+#case-indicator {
+	background-color: #00000000;
+	spacing:    0;
+}
+#entry {
+	background-color: #00000000;
+	spacing:    0;
+}
+#prompt {
+	background-color: #00000000;
+	spacing:    0;
+}
+
+#textbox-prompt-colon {
+	background-color: #00000000;
+	expand:     false;
+	str:        ":";
+	margin:     0 0.3em 0 0;
+}

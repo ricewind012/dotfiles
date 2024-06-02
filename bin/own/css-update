@@ -1,0 +1,81 @@
+#!/usr/bin/env zsh
+eval "$(xrescolors)"
+
+zsh_math_func_min() {
+  local result=$1
+  local arg
+  shift
+
+  for arg; do
+    (( arg < result )) && result=$arg
+  done
+
+  (( result ))
+}
+functions -M min 1 -1 zsh_math_func_min
+
+zsh_math_func_max() {
+  local result=$1
+  local arg
+  shift
+
+  for arg; do
+    (( arg > result )) && result=$arg
+  done
+
+  (( result ))
+}
+functions -M max 1 -1 zsh_math_func_max
+
+rgb_to_hsl() {
+	local -F r=${1:-0} g=${2:-0} b=${3:-0} \
+		max min d
+	typeset -gF h s l
+
+	((
+		r /= 255,
+		g /= 255,
+		b /= 255,
+		max = max(r, g, b),
+		min = min(r, g, b),
+		h = s = l = (max + min) / 2
+	))
+
+	if (( max == min )) {
+		(( h = s = 0 ))
+	} else {
+		(( d = max - min,
+			s = l > 0.5 ? d / (2 - max - min) : d / (max + min) ))
+		case $max {
+			$r) (( h = (g - b) / d + (g < b ? 6 : 0) )) ;;
+			$g) (( h = (b - r) / d + 2 )) ;;
+			$b) (( h = (r - g) / d + 4 )) ;;
+		}
+		(( h /= 6 ))
+	}
+
+	printf -v h '%.0f' $(( h * 360 ))
+	printf -v s '%.0f' $(( s * 100 ))
+	printf -v l '%.0f' $(( l * 100 ))
+}
+
+main() {
+	local k v
+	local file=$skindir/css/common/vars.css
+	setopt extendedglob
+
+	[[ -f $file ]] || die
+
+	for k v (background $background foreground $foreground) {
+		v=${v#\#}
+		printf -v $k '%d %d %d' \
+			0x${v%????} 0x${${v#??}%??} 0x${v#????}
+		rgb_to_hsl ${(Pz)k}
+		eval "local -A $k[1]g=(h $h s $s l $l)"
+	}
+
+	print $bg[h] $bg[s] $bg[l]
+	print -rl -- ${${"${(@f)$(<$file)}"//\%/%%}//(#b)--([bf]g)-([hsl]): [!%]##\%#\%#/$match}
+}
+
+main $@

@@ -1,0 +1,56 @@
+@-moz-document \
+	url-prefix("about:preferences"),
+	url-prefix("about:settings")
+{
+/**
+ * Hide elements
+**/
+#category-more-from-mozilla,
+#helpButton,
+[is="moz-support-link"] {
+	display: none $i;
+}
+
+/**
+ * Content
+**/
+#preferences-body {
+	--main-pane-width: 100% $i;
+}
+.main-content {
+	padding: var(--body-pad) $i;
+
+	h1 {
+		display: none;
+	}
+}
+.pane-container {
+	contain: inline-size;
+}
+
+groupbox[data-category] {
+	mar(0);
+}
+.subcategory {
+	pad(0);
+	brd(0);
+	mar(0);
+}
+h1,
+h2 {
+	normalise-header(false);
+	width: 100%;
+}
+#pane-experimental-search-results-header,
+#pane-experimental-subtitle {
+	background-position: right;
+	min-height: var(--font-size);
+}
+.accessory-button {
+	normalise-button();
+}
+.checkbox-label,
+checkbox {
+	mar(0);
+}
+}

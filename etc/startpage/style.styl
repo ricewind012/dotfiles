@@ -1,0 +1,77 @@
+@charset 'UTF-8';
+@import 'common';
+$i = null;
+
+:root {
+  --section-divider: ':';
+  --website-divider: ',';
+
+  /* Make it centered on a small window.
+   *
+   * Example: var(--wide, something)
+   * If *not* wide, "something" is used,
+   * else use the fallback value.
+   */
+	@media (min-width: 480px) { --wide: 1; }
+	@media (max-width: 480px) { --short: 1; }
+}
+
+html {
+  background-color: var(--bg, Window);
+  color: var(--fg, WindowText);
+	line-height: var(--line-height);
+}
+
+body {
+  height: 100vh;
+}
+
+body,
+ul {
+  display: flex;
+  padding: 0;
+  margin: 0;
+}
+
+div {
+  margin: auto;
+}
+
+h1 {
+	normalise-header();
+}
+
+ul {
+  flex-direction: var(--wide, column);
+  align-items: var(--wide, center);
+
+	&:not(:first-child) {
+		margin-top: var(--wide, calc(var(--pad, 1em) * 2));
+	}
+}
+
+span {
+  text-align: var(--short, right);
+  width: var(--short, 8ch);
+
+	&::after {
+		content: var(--short, var(--section-divider) '\00a0');
+		color: var(--fg2);
+	}
+}
+
+a {
+  color: var(--fg-link);
+  text-align: var(--wide, center);
+
+	&:not(:hover) {
+		text-decoration: none;
+	}
+
+	&:not(:last-of-type)::after {
+		content: var(--short, var(--website-divider) '\00a0');
+		display: inline-block;
+		color: var(--fg);
+		pointer-events: none;
+	}
+}

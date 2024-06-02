@@ -1,0 +1,4 @@
+#!/bin/sh -e
+c=$(grep -v '^#!' $1)
+if [ "$1" ]; then n=/tmp/${1%.c}; shift; else n=/tmp/a.out; fi
+printf '%s\n' "$c" | gcc -Wall $o -o "$n" -x c /dev/stdin && "$n" "$@" && rm "$n"

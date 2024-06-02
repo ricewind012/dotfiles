@@ -1,0 +1,182 @@
+@-moz-document url-prefix("about:addons"), url-prefix("about:userchrome") {
+// Global
+:root {
+	--addon-icon-size: calc(
+		var(--font-size) * 2 * var(--line-height)
+	) $i;
+	--main-margin-start: var(--body-pad) $i;
+	--section-width: 100% $i;
+}
+
+.toggle-button {
+	--bg2: var(--bg);
+	@extend input[type="checkbox"];
+
+	&[aria-pressed="true"] {
+		@extend input[type="checkbox"]:checked;
+	}
+
+	&::before {
+		brd(0);
+		mar(0);
+		box(unset);
+		translate: unset $i;
+	}
+}
+
+panel-list {
+	pad(0);
+	brd();
+
+	& > hr {
+		mar(0);
+		height: var(--border-width) $i;
+	}
+}
+
+// Sidebar
+#categories > .category {
+	background-size: var(--font-size) $i;
+	background-position: var(--pad) center $i;
+	padding-left: calc(var(--font-size) + var(--pad)) $i;
+}
+
+// Header
+.sticky-container {
+	position: unset $i;
+}
+.textbox-search-icons {
+	display: none;
+}
+.main {
+	&-search {
+		display: none $i;
+	}
+	&-heading {
+		normalise-header();
+		margin-left: var(--body-pad) $i;
+		flex();
+		gap: 1ch;
+
+		button {
+			bg();
+			pad(0);
+			box(var(--font-size));
+			cursor: pointer;
+
+			&:not(:hover) {
+				fg(2);
+			}
+		}
+		.back-button {
+			order: 1;
+		}
+	}
+}
+.list-section-heading {
+	display: none;
+}
+addon-list > section {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 0 var(--pad);
+}
+
+// Content
+#content {
+	margin-top: var(--body-pad);
+	margin-right: var(--body-pad);
+}
+.card {
+	opacity: 1 $i;
+	pad();
+	brd();
+	mar(bottom);
+
+	&-heading {
+		normalise-header();
+		flex(,,start);
+
+		&-icon {
+			margin-right: 1ch $i;
+			box(var(--font-size));
+		}
+	}
+
+	.spacer {
+		display: none $i;
+	}
+
+	.more-options-button {
+		pad(0);
+		margin-left: 1ch $i;
+		box($select-size);
+		min-width: $select-size $i;
+	}
+}
+.addon {
+	&-name {
+		lnh();
+		flex-grow: 1;
+
+		&-container {
+			mar(0);
+		}
+	}
+	&-description,
+	&-badge-recommended,
+	&-detail-contribute {
+		display: none $i;
+	}
+	&-badge {
+		box(var(--font-size));
+	}
+}
+.tab {
+	&-group {
+		brd(top);
+		brd(bottom);
+		mar(top);
+		display: flex $i;
+	}
+	&-button {
+		lnh();
+		pad();
+		brd(0);
+		min-width: unset $i;
+		cursor: pointer;
+
+		&:not(:hover) {
+			fg(2);
+		}
+
+		&[selected] {
+			hl();
+		}
+	}
+}
+.shortcut {
+	&-row {
+		mar(top);
+	}
+	&-input {
+		--bg2: var(--bg);
+	}
+
+	.ghost-button {
+		cursor: pointer;
+
+		&:not(:hover) {
+			fg(2);
+		}
+	}
+	.expand-button {
+		normalise-button();
+		--bg2: var(--bg);
+	}
+}
+.inline-options-stack {
+	mar(0);
+	mar(top);
+}
+}

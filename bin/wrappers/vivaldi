@@ -1,0 +1,48 @@
+#!/bin/sh
+
+export install_dir='/opt'
+opts="
+	--disable-web-security
+	--process-per-site
+	--debug-packed-apps --silent-debugger-extension-api
+	--window-size=983,770 --window-position=680,82
+	--user-data-dir="$HOME/.vivaldi-dont-correct-this"
+"
+grep -q 'dark-theme=1' "$gtk3" &&
+	opts="$opts --force-dark-mode"
+
+[ "$1" = install ] && {
+	set -ex
+	file=$PWD/${2:?}
+	shift
+
+	mkdir -p "${TMPDIR:=/tmp}/vivaldi"
+	cd "$TMPDIR/vivaldi"
+
+	[ "${file##*/}" != codecs ] && {
+		cp "$file" "$TMPDIR/vivaldi"
+		ar x "$file"
+		tar Jxvf data.tar.xz
+	}
+
+	su -c'
+		vivaldi_dir="$install_dir/vivaldi"
+
+		[ -f "$vivaldi_dir/libffmpeg.so" ] &&
+			cp "$vivaldi_dir/libffmpeg.so" ./opt/vivaldi
+		[ -d "${vivaldi_dir}-older" ] &&
+			rm -rf "${vivaldi_dir}-older"
+		[ -d "${vivaldi_dir}-old" ] &&
+			mv "${vivaldi_dir}-old" "${vivaldi_dir}-older"
+		[ -d "$vivaldi_dir" ] &&
+			mv "$vivaldi_dir" "${vivaldi_dir}-old"
+		mv ./opt/vivaldi "$install_dir"
+		chown $USER:$USER "$vivaldi_dir"
+
+		wget "https://archlinux.org/packages/community/x86_64/vivaldi-ffmpeg-codecs/download" -O - |
+			zstd -dc | tar xv opt/vivaldi
+		mv ./opt/vivaldi/libffmpeg.so* "$vivaldi_dir"
+	'
+}
+
+exec "$install_dir/vivaldi/vivaldi-bin" $opts "$@"

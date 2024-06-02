@@ -1,0 +1,35 @@
+# background & borders
+background_color_hover = #2f373c 100
+rounded = 1
+background_color = #3c454b 100
+border_width = 1
+border_sides = T
+border_color = #2f373c 100
+
+separator = new
+separator_size = 1
+separator_style = line
+separator_color = #2f373c 100
+
+# panel
+panel_items = T:C
+panel_size = 100% 32
+panel_position = bottom
+panel_background_id = 1
+
+# task
+task_text = 1
+task_centered = 1
+task_font = Arial 9
+task_font_color = #ccd2d6 100
+mouse_left = toggle_iconify
+taskbar_mode = multi_desktop
+taskbar_padding = 0
+taskbar_hide_if_empty = 1
+taskbar_distribute_size = 1
+
+# clock
+time1_format = %H:%M
+time1_font = Arial 9
+clock_font_color = #ccd2d6 100
+clock_padding = 8

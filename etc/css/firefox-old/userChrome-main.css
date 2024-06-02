@@ -1,0 +1,128 @@
+/* main file
+ * partly from /u/testuser4567 */
+
+/* Don't display certain things */
+#alltabs-button, /* Button for all tabs */
+.titlebar-spacer, /* Spacers for dragging */
+.tab-line[selected="true"], /* Tab line of selected tab */
+.urlbarView-type-icon, /* Pinned website icon in URL bar */
+#tracking-protection-icon-container, /* Tracking protection */
+notification[value="default-browser"], /* Default browser prompt */
+#urlbar .search-one-offs:not([hidden]) /* "This time, search with..." */ {display: none !important}
+
+/* Font */
+* {font-family: Rosemary}
+
+/* No border radius except some things */
+* {border-radius: 0 !important}
+#PanelUI-menu-button[badge-status="update-available"] > .toolbarbutton-badge-stack > .toolbarbutton-badge,
+#PanelUI-menu-button[badge-status="update-manual"] > .toolbarbutton-badge-stack > .toolbarbutton-badge,
+#PanelUI-menu-button[badge-status="update-restart"] > .toolbarbutton-badge-stack > .toolbarbutton-badge,
+#PanelUI-menu-button[badge-status="update-unsupported"] > .toolbarbutton-badge-stack > .toolbarbutton-badge {border-radius: 50% !important}
+
+/* Set a background */
+#main-window, #toolbar-menubar, #TabsToolbar, #PersonalToolbar, #sidebar-box, #customization-container {
+	background-color: var(--main-background) !important;
+	background-image: none !important;
+	-moz-appearance: none !important;
+}
+#browser vbox#appcontent tabbrowser, #content, #tabbrowser-tabpanels,
+browser[type=content-primary], browser[type=content] > html {
+	background: var(--in-content-page-background) !important;
+}
+
+/* URL/search bar */
+#urlbar, #searchbar {
+	font-size: 1em !important;
+}
+#urlbar-input-container {
+	border: none !important;
+}
+#nav-bar[brighttext] #urlbar:not([focused="true"]):hover > #urlbar-background,
+#nav-bar[brighttext] #searchbar:not(:focus-within):hover {
+	border-color: #505050 !important;
+}
+#identity-box {
+	--urlbar-separator-color: ThreeDShadow !important;
+	margin-inline-end: 6px !important;
+	padding-left: 2px;
+	border-right: 1px solid var(--urlbar-separator-color);
+	border-image: linear-gradient(transparent 15%, var(--urlbar-separator-color) 15%, var(--urlbar-separator-color) 85%, transparent 85%);
+	border-image-slice: 1;
+}
+#identity-box.localResource,
+#identity-box.notSecure[pageproxystate="invalid"] {
+	padding-right: 4px;
+}
+#identity-box.verifiedDomain,
+#identity-box.notSecure {
+	padding-right: 3px;
+}
+#urlbar-zoom-button {
+	margin-block: calc((var(--urlbar-min-height) - var(--urlbar-container-padding) - 18px) / 2) !important;
+}
+#urlbar-background, #searchbar {
+	-moz-appearance: none !important;
+	background-color: var(--urlbar-background) !important;
+}
+
+/* Navigation bar & tabs */
+#nav-bar {
+	box-shadow: 0 0 3px rgba(0,0,0,.25) !important;
+	background-color: var(--toolbar-bgcolor) !important;
+	background-image: none !important;
+}
+:root:not([uidensity="compact"]) #back-button > .toolbarbutton-icon {
+  background-color: unset !important;
+  border: 0 !important;
+  width: calc(2 * var(--toolbarbutton-inner-padding) + 16px) !important;
+  height: calc(2 * var(--toolbarbutton-inner-padding) + 16px) !important;
+  padding: var(--toolbarbutton-inner-padding) !important;
+  transition: none !important;
+}
+:root:not([uidensity="compact"]) #back-button:not([disabled]):not([open]):hover > .toolbarbutton-icon {
+  background-color: var(--toolbarbutton-hover-background) !important;
+  box-shadow: none !important;
+}
+:root[uidensity="compact"] .tab-throbber:not([pinned]), .tab-sharing-icon-overlay:not([pinned]),
+:root[uidensity="compact"] .tab-icon-pending:not([pinned]), .tab-icon-image:not([pinned]) {
+	margin-inline-end: 5px !important;
+}
+#toolbar-menubar {
+	padding: 0 !important;
+}
+#navigator-toolbox {
+	--tabs-border-color: transparent !important;
+}
+#tabbrowser-tabs, #tabbrowser-arrowscrollbox, #tabbrowser-tabs[positionpinnedtabs] > #tabbrowser-arrowscrollbox > .tabbrowser-tab[pinned] {
+	min-height: 32px !important;
+}
+.tabbrowser-tab[pending="true"] {
+	filter: brightness(.75);
+}
+.tabbrowser-tab[visuallyselected], tab[visuallyselected] > .tab-stack > .tab-background {
+	filter: drop-shadow(2px 2px 3px rgba(0,0,0,0.25));
+	background-color: var(--toolbar-bgcolor) !important;
+	background-image: none !important;
+}
+.tab-background {
+	border: none !important;
+}
+#tabs-newtab-button {
+	margin-top: -2px !important;
+}
+
+/* Change favicon into close button on hover */
+.tabbrowser-tab .tab-close-button {
+  -moz-box-ordinal-group: 0 !important;
+  margin: 0 !important;
+  padding-right: 1px;
+  display: none !important;
+}
+.tabbrowser-tab:not([pinned="true"]):hover .tab-icon-image,
+.tabbrowser-tab:not([pinned="true"]):hover .tab-throbber {
+  display: none;
+}
+.tabbrowser-tab:not([pinned="true"]):hover .tab-close-button {
+  display: -moz-box !important;
+}

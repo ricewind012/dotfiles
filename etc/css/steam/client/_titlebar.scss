@@ -1,0 +1,80 @@
+.title {
+	&BarContainer {
+		background-color: $bg $i;
+
+		.friendlist & {
+			padding-top: $header-h;
+		
+			&::before {
+				//content: 'Steam #{$delim} Friends list';
+				content: 'Friends';
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				height: $header-h;
+				margin: 0 $window-button-size * 3;
+				@include center;
+				color: $text;
+			}
+		}
+
+		.focused & {
+			background-color: $accent $i;
+		}
+
+		&.ChatTabs {
+			height: $header-h;
+		}
+	}
+
+	&-bar-actions {
+		right: 0 $i;
+	}
+
+	&-area {
+		height: $header-h $i;
+
+		&-icon {
+			height: $header-h $i;
+			@include center;
+
+			&:hover {
+				background-color: $accent-border $i;
+			}
+
+			svg {
+				margin: 0 $i;
+			}
+		}
+
+		@at-root .singleWindowFocusBar,
+		&-highlight {
+			display: none;
+		}
+	}
+}
+
+.PopupFullWindow {
+	padding-top: $header-h;
+	height: calc(100% - #{$header-h}) $i;
+}
+[class*="PagedSettingsDialog_Title"] {
+	position: absolute;
+	top: $header-h * -1;
+	left: 0;
+	right: 0;
+	height: $header-h;
+	margin: 0 $i;
+	@include center;
+	background-image: linear-gradient(to right, $accent-border, $accent);
+	color: $text $i;
+	text-transform: unset $i;
+
+	&::before {
+		content: 'Steam #{$delim}\00a0';
+	}
+	[class*="AppProperties"] &::before {
+		content: 'Steam #{$delim} Properties #{$delim}\00a0';
+	}
+}

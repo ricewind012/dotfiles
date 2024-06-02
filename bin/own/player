@@ -1,0 +1,429 @@
+#!/bin/sh
+#
+# player - a wrapper for foobar2000/mpd/playerctl
+#
+# Depends on:
+# foobar2000 (in PATH)/mpd/playerctl
+# Notifications - sending: notify-send
+# Notifications - getting album: ffprobe/mediainfo/libsndfile
+# Notifications - player generic icon: GTK 3.0
+# Notifications - cover image: 7z/unar and lsar
+# foobar2000 metadata:
+# 1) xdotool
+# 2a) window title: `$if(%ispaused%,Paused,Playing): [%artist% - ][%title]`
+# 2b) foo_np_simple: `$if(%ispaused%,Paused,Playing): [%artist% - ][%title]$crlf()%path%` to $TMPDIR/fb2kmetadata
+export LC_ALL=C
+. "$bin/common.sh"
+
+uppercase() str=$(printf '%c' "${1%"${1#?}"}" |
+	tr '[:lower:]' '[:upper:]')${1#?}
+reverse_lines()
+	awk '{a[i++]=$0} END {while(i>0) print(a[--i])}'
+
+get_icons() {
+	if [ -f "$confdir/gtk-3.0/settings.ini" ]; then
+		tkprop=gtk-icon-theme-name
+		tkfile=$confdir/gtk-3.0/settings.ini
+	elif [ -f "$confdir/qt5ct/qt5ct.conf" ]; then
+		tkprop=icon_theme
+		tkfile=$confdir/qt5ct/qt5ct.conf
+	else
+		log 'No GTK3 or Qt5 settings file found'
+		return 1
+	fi
+
+	while IFS='=' read -r p v; do case $p in
+		"$tkprop") icons=$v; break
+	esac; done < "$tkfile"
+
+	case $(uname) in
+		Linux) osdir=/usr/share ;;
+		*BSD*) osdir=/usr/local/share ;;
+	esac
+
+	image=$osdir/icons/$icons/64x64/apps/$player.svg
+	[ -f "$image" ] || image=$osdir/pixmaps/$player.png
+}
+
+get_file() {
+	case $player in
+		foobar2000)
+			. $bin/own/asdfgh
+			realfile=$file
+			winepath "$file"
+			[ -f "$file" ] ||
+				file=$(command winepath -- "$realfile")
+			#testglob "$file" = *\|* && file=${file%%\|*}
+		;;
+
+		mpd)
+			[ "$musicdir" ] || while IFS='"	' read -r p v _; do
+				[ "$p" = music_directory ] && {
+					musicdir=$v
+					[ "${musicdir%"${musicdir#?}"}" = '~' ] &&
+						musicdir=$HOME/${v#??}
+					break
+				}
+			done < "$confdir/mpd/mpd.conf"
+			file=$musicdir/$(mpc -f '%file%' current)
+		;;
+
+		cmus)
+			file=$(cmus-remote -C 'format_print %f')
+		;;
+
+		firefox)
+			for i in "$HOME/.mozilla/firefox/firefox-mpris/"*; do
+				[ -f "$i" ] && [ "${i##*.}" = png ] && break
+			done
+			file=$i
+		;;
+
+		*)
+			file=$(playerctl metadata xesam:url)
+			file=${file#file://}
+		;;
+	esac
+}
+
+get_status() {
+	case $player in
+		foobar2000)
+			[ "$component" ] && status=${meta%%: *} ||
+				case $foobarwinname in
+					foobar2000) status=Stopped ;;
+					Playing*) status=Playing ;;
+					Paused*) status=Paused ;;
+				esac
+		;;
+
+		cmus)
+			case $(cmus-remote -C 'format_print %{status}') in
+				.) status=Stopped ;;
+				>) status=Playing ;;
+				|) status=Paused ;;
+			esac
+		;;
+
+		mpd)
+			while IFS='[]' read -r _ mstat _; do case $mstat in
+				playing|paused) status=P${mstat#?}; break
+			esac; done <<-EOF
+			$(mpc)
+			EOF
+		;;
+
+		*)
+			status=$(playerctl status 2>/dev/null)
+		;;
+	esac
+
+	: "${status:=Stopped}"
+}
+
+get_cover() {
+	[ "$player" = firefox ] && {
+		get_file
+		image=$file
+		return
+	}
+
+	playerctl metadata mpris:artUrl 2>/dev/null && {
+		image=$(playerctl metadata mpris:artUrl)
+		image=${image#file://}
+		return
+	}
+
+	if
+		[ "$musicdir" ] ||
+		[ "$player" = mpd ] ||
+		[ "$component" ]
+	then :; else
+		return 1
+	fi
+	get_file
+
+	# If the file is an archive, (try to) get the cover art
+	mkdir -p "$sdir"
+	cd "$sdir" || return 1
+
+	case ${file##*.} in zip*|rar*|tar*)
+		testglob "${file#*/}" = */* && file=${file%/*}
+
+		command -v lsar >/dev/null && cmd=lsar
+		command -v 7z >/dev/null && cmd='7z l'
+		[ "$cmd" ] || return 1
+
+		while IFS= read -r l; do case ${l##*.} in png|jp*g)
+			case ${l##*/} in [Cc]over*|[Ff]ront*|[Bb]ack*)
+				arimage=$l
+			esac
+		esac; done <<-EOF
+		$($cmd "$file")
+		EOF
+		arimage=$(printf '%s' "$arimage" |
+			reverse_lines | head -n 1)
+
+		case $cmd in
+			lsar)
+				unar -f -D -o "$sdir" "$file" "$arimage"
+			;;
+
+			7z*)
+				arimage=${arimage#*[0-9]  }
+				arimage=${arimage#?????????????}
+
+				7z -y -o"$sdir" x "$file" "$arimage" >/dev/null
+			;;
+		esac
+
+		image=$sdir/$arimage
+	esac
+
+	# Get the album
+	for i in ffprobe mediainfo sndfile-info; do
+		command -v "$i" >/dev/null && case $i in
+			ffprobe)
+				out=$($i "$file" 2>&1)
+				album=$(printf '%s' "$out" | grep -i 'album  ')
+				date=$(printf '%s' "$out" | grep -i 'date  ')
+			;;
+
+			mediainfo)
+				out=$($i "$file")
+				album=$(printf '%s' "$out" | grep 'Album  ')
+				date=$(printf '%s' "$out" | grep 'date  ')
+			;;
+
+			sndfile-info)
+				case ${file##*.} in flac|opus|ogg|wav|aif|aiff)
+					out=$($i "$file")
+
+					testglob "$out" != 'Error*' && {
+						printf '%s' "$out" > "$sdir/sfoutput"
+						findp -o '*ALBUM=*' "$sdir/sfoutput"
+						album=$lines
+						findp -o '*DATE=*' "$sdir/sfoutput"
+						date=$lines
+					}
+				esac
+
+				[ "$out" ] ||
+					log 'sndfile: File is of an unimplemented type'
+			;;
+		esac && break
+	done
+	[ "$out" ] || log 'No media prober found'
+
+	album=${album#* : }
+	album=${album#*=}
+	[ "$album" = "$title" ] &&
+		printf '%s\n' "$album" "$title"
+
+	# Get the cover
+	if
+		[ ! "$arimage" ] &&
+		ffmpeg -y -i "$file" "$sdir/cover.jpg" 2>/dev/null
+	then
+		image=$sdir/cover.jpg
+	elif [ ! "$arimage" ]; then
+		[ -d "${file%/*}" ] &&
+			for f in "${file%/*}/"*; do case ${f##*.} in
+				jpeg|jpg|png) image=$f; break
+			esac; done
+		[ "$image" ] || return 1
+	fi
+}
+
+ncmd() {
+	if [ "$notification" ]; then
+		get_cover || get_icons
+
+		case $player in
+			foobar2000|cmus|mpd) ;;
+			*) uppercase "$player" && player=$str ;;
+		esac
+		notify-send -h "string:image-path:$image" "${metadata%%\\n*}" -- \
+			"${metadata##*\\n}"
+			#"${metadata:-${artist:+$artist - }${album:+$album${date:+ ($date)}\n}$title}"
+	else
+		printf '%s\n' "$@"
+	fi
+}
+
+get_metadata() {
+	case $player in
+		foobar2000)
+			[ "$component" ] &&
+				meta=${meta#*: } ||
+				metadata=${foobarwinname#"$status"? }
+
+			artist=${meta%% - *}
+			title=${meta##* - }
+		;;
+
+		cmus)
+			[ "$format" ] || format='%a\n%t'
+			metadata=$(cmus-remote -C "format_print '$format'")
+		;;
+
+		mpd)
+			[ "$format" ] ||
+				format='[[%artist%\n]%title%]|%file%}'
+			metadata=$(mpc -f "$format" current)
+		;;
+
+		*)
+			[ "$format" ] || format='{{artist}}\n{{title}}'
+			metadata=$(playerctl -f "$format" metadata |
+				sed -E 's/ \(@\w+\)//')
+		;;
+	esac
+
+	ncmd "$metadata"
+}
+
+cmd() {
+	[ "$notification" ] && ncmd="$ncmd $2"
+
+	case $player in
+		cmus)
+			cmus_cmd() cmus-remote -C "player-$1"
+			cmd=cmus_cmd
+		;;
+
+		foobar2000)
+			if [ "$beefweb" ]; then
+				[ "$1" = "$toggle" ] && cmdl=pause/toggle
+
+				fb2k_cmd() curl -X POST \
+					"http://localhost:8880/api/player/$cmdl"
+				cmd=fb2k_cmd
+			else
+				cmd=foobar2000
+			fi
+		;;
+
+		mpd) cmd=mpc ;;
+		*) cmd=playerctl ;;
+	esac
+
+	$cmd "$od$1" #&& $ncmd
+}
+
+args() case $1 in
+	play)
+		case $status in
+			Stopped) b=Started ;;
+			Paused) b=Resumed ;;
+			Playing) die 'Already playing' ;;
+		esac
+
+		cmd "$1" "$b"
+	;;
+
+	toggle)
+		case $status in
+			Stopped) b=Started ;;
+			Playing) b=Paused ;;
+			Paused) b=Resumed ;;
+		esac
+
+		if [ "$player" = foobar2000 ] && [ ! "$beefweb" ]; then
+			# Faster way - Wine takes some time to respond
+			set -e
+			oldwindow=$(xdotool getactivewindow)
+
+			xdotool search --class foobar2000.exe \
+				windowactivate key End \
+				windowactivate "$oldwindow"
+		else
+			cmd "$toggle" "$b"
+		fi
+	;;
+
+	pause)
+		[ "$status" = Paused ] && die 'Already paused'
+		cmd "$1" Paused
+	;;
+
+	stop)
+		[ "$status" = Stopped ] && die 'Already stopped'
+		cmd "$1" Stopped
+	;;
+
+	prev) cmd "$previous" Previous ;;
+	next) cmd "$1" Next ;;
+	file) get_file && printf '%s\n' "$file" ;;
+	*) get_metadata ;;
+esac
+
+check() {
+	[ -f "$fb2k/running" ] && {
+		player=foobar2000
+		toggle=playpause
+		previous=prev
+		od=-
+		foobar2000 -e foo_beefweb && beefweb=1
+		if foobar2000 -e foo_np_simple; then
+			component=1
+			while IFS= read -r l || [ -n "$l" ]; do case $l in
+				???P[la]*) meta=$l ;;
+				[[:alpha:]]:\\*) file=$l ;;
+			esac; done < "$TMPDIR/fb2kmetadata"
+		else
+			for i in $(xdotool search --class foobar2000.exe); do
+				n=$(xdotool getwindowname "$i")
+				testglob "$n" = 'P[la]*' && break
+			done; foobarwinname=$n
+		fi
+	}
+
+	testglob "$(playerctl metadata 2>&1)" != 'No*' && {
+		player=$(playerctl -l 2>/dev/null)
+		player=${player%%.*}
+		toggle=play-pause
+		previous=previous
+	}
+
+	mpc 2>&1 | grep -q '^\[p' && {
+		player=mpd
+		toggle=toggle
+		previous=prev
+	}
+
+	get_proc cmus && [ "$proc" ] && {
+		player=cmus
+		toggle=pause
+		previous=prev
+	}
+
+	[ "$player" ] || die 'No players available'
+	log "Player: $player"
+}
+
+main() {
+	: "${sdir:=${TMPDIR:=/tmp}/${0##*/}}"
+	confdir=${XDG_CONFIG_HOME:=$HOME/.config}
+	datadir=${XDG_DATA_HOME:=$HOME/.local/share}
+	fb2k=$winhome/Desktop/foobar2000
+	progopts=f:p:m:nh
+
+	while getopts "$progopts" opt; do case $opt in
+		f) format=$OPTARG ;;
+		p) player=$OPTARG ;;
+		m) [ -d "$OPTARG" ] && musicdir=$OPTARG ;;
+		n) notification=1 ;;
+
+		[h?])
+			printf 'Usage: %s [-%s] [command]\n' \
+				"${0##*/}" "$progopts" >&2
+			exit 2
+		;;
+	esac; done; shift $(( OPTIND - 1 ))
+
+	check && get_status
+	args "${1:-metadata}"
+}
+
+main "$@"

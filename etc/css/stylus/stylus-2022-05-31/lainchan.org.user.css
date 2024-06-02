@@ -1,0 +1,13 @@
+/* ==UserStyle==
+@name           lainchan.org - 5/18/2022, 8:57:21 AM
+@namespace      github.com/openstyles/stylus
+@version        1.0.0
+@description    A new userstyle
+@author         Me
+==/UserStyle== */
+
+@-moz-document domain("lainchan.org") {
+	body {
+		color: #ccc;
+	}
+}

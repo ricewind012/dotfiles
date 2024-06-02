@@ -1,0 +1,142 @@
+@-moz-document \
+	url-prefix("about:"),
+	url-prefix("chrome://devtools"),
+	url-prefix("chrome://browser/content"),
+	url-prefix("moz-extension://")
+{
+	@import '../firefox-shared/*';
+
+	:root {
+		// Reserve own variables
+		--reserve-bg: var(--bg);
+		--reserve-fg: var(--fg);
+		--reserve-fg2: var(--fg2);
+		--reserve-border: var(--border);
+		--reserve-pad: var(--pad);
+	}
+}
+
+@-moz-document url-prefix("about:"), url-prefix("chrome://browser/content") {
+	:root,
+	dialog {
+		// Background
+		--in-content-page-background: var(--bg) $i;
+		--in-content-box-background: var(--bg2) $i;
+		--in-content-box-background-odd: var(--bg3) $i;
+		--in-content-box-info-background: var(--bg2) $i;
+		--in-content-button-background: var(--bg2) $i;
+		--in-content-button-background-hover: var(--bg2) $i;
+		--in-content-button-background-active: var(--bg2) $i;
+		--in-content-table-background: var(--bg2) $i;
+		--in-content-table-header-background: var(--bg3) $i;
+		--in-content-item-selected: var(--hl) $i;
+		--in-content-item-hover: var(--bg2) $i;
+
+		// Foreground
+		--in-content-page-color: var(--fg) $i;
+		--in-content-item-selected-text: var(--hl-fg) $i;
+		--in-content-icon-color: var(--fg) $i;
+		--in-content-accent-color: var(--accent) $i;
+		--in-content-accent-color-active: var(--accent) $i;
+		--in-content-error-text-color: var(--color9) $i;
+		--in-content-link-color: var(--fg-link) $i;
+		--in-content-link-color-hover: var(--fg-link) $i;
+		--in-content-link-color-active: var(--fg-link) $i;
+		--in-content-link-color-visited: var(--fg-link) $i;
+
+		// Border
+		--in-content-box-border-color: var(--border) $i;
+		--in-content-border-hover: var(--border) $i;
+		--in-content-border-invalid: var(--color1) $i;
+		--in-content-border-color: var(--border) $i;
+		--in-content-table-border-color: var(--border) $i;
+		--in-content-table-header-color: var(--fg) $i;
+
+		// etc.
+		--sidebar-width: 228px $i;
+		--in-content-sidebar-width: var(--sidebar-width) $i;
+		--shadow-10: var(--shadow-low) $i;
+		--shadow-30: var(--shadow-big) $i;
+		--card-padding: var(--pad) $i;
+		--card-shadow: none $i;
+
+		@media (max-width: 830px) {
+			--sidebar-width: calc(var(--pad) * 2 + var(--font-size)) $i;
+		}
+	}
+	:root[dialogroot] {
+		--in-content-page-background: var(--bg) $i;
+	}
+
+	container-with-text {
+		.radio-&,
+		.toggle-& {
+			gap: 1ch;
+		}
+	}
+
+	// Sidebar
+	#sidebar,
+	.navigation {
+		bg(2);
+		brd(right);
+	}
+	#categories {
+		pad(0);
+		mar(0);
+	}
+	.category {
+		pad();
+		brd(0);
+		mar(0);
+		// Stylus errors if this gets indented
+		min-height: calc(var(--font-size) * var(--line-height) + var(--pad) * 2) $i;
+		transition: none $i;
+
+		&:not(:hover) {
+			fg(2);
+		}
+
+		&-icon {
+			box(var(--font-size));
+		}
+		&,
+		&-name {
+			cursor: pointer $i;
+		}
+		&-name {
+			lnh();
+			padding-left: 1ch;
+		}
+		&.selected,
+		&[selected] {
+			hl();
+			cursor: default $i;
+		}
+	}
+	.sidebar-footer {
+		&-list {
+			mar(0);
+			width: var(--in-content-sidebar-width);
+		}
+		&-icon {
+			mar(0);
+			box(var(--font-size));
+		}
+		&-label {
+			lnh();
+			padding-left: 1ch;
+			mar(0);
+		}
+		&-link {
+			pad();
+			border-radius: unset $i;
+			height: unset $i;
+			cursor: pointer $i;
+
+			&:not(:hover) {
+				fg(2);
+			}
+		}
+	}
+}

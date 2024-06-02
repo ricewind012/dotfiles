@@ -1,0 +1,531 @@
+/* ==UserStyle==
+@name           Soundcloud
+@namespace      github.com/openstyles/stylus
+@version        1.0.0
+@description    A new userstyle
+@author         Me
+
+@preprocessor stylus
+==/UserStyle== */
+
+@-moz-document domain('soundcloud.com') {
+	:root {
+		--page-width: 1180px;
+	}
+
+	/* Variables */
+	:root {
+		--background-inverted: #0d0d0d; // old header
+
+		// New ones to be used(?)
+		--background-surface-color: var(--bg); // body
+		--background-dark-color: var(--fg); // inverted?
+		--font-primary-color: var(--fg);
+		--font-secondary-color: var(--fg2);
+		--spacing-1x: 8px; // wtf
+		--spacing-2x: 16px;
+		--spacing-3x: 24px;
+
+		// Custom
+		--orange: #f50;
+		--orange2: #f30;
+		--text3: #999;
+		--text4: #ccc;
+	}
+
+	/* Remove elements */
+	.relatedList__explanation,
+	.userNetwork__subheadlineWrapper,
+	.callout,
+	.calloutBackground,
+	.directSupport,
+	.featuredProfiles,
+	.searchOptions__footer,
+	.l-footer,
+	.listenArtistInfo__copyright,
+	.sc-button-copylink, // Copy track link
+	.sound .commentForm, .listenEngagement__commentForm,
+	.listenDetails__login {
+		display: none !important;
+	}
+
+	/* Fix soundcloud's shit
+	 * only from app-1ef58cd5e2fd6e170cb1.css
+	 */
+	body {
+		background: var(--background-surface-color) none !important;
+		color: var(--font-primary-color) !important;
+	}
+	button, input, select, textarea {
+		color: var(--font-primary-color) !important;
+	}
+	.sc {
+		&-background {
+			&-blue { background-color: var(--text-link) !important; }
+			&-darkgrey { background-color: var(--font-primary-color) !important; }
+			&-grey { background-color: var(--font-secondary-color) !important; }
+			&-lightgrey { background-color: var(--text3) !important; }
+			&-white { background-color: var(--background-surface-color) !important; }
+			&-dark { background-color: var(--bg3) !important; }
+			&-light { background-color: var(--bg2) !important; }
+		}
+		&-link {
+			&-dark { color: var(--font-primary-color) !important; }
+			&-medium { color: var(--font-secondary-color) !important; }
+			&-light { color: var(--text3) !important; }
+			&-verylight { color: var(--text-muted2) !important; }
+			&-white { color: var(--background-surface-color) !important; }
+		}
+		&-text {
+			color: var(--font-primary-color) !important;
+			&-light { color: var(--text3) !important; }
+			&-verylight { color: var(--text4) !important; }
+			&-link { color: var(--text-link) !important; }
+			&-orange { color: var(--orange) !important; }
+		}
+
+		// secondary bg
+		&-button {
+			&-disabled,
+			&-disabled:focus,
+			&-disabled:hover,
+			&.sc-pending,
+			&.sc-pending:focus,
+			&.sc-pending:hover,
+			&:disabled,
+			&:disabled:hover,
+			&-medium&-white&-disabled&-mastering {
+				background-color: var(--bg2) !important;
+				border-color: var(--border) !important;
+				color: var(--text4) !important
+			}
+		}
+		&-upsell-container {
+			background-color: var(--bg2) !important;
+			border-color: var(--border) !important;
+		}
+		&-checkbox-check,
+		&-label,
+		&-radio-radio,
+		&-radio-input:checked:disabled + &-radio-radio
+		&-radio:hover &-radio-input:checked:disabled + &-radio-radio {
+			background-color: var(--bg2) !important;
+		}
+		&-radio-input:checked + &-radio-radio {
+			box-shadow: inset 0 0 0 2px var(--bg2) !important;
+		}
+		&-radio-input:checked:focus + &-radio-radio {
+			box-shadow: inset 0 0 0 3px var(--bg2) !important;
+		}
+
+		// Borders
+		border-colors = {
+			dark: var(--bg3),
+			light: var(--bg2),
+			orange: var(--orange)
+		}
+		for k, v in border-colors {
+			&-border-{k} {
+				border-color: v !important;
+
+				&-top { border-top-color: v !important; }
+				&-right { border-right-color: v !important; }
+				&-bottom { border-bottom-color: v !important; }
+				&-left { border-left-color: v !important; }
+			}
+		}
+
+		// --font-primary-color
+		&-buylink:hover,
+		&-link-dark:hover,
+		&-link-medium:hover,
+		&-snippet-badge {
+			color: var(--font-primary-color) !important;
+		}
+
+		&-button {
+			background-color: var(--background-surface-color) !important;
+			color: var(--font-primary-color) !important;
+			border-color: var(--bg3) !important;
+
+			&-apple {
+				&, &:focus, &:hover, &:visited {
+					background-color: var(--font-primary-color) !important;
+					color: var(--background-surface-color) !important;
+					border-color: var(--font-primary-color) !important;
+				}
+			}
+		}
+
+		// --font-secondary-color
+		&-checkbox-input:focus + &-checkbox-check,
+		&-checkbox:hover &-checkbox-check,
+		&-radio-input:focus + &-radio-radio,
+		&-radio:hover &-radio-radio,
+		&-tag:hover,
+		&-button-text:focus, &-button-text:hover,
+		.g-dark &-button:not(&-button-cta),
+		.g-dark &-button:not(&-button-primary) {
+			border-color: var(--font-secondary-color) !important;
+		}
+
+		&-tag {
+			&:hover {
+				background-color: var(--font-secondary-color) !important;
+			}
+			&, &:visited {
+				background-color: var(--text3) !important;
+				border-color: var(--text3) !important;
+			}
+			&:focus {
+				outline: thin dotted var(--font-secondary-color) !important;
+			}
+		}
+
+		// --text3 (tertiary?)
+		&-radio-radio,
+		&-checkbox-check,
+		&-checkbox-input:disabled + &-checkbox-check,
+		&-checkbox:hover &-checkbox-input:disabled + &-checkbox-check {
+			border-color: var(--text3) !important;
+		}
+		&-label, &-label:hover, &-label:visited,
+		&-ministats, &-ministats-small, &-ministats-light:hover,
+		&-snippet-badge-grey,
+		&-type-light,
+		&-button-text {
+			color: var(--text3) !important;
+		}
+		.g-oscp-section-header::before {
+			background-color: var(--background-dark-color) !important;
+			color: var(--background-surface-color) !important;
+
+			~/-text-secondary&,
+			~/-type-light& {
+				background-color: var(--text3) !important;
+			}
+		}
+
+		// --orange(2)
+		&-button {
+			// --orange
+			~/-orange,
+			~/-text-orange,
+			&-active, &-selected {
+				color: var(--orange) !important;
+			}
+			&-active&-focus,
+			&-active:focus,
+			&-active:hover,
+			&-selected&-focus,
+			&-selected:focus,
+			&-selected:hover {
+				color: var(--orange) !important;
+				border-color: var(--orange) !important;
+			}
+			&-cta, &-cta:focus, &-cta:hover, &-cta:visited,
+			&&-white:focus, &&-white:hover,
+			&-dropdown&-active:not(&-dropdown-plain),
+			&-dropdown:hover:not(&-dropdown-plain) {
+				background-color: var(--orange) !important;
+				border-color: var(--orange) !important;
+				color: var(--hl-text) !important;
+			}
+			&&-white {
+				background-color: var(--hl-text) !important;
+				color: var(--orange) !important;
+				border-color: var(--orange) !important;
+			}
+			&-follow&-selected {
+				border-color: var(--orange) !important;
+			}
+			&-dropdown:not(&-disabled):not(:disabled) {
+				border-color: var(--orange) !important;
+				color: var(--orange) !important;
+			}
+			&-dropdown::after {
+				border-right-color: var(--orange) !important;
+				border-bottom-color: var(--orange) !important;
+			}
+			&-next,
+			&-pause,
+			&-play,
+			&-prev,
+			&&-blocked,
+			&&-play&-disabled:disabled,
+			&&-play:disabled,
+			&&-play:disabled:hover {
+				background-color: var(--orange) !important;
+			}
+
+			// --orange2
+			&-next&-focus,
+			&-next:focus,
+			&-next:hover,
+			&-pause&-focus,
+			&-pause:focus,
+			&-pause:hover,
+			&-play&-focus,
+			&-play:focus,
+			&-play:hover,
+			&-prev&-focus,
+			&-prev:focus,
+			&-prev:hover {
+				background-color: var(--orange2) !important;
+			}
+			&-next:active,
+			&-pause:active,
+			&-play:active,
+			&-prev:active {
+				background-color: var(--orange2) !important;
+				border-color: var(--orange2) !important;
+			}
+		}
+
+		&-label {
+			&&-private {
+				background-color: var(--orange) !important;
+
+				&-ghost {
+					color: var(--orange) !important;
+				}
+			}
+		}
+		&-tag-selected {
+			&, &:hover, &:visited {
+				background-color: var(--orange) !important;
+				border-color: var(--orange) !important;
+			}
+			&::before, &:hover::before {
+				border-color: transparent var(--orange) transparent transparent !important;
+			}
+		}
+		&-toggle::before {
+			background: var(--orange) !important;
+		}
+	}
+	.g {
+		&-dark {
+			input[type="password"],
+			input[type="search"],
+			input[type="text"],
+			select, textarea {
+				color: var(--font-secondary-color) !important;
+			}
+
+			.sc-button {
+				&:not(^[1..-1]-cta):focus,
+				&:not(^[1..-1]-cta):hover,
+				&:not(^[1..-1]-primary):focus,
+				&:not(^[1..-1]-primary):hover {
+					border-color: var(--text3) !important;
+				}
+				&-selected:not(^[1..-1]-cta),
+				&-selected:not(^[1..-1]-primary),
+				&-selected:not(^[1..-1]-cta):focus,
+				&-selected:not(^[1..-1]-cta):hover,
+				&-selected:not(^[1..-1]-primary):focus,
+				&-selected:not(^[1..-1]-primary):hover {
+					color: var(--orange) !important;
+				}
+			}
+			input[type="password"],
+			input[type="search"],
+			input[type="text"],
+			select, textarea {
+				&::-webkit-input-placeholder,
+				&:-moz-placeholder {
+					color: var(--text3) !important;
+				}
+			}
+			for i in (1..3) {
+				.sc-text-h{i},
+				.sc-type-h{i},
+				h{i} {
+					color: var(--text3) !important;
+				}
+			}
+		}
+
+		&-oscp-section,
+		.sc-classic &-tabs,
+		.sc-classic &-modal-title-h1 {
+			border-bottom-color: var(--bg2) !important;
+		}
+		&-type-shrinkwrap-large-secondary a:hover
+		&-type-shrinkwrap-large-secondary a:visited:hover
+		&-type-shrinkwrap-secondary a:hover
+		&-type-shrinkwrap-secondary a:visited:hover
+		a&-type-shrinkwrap-large-secondary:hover
+		a&-type-shrinkwrap-large-secondary:visited:hover
+		a&-type-shrinkwrap-secondary:hover
+		a&-type-shrinkwrap-secondary:visited:hover,
+		a&-type-shrinkwrap-large-primary
+		a&-type-shrinkwrap-large-primary:visited
+		a&-type-shrinkwrap-primary
+		a&-type-shrinkwrap-primary:visited {
+			color: var(--bg2) !important;
+		}
+		&-dark,
+		.sc-classic &-form-section-title,
+		.sc-classic &-tabs-link &-tabs-subheading,
+		.sc-classic &-avatar-badge-avatar-link {
+			color: var(--text3) !important;
+		}
+
+		// --orange(2)
+		&-tabs {
+			.sc-classic &-link.active {
+				border-color: var(--orange) !important;
+				color: var(--orange) !important;
+			}
+			&-link.active &-subheading {
+				color: var(--orange) !important;
+			}
+		}
+		&-button-premium-pro-unlimited {
+			&, &:focus, &:hover {
+				background-color: var(--orange) !important;
+				border-color: var(--orange) !important;
+			}
+		}
+		&-type-marketing {
+			&::after {
+				background-color: var(--orange) !important;
+			}
+			&-header::after {
+				background-image: linear-gradient(90deg, #7d01a1, var(--orange2) 50%, var(--orange)) !important;
+			}
+		}
+	}
+	::-webkit-input-placeholder,
+	:-moz-placeholder,
+	:focus {
+		/button[disabled],
+		/input[disabled],
+		input[type="date"]&,
+		input[type="email"]&,
+		input[type="password"]&,
+		input[type="search"]&,
+		input[type="tel"]&,
+		input[type="text"]&,
+		input[type="url"]&,
+		select&, textarea& {
+			color: var(--text3) !important;
+		}
+	}
+
+	/* Header */
+	.header {
+		background-color: var(--background-surface-color) !important;
+
+		.loginButton {
+			color: var(--font-primary-color) !important;
+		}
+
+		&__navMenu > li {
+			& > a {
+				border-right-color: var(--border) !important;
+				color: var(--font-primary-color) !important;
+
+				&.selected {
+					color: var(--font-primary-color) !important;
+					background-color: var(--bg2) !important;
+
+					&:hover {
+						cursor: default;
+					}
+				}
+
+				&:not(.selected) {
+					&:focus, &:hover {
+						box-shadow: inset 0 -1px var(--font-primary-color);
+						color: var(--font-primary-color) !important;
+					}
+				}
+			}
+
+			& > .header__moreButton {
+				~/__userNavUsernameButton::after,
+				.notificationIcon::before,
+				& {
+					filter: invert();
+					opacity: .5 !important;
+				}
+
+				&:hover {
+					box-shadow: none !important;
+				}
+
+				&:hover,
+				&.selected {
+					opacity: .75 !important;
+				}
+
+				&.selected {
+					background-color: var(--background-inverted) !important;
+				}
+			}
+		}
+
+		&__right > div > a {
+			color: var(--font-primary-color) !important;
+
+			&.selected {
+				background-color: var(--bg2) !important;
+			}
+
+			&:not(.selected) {
+				&:focus, &:hover {
+					box-shadow: 0 1px var(--font-primary-color);
+				}
+			}
+		}
+	}
+
+	/* Content width */
+	/*body.sc-classic {
+		background: var(--background-secondary) !important;
+
+		.l-container {
+			background-color: var(--background);
+			width: var(--page-width);
+		}
+	}
+	.l-fluid-fixed .l-main {
+		padding-top: 0 !important;
+		margin: 0 330px 0 auto;
+		/*width: calc(var(--page-width) - 355px);
+		width: calc(100% - 355px);
+	}
+
+	/* Remove right sidebar on small resolutions */
+	/*@media (max-width: 1079px) {
+		.l-sidebar-right {
+			display: none !important;
+		}
+		.l-main {
+			border-right: none !important;
+			padding-right: 0 !important;
+			margin: 0 auto !important;
+			width: calc(var(--page-width) - 28%) !important;
+		}
+	}
+
+	/* etc. */
+	.searchOptions__navigationItem:not(.active):hover {
+		background-color: var(--bg2);
+	}
+	.l-collection > .l-nav {
+		margin: 20px 0 !important;
+	}
+	.spotlight:empty + h3 {
+		padding-top: 0 !important;
+	}
+	.userstream__header {
+		margin: 20px 0 !important;
+	}
+	a[title="Pro Unlimited"] > span {
+		border-radius: 0 !important;
+	}
+}

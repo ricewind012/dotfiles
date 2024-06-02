@@ -1,0 +1,227 @@
+#!/usr/bin/env zsh
+
+get_ls_colors() {
+	(( $+LS_COLORS )) ||
+		return 1
+	[[ $TERM == (${(~j.|.)${(M)"${(f)$(</etc/colors/DIR_COLORS)}":#TERM[[:space:]]*}#TERM[[:space:]]}) ]] ||
+		return 1
+
+	local f c
+	for f c (${(s. .)${(s.:.)LS_COLORS//=/ }})
+		colors[$f]=$c
+}
+
+get_color() {
+	# no - Global default
+	# bd - Block device
+	# ca - File with capability
+	# cd - Character device
+	# di - Directory
+	# do - Door TODO
+	# ex - Executable
+	# fi - Normal file
+	# ln - Symbolic link
+	# mh - Multi-Hardlink TODO
+	# mi - Missing file TODO
+	# or - Orphaned symbolic link
+	# ow - Other writable TODO
+	# pi - Named pipe
+	# rs - Reset to normal color TODO?
+	# sg - Set GID
+	# so - Socket
+	# st - Sticky
+	# su - Set UID
+	# tw - Sticky other writable TODO
+	local c
+
+	[[ -b $1 ]] && c=bd
+	[[ -c $1 ]] && c=cd
+	[[ -d $1 ]] && c=di
+	[[ -x $1 ]] && c=ex
+	if [[ -L $1 ]] {
+		c=ln
+		[[ ! -e $1 ]] && c=mi
+	}
+	[[ -p $1 ]] && c=pi
+	[[ -g $1 ]] && c=sg
+	[[ -S $1 ]] && c=so
+	[[ -k $1 ]] && c=st
+	[[ -u $1 ]] && c=su
+	: "${c:=*.$1:e}"
+
+	color="\e[${colors[$c]:-00}m"
+}
+
+get_size() {
+	zmodload zsh/mathfunc || return 1
+
+	if (( ! fstat[size] )) {
+		fstat[size]='   0 B '
+		return
+	}
+
+	local -a units=(B KB MB GB TB)
+	local -i e=$(( log(fstat[size]) / log(1024) ))
+	local -i s=$(( fstat[size] / (1024 ** floor(e)) ))
+
+	fstat[size]="${(l:4:)s} ${(r:2:)units[$(( e + 1 ))]}"
+}
+
+get_count() {
+	unset count
+	[[ -d $1 ]] && count=($1/*(N$opts[g]))
+}
+
+fuckoff() {
+	files=(); mapfile=(); out=()
+	cd -- $OLDPWD
+}
+
+warn() {
+	printf '%s:%d: %s: %s\n' $1 ${(%):-%i} $3 $2 >&2
+}
+
+print_files() {
+	local -a out
+	local -A fstat maxlen
+	local f p part
+
+	for f {
+		(( opts[c] )) && get_color $f
+		(( opts[C] )) && get_count $f
+		(( opts[l] )) &&
+			stat -H fstat -F ${opts[F]:=%F} -L -- $f
+	
+		if (( ! opts[l] )) {
+			out+="$color$f\e[m${count:+ ($#count)}"
+		} else {
+			get_size
+	
+			for p (${=opts[f]:=mode gid uid size mtime})
+				(( $#fstat[$p] > maxlen[$p] )) &&
+					maxlen[$p]=$#fstat[$p]
+			for p ($=opts[f])
+				part+="${(l:maxlen[$p]:)fstat[$p]} "
+			out+="${part%?} $color${f//(#m)\\([a-z]|033)/${(q)MATCH}}\e[m${count:+ ($#count${opts[g]:+, $opts[g]})}${fstat[link]:+ -> ${(D)fstat[link]}}"
+			unset part
+		}
+	}
+
+	(( $#opts[(i)[1l]] )) && p=-l || p=-c
+	print $p -- $out
+	fuckoff
+}
+
+main() {
+	typeset -gA opts colors
+	local -a dirs {,p}files{,p,n,f} mapfile
+	local -i OPTIND i
+	local opt OPTARG part f
+	local progopts=1cCdDf:F:g:G:hls
+	setopt extendedglob
+
+	while getopts $progopts opt; do case $opt in
+		[h?])
+			<<-EOF >&2
+			Usage: ${ZSH_ARGZERO##*/} [-$progopts] [dir]
+
+			-1 One file per line
+			-c Use color
+			-C Count files in a directory
+			-d Directories first
+			-D Display directories instead of their contents
+			-f Long listing format (zstat elements)
+			-F Long listing date format
+			-g Count a type of files (with -C)
+			-G Print a type of files
+			-h Print this message
+			-l Long listing of files
+			-s Sort error messages (put them on bottom)
+			EOF
+			exit 2
+		;;
+
+		l) zmodload zsh/stat && opts[$opt]=1 ;;
+		c) get_ls_colors && opts[$opt]=1 ;;
+		*) opts[$opt]=${OPTARG:-1} ;;
+	esac; done; shift $(( OPTIND - 1 ))
+
+  # TODO N:a kills non-existent arguments
+	dirs=(${(u)@:-.}(N:a))
+	for (( i = 1; i <= $#dirs; i++ )) {
+		if [[ -d $dirs[$i] ]] {
+			cd -- $dirs[$i] 2>/dev/null || {
+				if (( ! opts[s] )) {
+					(( i != 1 )) &&
+						printf '\n' >&2
+					printf '%s:\n' $dirs[$i] >&2
+					warn $0 $dirs[$i] 'permission denied'
+				}
+				filesp+=$dirs[$i]
+				continue
+			}
+			(( opts[D] )) &&
+				mapfile=($dirs[$i]) || mapfile=(*(N$opts[G]))
+			local -i header=1
+
+		} elif [[ -e $dirs[$i] ]] {
+			pfiles+=$dirs[$i]
+			continue
+
+		} else {
+			if (( ! opts[s] )) {
+				(( i != 1 )) &&
+					printf '\n' >&2
+				printf '%s:\n' $dirs[$i] >&2
+				warn $0 $dirs[$i] 'no such file or directory'
+			}
+			filesn+=$dirs[$i]
+			(( $#dirs != 1 )) && continue || return 1
+		}
+
+		if (( $#dirs >= 2 )) {
+			# TODO
+			(( i != 1 && ! ($#filesp || $#filesn) )) &&
+				f='\n%s:\n' || f='%s:\n'
+			printf $f $dirs[$i]
+		}
+
+		local list=(${(o)mapfile:-$dirs[$i]})
+		if (( opts[d] )) {
+			for f ($list)
+				[[ -d $f ]] && files+=$f
+			for f ($list)
+				[[ ! -d $f ]] && files+=$f
+		} else {
+			files=($list)
+		}
+
+		if [[ ! $files[1](N/) ]] && (( ! opts[D] )) {
+			(( opts[s] && ! ($#filesp || $#filesn) )) &&
+				warn $0 $dirs[$i] 'no files'
+			filesf+=$dirs[$i]
+			fuckoff
+			continue
+		}
+
+		print_files $files
+	}
+	
+	if (( opts[s] )) {
+		(( i != 1 && ($#filesp || $#filesn || $#filesf) )) &&
+			printf '\n' >&2
+		for f ($filesn)
+			warn $0 $f 'no such file or directory'
+		for f ($filesf)
+			warn $0 $f 'no files'
+		for f ($filesp)
+			warn $0 $f 'permission denied'
+	}
+
+	if (( $#pfiles )) {
+		(( header )) && printf '\nFiles:\n'
+		print_files $pfiles
+	}
+}
+
+main $@

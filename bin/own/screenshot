@@ -1,0 +1,382 @@
+#!/bin/sh
+. "$bin/common.sh"
+
+notify() {
+	[ "$notification" -eq 1 ] || return
+
+	notify-send \
+		-u low \
+		-h "string:image-path:$output" \
+	"${0##*/}" "$1"
+}
+
+copy() {
+	tee "$1" | xclip -sel c -t image/png
+}
+
+strict() {
+	set -e
+	cleanup() rm -f "$@" 2>/dev/null
+	trap cleanup EXIT
+}
+
+out() {
+	output=$1
+
+	[ -d "${output%/*}" ] || mkdir -p "${output%/*}"
+}
+
+check_audio() {
+	if get_proc pulseaudio && [ "$proc" ]; then
+		audio_output=pulse
+		audio_device=default
+
+	elif [ -f /dev/dsp ]; then
+		audio_output=oss
+		audio_device=/dev/dsp
+
+	else
+		audio_device=default
+		audio_output=alsa
+
+		# https://trac.ffmpeg.org/wiki/Capture/ALSA
+		[ "$noaudio" ] || {
+			grep -q '^snd_aloop' /proc/modules ||
+				su -c '/sbin/modprobe snd-aloop pcm_substreams=1'
+			printf 'pcm.multi {\n\ttype route;\n\tslave.pcm {\n\t\ttype multi;\n\t\tslaves.a.pcm "output";\n\t\tslaves.b.pcm "loopin";\n\t\tslaves.a.channels 2;\n\t\tslaves.b.channels 2;\n\t\tbindings.0.slave a;\n\t\tbindings.0.channel 0;\n\t\tbindings.1.slave a;\n\t\tbindings.1.channel 1;\n\t\tbindings.2.slave b;\n\t\tbindings.2.channel 0;\n\t\tbindings.3.slave b;\n\t\tbindings.3.channel 1;\n\t}\n\n\tttable.0.0 1;\n\tttable.1.1 1;\n\tttable.0.2 1;\n\tttable.1.3 1;\n}\n\npcm.!default {\n\ttype plug\n\tslave.pcm "multi"\n} \n\npcm.output {\n\ttype hw\n\tcard 0\n}\n\npcm.loopin {\n\ttype plug\n\tslave.pcm "hw:Loopback,0,0"\n}\n\npcm.loopout {\n\ttype plug\n\tslave.pcm "hw:Loopback,1,0"\n}' > "$confdir/alsa/asoundrc"
+			audio_device=loopout
+		}
+	fi
+}
+
+convert() {
+	$ffmpeg -i "${1:-$sdir/video.mkv}" \
+		-c:v h264 -b:v 3000k -c:a aac \
+	"${2:-$selpath/$selname}"
+
+	notify 'Video converted'
+}
+
+get_resolution() {
+	while read -r res rr _; do case $rr in *\**)
+		rr=$(printf '%.0f' "${rr%??}"); break
+	esac; done <<-EOF
+	$(xrandr --current)
+	EOF
+}
+
+get_xprop_class() {
+	class=$(xprop -notype -id "$1" WM_CLASS)
+	class=${class##*\"}
+	proc=${class%\"}
+}
+
+get_window_process() {
+	if command -v xdotool >/dev/null; then
+		wincmd=xdotool
+		desiredwindow=$(xdotool getmouselocation)
+		desiredwindow=${desiredwindow##*:}
+		windowpid=$(xdotool getwindowpid "$desiredwindow")
+
+	# limitation: only the focused window
+	elif command -v xprop >/dev/null; then
+		wincmd=xprop
+		windowid=$(xprop -root _NET_ACTIVE_WINDOW)
+		windowid=${windowid##* }
+		windowpid=$(xprop -id "$windowid" _NET_WM_PID)
+		windowpid=${windowpid##* }
+
+	else
+		log 'xdotool or xprop not found'
+		return 1
+	fi
+	# TODO get_proc
+	read -r proc < "/proc/$windowpid/comm"
+
+	case $proc in
+		'')
+			if [ "$windowid" = 0x0 ]; then
+				if [ "$wincmd" = xprop ]; then
+					set -- $(xprop -notype -root \
+						_NET_SUPPORTING_WM_CHECK)
+					IFS='"'
+					set -- $(xprop -notype -id "$5" _NET_WM_NAME)
+					proc=$2
+
+				elif command -v wmctrl >/dev/null; then
+					read -r _ proc <<-EOF
+					$(wmctrl -m)
+					EOF
+
+				else
+					log 'xprop or wmctrl not found'
+					return 1
+				fi
+			else
+				get_xprop_class "$windowid"
+			fi
+		;;
+
+		AppRun)
+			case $wincmd in
+				xprop)
+					get_xprop_class "$windowid"
+				;;
+
+				xdotool)
+					proc=$(xdotool getwindowclassname "$windowid")
+				;;
+			esac
+		;;
+
+		electron)
+			get_xprop_class "$windowid"
+		;;
+
+		MainThread|GeckoMain) proc=firefox ;;
+		Minecraft*) proc=Minecraft ;;
+		*-bin) proc=${proc%-bin} ;;
+		*.exe) proc=${proc%.exe} ;;
+	esac
+}
+
+opts() { # TODO: add ffmpeg pid and kill it idk
+	case $1 in
+		sel)
+			[ -d "$sspath" ] || mkdir -p "$sspath"
+			$selcmd | copy "$sspath/$ssname"
+			#flameshot gui -p "$sspath/$ssname" -c
+		;;
+
+		color)
+			colorpicker -do | xclip -sel c
+		;;
+
+		qr)
+			if [ "$notification" -eq 1 ]; then
+				out "$sdir/qr.png"
+				notify "$(maim -su /dev/stdout | tee "$output" |
+					zbarimg --raw /dev/stdin)"
+			else
+				maim -su /dev/stdout |
+					zbarimg --raw /dev/stdin 2>/dev/null
+			fi
+		;;
+
+		full)
+			out "$ssfullpath/$ssfullname"
+			strict "$sdir/screenshot.png"
+			get_resolution
+
+			$ffmpeg \
+				-f x11grab -i "$DISPLAY.0" \
+				-video_size "$res" -vframes 1 \
+			"$sdir/screenshot.png"
+
+			< "$sdir/screenshot.png" copy "$output"
+
+			notify 'Fullscreen screenshot taken'
+		;;
+
+		ws-montage)
+			out "$ssfullpath/$ssfullname"
+			strict "$sdir"/ws*.png
+
+			ws=$(xdotool get_num_desktops)
+			cws=$(xdotool get_desktop)
+			get_resolution
+			count 1 "$ws"
+
+			for i in $c; do
+				xdotool set_desktop "$(( i - 1 ))"
+				sleep 0.5
+				$ffmpeg -loglevel error \
+					-f x11grab -i "$DISPLAY.0" \
+					-video_size "$res" -vframes 1 \
+				"$sdir/ws$i.png"
+			done
+
+			xdotool set_desktop "$cws"
+			montage "$sdir/ws[1-$ws].png" \
+				-tile "1x$ws" -geometry +0+0 \
+			"$ssfullpath/$ssfullname"
+
+			notify 'Workspace montage done'
+		;;
+
+		window)
+			out "$sspath/$ssname"
+
+			if [ "$shadow" -eq 1 ]; then
+				# Try to get picom's shadow
+				while IFS=' =;' read -r p v; do case $p in
+					shadow-radius) or=$v; r=$(( v / 3 )) ;;
+					shadow-offset-x) x=$(( or + v )) ;;
+					shadow-offset-y) y=$(( or + v )) ;;
+					shadow-opacity)
+						case $v in
+							[1-9].*) o=${v%.*}${v#*.} ;;
+							*) o=${v#0.} ;;
+						esac
+					;;
+				esac; done < "$confdir/picom/picom.conf"
+
+				testglob "$x" = '[0-9]*' && x=+$x
+				testglob "$y" = '[0-9]*' && y=+$y
+
+				# ..and screenshot
+				maim -Boust 9999999 $args /dev/stdout |
+					command convert - \
+						\( +clone -background none \
+						-shadow "${o}x${r}${x}${y}" \) \
+						+swap -bordercolor none -layers merge +repage \
+					- |
+				copy "$output"
+			else
+				maim -Boust 9999999 $args /dev/stdout |
+					copy "$output"
+			fi
+
+			notify 'Window screenshot taken'
+		;;
+
+		vrecord)
+			out "$vdpath/$vdname"
+			get_proc ffmpeg
+
+			if ! kill -s INT "$pid" 2>/dev/null; then
+				check_audio
+				get_resolution
+
+				$ffmpeg \
+					-video_size "$res" -framerate "$frames" \
+					-f x11grab -i "$DISPLAY.0" \
+					-f "$audio_output" -i "$audio_device" \
+				"$sdir/video.mkv"
+
+				notify 'Stopped recording video'
+			else
+				convert "$sdir/video.mkv" "$output"
+			fi
+		;;
+
+		srecord)
+			out "$selpath/$selname"
+			get_proc ffmpeg
+
+			if ! kill -s INT "$pid" 2>/dev/null; then
+				o=${offset:-$(slop $args)} ||
+					die 'Failed to get offset'
+				IFS='x+'; set -- $o
+				check_audio
+
+				eval $ffmpeg \
+					-video_size "${1}x${2}" -framerate "$frames" \
+					-f x11grab -i "$DISPLAY.0+$3,$4" \
+					-f "$audio_output" -i "$audio_device" \
+					-pix_fmt yuv420p \
+				"$sdir/video.mkv"
+
+				notify 'Stopped recording video'
+			else
+				convert "$sdir/video.mkv" "$output"
+			fi
+		;;
+	
+		shadowplay)
+			out "$vdpath/$vdname"
+			get_proc ffmpeg
+
+			if ! kill -s INT "$pid" 2>/dev/null; then
+				check_audio
+				get_resolution
+
+				$ffmpeg \
+					-video_size "$res" -framerate "$frames" \
+					-f x11grab -i "$DISPLAY.0" -pix_fmt yuv420p \
+					-f "$audio_output" -i "$audio_device" \
+				"$sdir/video.mkv"
+			else
+				strict "$sdir/video.mkv"
+
+				# TODO
+				$ffmpeg -i "$sdir/video.mkv" \
+					-sseof -$seconds -c copy \
+				"$sdir/video.mkv"
+
+				convert "$sdir/video.mkv" "$output"
+			fi
+		;;
+
+		arecord)
+			out "$aupath/$auname"
+			get_proc ffmpeg
+
+			kill -s INT "$pid" 2>/dev/null || {
+				check_audio
+
+				$ffmpeg \
+					-f "$audio_output" -i "$audio_device" \
+				"$output"
+			}
+
+			notify 'Stopped recording audio'
+		;;
+
+		convert)
+			shift
+			convert "$@"
+		;;
+
+		*) get_resolution && get_window_process;echo $proc
+	esac
+}
+
+main() {
+	: "${sdir:=${TMPDIR:=/tmp}/${0##*/}}"
+	confdir=${XDG_CONFIG_HOME:-$HOME/.config}
+	date=$(date +%Y-%m-%d_%H-%M-%S)
+	get_window_process
+	ffmpeg='ffmpeg -y -hide_banner'
+	selcmd='flameshot gui -r'
+	shadow=0
+	seconds=10
+	frames=60
+	. "$confdir/user-dirs.dirs" 2>/dev/null
+	screenshotpath="$XDG_PICTURES_DIR/scr"
+	ssfullpath="$screenshotpath/Fullscreen/$proc"
+	ssfullname="$date.png"
+	sspath="$screenshotpath/$(date +%Y-%m)"
+	ssname="${proc:+${proc}_}${date}.png"
+	vdpath="$XDG_VIDEOS_DIR"
+	vdname="$date.mp4"
+	selpath="$XDG_VIDEOS_DIR"
+	selname="${proc}_${date}.mp4"
+	aupath="$XDG_VIDEOS_DIR"
+	auname="$date.mp3"
+	progopts=a:Af:s:F:o:d:tSnh
+
+	while getopts "$progopts" opt; do case $opt in
+		a) args=$OPTARG ;;
+		A) noaudio=1 ;;
+		f) ffmpeg="ffmpeg $OPTARG" ;;
+		s) seconds=$OPTARG ;;
+		F) frames=$OPTARG ;;
+		o) offset=$OPTARG ;;
+		d) [ -d "$OPTARG" ] && sspath=$OPTARG ;;
+		t) sspath=$TMPDIR; ssname=image0.png ;;
+		S) shadow=1 ;;
+		n) notification=1 ;;
+
+		[h?])
+			printf 'Usage: %s [-%s] command\n' \
+				"${0##*/}" "$progopts" >&2
+			exit 2
+		;;
+	esac; done; shift $(( OPTIND - 1 ))
+
+	[ -d "$sdir" ] || mkdir -p "$sdir"
+	opts "${1:-sel}"
+}
+
+main "$@"

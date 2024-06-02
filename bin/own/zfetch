@@ -1,0 +1,110 @@
+#!/usr/bin/env zsh
+
+am_i_xterm() {
+	if [[ $TERM != xterm ]] {
+		print -r -- im not xterm
+		return 1
+	}
+}
+
+get_shell() {
+	case ${SHELL##*/} {
+		bash) shver='${BASH_VERSION%%[(-]*}' ;;
+		ksh) shver='${KSH_VERSION##* }' ;;
+		zsh) shver='$ZSH_VERSION' ;;
+	}
+
+	$SHELL -c "printf '%s %s\n' ${SHELL##*/} $shver"
+}
+
+get_terminal_font() {
+	local v REPLY
+
+	am_i_xterm || return
+	printf '\e]50;?\e\\'
+	read -st 2 -rk 3
+	read -srd$'\e'
+	v=$REPLY
+	read -srk1
+
+	print -r -- ${v#*;}
+}
+
+get_terminal_size() {
+	local REPLY
+
+	am_i_xterm || return
+	printf '\e[14t'
+	read -st 2 -rk 3
+	read -d t
+
+	print -r -- ${${REPLY#?}//;/x}
+}
+
+get_gpu() {
+	local out=("${(f)$(lspci -mm)}")
+
+	: ${${(M)out:#*GeForce*}//(#b)\[(*)\]}
+	print -r -- ${match%%\]*}
+}
+
+get_song()
+	print -r -- ${${${"${(f)$(<${TMPDIR:=/tmp}/fb2kmetadata)}"[1]}#*: }:-$(playerctl metadata)}
+get_gtk()
+	print -r -- ${(s. .)${(M)"${(f)$(<$confdir/gtk-3.0/settings.ini)}":#gtk-theme-name*}#*=}
+get_cpu()
+	print -r -- ${${${${(M)"${(f)$(</proc/cpuinfo)}":#model name*}#*: }[1]}//(#i)(\((R|TM)\)|[[:space:]]#CPU| @ <->.<->[[:space:]]#GHz)} ${opts[t]:+@ $(( $(</sys/class/hwmon/hwmon0/temp1_input) / 1000 ))°C}
+get_memory()
+	print -r -- $(( ${${${(s. .)${(M)"${(f)$(</proc/meminfo)}":#MemTotal*}}[2]}%$'\n'} / 1024 )) MB
+get_qt()
+	print -- ${${${${${(M)"${(f)$(<$confdir/qt5ct/qt5ct.conf)}":#fixed=@*}//@}#fixed=Variant\(}%\)}//\\(0|x5)}
+get_wm()
+	print -r -- ${${${${"$(xprop -id ${"$(xprop -root -notype _NET_SUPPORTING_WM_CHECK)"##* } -notype -len 100 -f _NET_WM_NAME 8t)"/*WM_NAME = }/\"}/\"*}:-${${"${(f)$(wmctrl -m)}"[1]}#Name: }}
+get_resolution()
+	print -r -- ${${(s. .)${(M)"${(f)$(xrandr --current)}":#*\**}}[1]}
+get_system()
+	print -r -- ${${${${(M)"${(f)$(</etc/os-release)}":#NAME=*}#NAME=}//\"}%[[:space:]]#Linux} ${"$(uname -srm)"// /, }
+get_uptime()
+	print -r -- ${${"${(f)$(</proc/uptime 2>/dev/null)}"/.*}:-0} seconds
+get_terminal()
+	print -r -- ${TERMINAL:-$TERM}
+
+main() {
+	typeset -A opts
+	local -i OPTIND pad
+	local opt OPTARG i
+	local progopts=chns:t
+	local funcs=(${${(Mko)functions:#get_*}//get_})
+	confdir=${XDG_CONFIG_HOME:=$HOME/.config}
+	setopt extendedglob
+
+	while getopts $progopts opt; do case $opt in
+		[h?])
+			<<-EOF >&2
+			Usage: $ZSH_ARGZERO:t [-$progopts] ${(j.|.)funcs}
+
+			-c Center output
+			-n Print user@hostname
+			-s Output separator
+			-t Show temperature
+			EOF
+			exit 2
+		;;
+
+		c) opts[s]=' '${${opts[s]:=- }#[[:space:]]##} ;|
+		n) print $USER@$HOST$'\n'${(l:$#USER+$#HOST+1::-:)} ;;
+		*) opts[$opt]=${OPTARG:-1} ;;
+	esac; done; shift $(( OPTIND - 1 ))
+
+	local args=(${(uL)@:-$funcs})
+	(( opts[c] )) && pad=${#${(j. .)args[(r)${(l.${#${(O@)args//?/X}[1]}..?.)}]}}
+	for i ($args) {
+		[[ $functions[get_$i] ]] || continue
+
+		(( $#i <= 3 )) && i=${(U)i} || i=${(C)i}
+		print -rn -- $'\e[1m'${(l:pad:)i//_/ }$'\e[m'${opts[s]:=: }
+		get_${(L)i}
+	}
+}
+
+main $@
