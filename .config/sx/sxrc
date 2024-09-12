@@ -1,0 +1,49 @@
+#!/bin/sh
+export wm=${wm:-xfwm4}
+
+xrandr --auto; xrandr --output HDMI-1-1 --primary --dpi 96
+xwallpaper --zoom "$images/4/t/1643335597605.jpg"
+xinput --set-prop 10 'libinput Accel Speed' 0.8
+xsetroot -cursor_name left_ptr
+xset r rate 400 30
+xset dpms 120 120
+
+[ "$DBUS_SESSION_BUS_ADDRESS" ] ||
+	eval $(dbus-launch --sh-syntax)
+
+get_theme() {
+	d=$(date +%H)
+
+	case ${d#0} in
+		2[0-3]|[0-6]) export theme=$1 ;;
+		[7-9]|1[0-9]) export theme=$2 ;;
+	esac
+}
+
+[ "$wm" != xfwm4 ] && xrdb "$XDG_CONFIG_HOME/sx/xresources"
+case $wm in
+	berry|bspwm|herbstluftwm)
+		get_theme dark-gray light-bloom
+	;;
+
+	xfwm4)
+		get_theme xfwm4-dark xfwm4-light
+		theme "$theme"
+	;;
+
+	openbox)
+		get_theme "$wm/dark-openbox" "$wm/light-openbox"
+		theme "$theme"
+	;;
+esac
+
+for proc in \
+	sxhkd \
+	'redshift -O 4000' \
+	clipmenud \
+	"$TERMINAL"
+do
+	pgrep -x "${proc%% *}" || $proc &
+done
+
+exec "$wm"

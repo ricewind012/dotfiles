@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<openbox_menu xmlns="http://openbox.org/3.4/menu">
+
+<menu id="scr" label="Screenshot">
+  <item label="Selection">
+    <action name="Execute">
+      <command>screenshot</command>
+    </action>
+  </item>
+  <item label="Window">
+    <action name="Execute">
+      <command>screenshot -S window</command>
+    </action>
+  </item>
+  <item label="Fullscreen">
+    <action name="Execute">
+      <command>screenshot full</command>
+    </action>
+  </item>
+  <item label="Workspace montage">
+    <action name="Execute">
+      <command>screenshot ws-motage</command>
+    </action>
+	</item>
+
+	<separator />
+  <item label="Fullscreen recording">
+    <action name="Execute">
+      <command>screenshot vrecord</command>
+    </action>
+  </item>
+  <item label="Selection recording">
+    <action name="Execute">
+      <command>screenshot srecord</command>
+    </action>
+  </item>
+  <item label="ShadowPlay(?)-like recording">
+    <action name="Execute">
+      <command>screenshot shadowplay</command>
+    </action>
+  </item>
+  <item label="Audio recording">
+    <action name="Execute">
+      <command>screenshot arecord</command>
+    </action>
+  </item>
+
+	<separator />
+  <item label="Screen color">
+    <action name="Execute">
+      <command>screenshot color</command>
+    </action>
+  </item>
+  <item label="QR code">
+    <action name="Execute">
+      <command>screenshot -n qr</command>
+    </action>
+  </item>
+</menu>
+
+<menu id="root-menu" label="Openbox 3">
+  <item label="Terminal">
+    <action name="Execute">
+      <command>sh -c '$TERMINAL'</command>
+    </action>
+  </item>
+  <item label="Browser">
+    <action name="Execute">
+      <command>sh -c '$BROWSER'</command>
+    </action>
+  </item>
+
+  <separator />
+	<item label="Reload">
+		<action name="Reconfigure" />
+	</item>
+  <item label="Configure">
+    <action name="Execute">
+			<command>sh -c '$TERMINAL -e "$EDITOR $XDG_CONFIG_HOME/openbox" && openbox --reconfigure'</command>
+    </action>
+  </item>
+
+	<separator />
+	<menu id="scr">
+</menu>
+
+</openbox_menu>

@@ -1,0 +1,30 @@
+#!/bin/sh
+_() bspc config "$@"
+
+# Tiling
+mstack &
+_ single_monocle true
+_ gapless_monocle true
+_ borderless_monocle true
+
+# Mouse
+_ pointer_modifier mod1
+_ pointer_action1 move
+_ pointer_action2 resize_side
+_ pointer_action3 resize_corner
+_ pointer_motion_interval 1
+_ focus_follows_pointer true
+_ click_to_focus any
+
+# etc.
+_ initial_polarity second_child
+_ automatic_scheme spiral
+_ ignore_ewmh_focus true
+_ honor_size_hints false
+bspc monitor -d 1 2 3 4 5
+rules
+
+case "$(date +%H)" in
+	2[0-3]|0[0-6]) theme dark-blue;;
+	0[7-9]|1[0-9]) theme light-bloom;;
+esac

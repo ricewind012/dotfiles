@@ -1,0 +1,37 @@
+#!/bin/sh
+_() bspc config "$@"
+
+width=$(_ border_width)
+color2=$(_ focused_border_color)
+color3=$(_ normal_border_color)
+
+while IFS='=' read -r var val; do case $var in ColorBackground)
+	v=${val#\#}; case $v in
+		ffffff*) outer=0xf0f0f0;;
+		f0f0f0*) outer=0xffffff;;
+		070b16*) outer=0x0f172f;;
+		*) outer=0x$v;;
+	esac; break
+esac; done < "$xfterm"
+
+inner1=0x${color2#\#} # focused
+inner2=0x${color3#\#} # normal
+
+targets() {
+	case $1 in
+		focused) bspc query -N -n .local.focused.\!fullscreen;;
+		normal) bspc query -N -n .local.\!focused.\!fullscreen;;
+		active) bspc query -N -n .active.\!focused.\!fullscreen
+	esac
+}
+
+draw() chwb2 -I "$i" -O "$o" -i $((width/2)) -o $((width/2)) $@ 2>/dev/null
+
+# initial draw, and then subscribe to events
+{ echo; bspc subscribe node_geometry node_focus; } |
+	while read -r _; do
+		i=$inner1 o=$outer draw "$(targets focused)"
+		i=$inner2 o=$outer draw "$(targets normal)"
+		i=$inner2 o=$outer draw "$(targets active)"		
+	done
+
