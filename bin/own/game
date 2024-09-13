@@ -70,7 +70,7 @@ case $prog in
 
 	th)
 		p=${1:-13}
-		xmodmap "${xinit%/*}/xmodmap"
+		xmodmap "${XINITRC%/*}/xmodmap"
 		exec wine explorer "$winhome/Desktop/thcrap/th$p.lnk"
 		#while pgrep -x th$p.exe >/dev/null; do sleep 1; one
 		#xmodmap "${XINITRC%/*}/xmodmap-restore"

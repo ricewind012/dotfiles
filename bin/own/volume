@@ -5,11 +5,11 @@ check_pa() {
 	p=${1:-5}
 
 	if get_proc pulseaudio && [ "$proc" ]; then
-		vinc() pactl set-sink-volume @DEFAULT_SINK@ "+$p%"
-		vdec() pactl set-sink-volume @DEFAULT_SINK@ "-$p%"
+		vinc() { pactl set-sink-volume @DEFAULT_SINK@ "+$p%"; }
+		vdec() { pactl set-sink-volume @DEFAULT_SINK@ "-$p%"; }
 	else
-		vinc() amixer -q -M sset Master "$p%+"
-		vdec() amixer -q -M sset Master "$p%-"
+		vinc() { amixer -q -M sset Master "$p%+"; }
+		vdec() { amixer -q -M sset Master "$p%-"; }
 	fi
 }
 

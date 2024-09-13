@@ -16,7 +16,7 @@ copy() {
 
 strict() {
 	set -e
-	cleanup() rm -f "$@" 2>/dev/null
+	cleanup() { rm -f "$@" 2>/dev/null; }
 	trap cleanup EXIT
 }
 

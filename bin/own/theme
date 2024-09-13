@@ -16,42 +16,43 @@ set_theme() {
 	"$themedir/$theme/apply"
 }
 
-args() case ${1:-$theme} in
-	update)
-		[ "$2" ] || prompt 'update what'
-		theme=${2:-$answer}
-		[ -d "$themedir/$theme" ] || die "No such theme $theme"
+args() {
+	case ${1:-$theme} in
+		update)
+			[ "$2" ] || prompt 'update what'
+			theme=${2:-$answer}
+			[ -d "$themedir/$theme" ] || die "No such theme $theme"
 
-		prompt n sure
-		testglob "$answer" = '[Yy]*' || return 1
+			prompt n sure
+			testglob "$answer" = '[Yy]*' || return 1
 
-		for dir in $dirs; do
-			cp -r "$confdir/$dir" "$themedir/$theme"
-		done
+			for dir in $dirs; do
+				cp -r "$confdir/$dir" "$themedir/$theme"
+			done
 
-		for file in $files; do
-			dir=$themedir/$theme/${file%/*}
+			for file in $files; do
+				dir=$themedir/$theme/${file%/*}
 
-			[ -d "$dir" ] || mkdir -p "$dir"
-			cp "$confdir/$file" "$dir"
-		done
-	;;
+				[ -d "$dir" ] || mkdir -p "$dir"
+				cp "$confdir/$file" "$dir"
+			done
+		;;
 
-	make)
-		[ "$2" ] || prompt 'make what'
-		theme=${2:-$answer}
-		[ -d "$themedir/$theme" ] && die "$theme already exists"
+		make)
+			[ "$2" ] || prompt 'make what'
+			theme=${2:-$answer}
+			[ -d "$themedir/$theme" ] && die "$theme already exists"
 
-		for dir in $dirs; do
-			cp -r "$confdir/$dir" "$themedir/$theme"
-		done
+			for dir in $dirs; do
+				cp -r "$confdir/$dir" "$themedir/$theme"
+			done
 
-		for file in $files; do
-			mkdir -p "$themedir/$theme/${file%/*}"
-			cp "$confdir/$file" "$themedir/$theme/$file"
-		done
+			for file in $files; do
+				mkdir -p "$themedir/$theme/${file%/*}"
+				cp "$confdir/$file" "$themedir/$theme/$file"
+			done
 
-		printf '#!/bin/sh
+			printf '#!/bin/sh
 eval "$(xrescolors)"
 
 # WM-specific options
@@ -119,41 +120,42 @@ esac
 . "$XDG_CONFIG_HOME/user-dirs.dirs"
 xwallpaper --zoom "$XDG_PICTURES_DIR/Wallpapers/wp.png"
 xsetroot -solid "$background"' \
-			"$(bspc config window_gap)" \
-			"$(bspc config border_width)" \
-			"$(bspc config normal_border_color)" \
-			"$(bspc config focused_border_color)" \
-			"$(herbstclient attr theme.title_height)" \
-			"$(herbstclient attr theme.title_color)" \
-			"$(herbstclient attr theme.title_font)" \
-			"$(herbstclient attr theme.padding_left)" \
-			"$(herbstclient attr theme.padding_top)" \
-			"$(herbstclient attr theme.padding_right)" \
-			"$(herbstclient attr theme.padding_bottom)" \
-			"$(herbstclient attr theme.border_width)" \
-			"$(herbstclient attr theme.inner_width)" \
-			"$(herbstclient attr theme.outer_width)" \
-			"$(herbstclient attr theme.color)" \
-			"$(herbstclient attr theme.normal.inner_color)" \
-			"$(herbstclient attr theme.normal.outer_color)" \
-			"$(herbstclient attr theme.active.inner_color)" \
-			"$(herbstclient attr theme.active.outer_color)" \
-		> "$themedir/$theme/apply"
+				"$(bspc config window_gap)" \
+				"$(bspc config border_width)" \
+				"$(bspc config normal_border_color)" \
+				"$(bspc config focused_border_color)" \
+				"$(herbstclient attr theme.title_height)" \
+				"$(herbstclient attr theme.title_color)" \
+				"$(herbstclient attr theme.title_font)" \
+				"$(herbstclient attr theme.padding_left)" \
+				"$(herbstclient attr theme.padding_top)" \
+				"$(herbstclient attr theme.padding_right)" \
+				"$(herbstclient attr theme.padding_bottom)" \
+				"$(herbstclient attr theme.border_width)" \
+				"$(herbstclient attr theme.inner_width)" \
+				"$(herbstclient attr theme.outer_width)" \
+				"$(herbstclient attr theme.color)" \
+				"$(herbstclient attr theme.normal.inner_color)" \
+				"$(herbstclient attr theme.normal.outer_color)" \
+				"$(herbstclient attr theme.active.inner_color)" \
+				"$(herbstclient attr theme.active.outer_color)" \
+			> "$themedir/$theme/apply"
 
-		chmod +x "$themedir/$theme/apply"
-		prompt y Edit
-		testglob "$answer" = '[Yy]*' &&
-			"${EDITOR:-vi}" "$themedir/$theme/apply"
-	;;
+			chmod +x "$themedir/$theme/apply"
+			prompt y Edit
+			testglob "$answer" = '[Yy]*' &&
+				"${EDITOR:-vi}" "$themedir/$theme/apply"
+		;;
 
-	*)
-		if [ -d "$themedir/$theme" ]; then
-			set_theme
-		else
-			die "No such theme $theme"
-		fi
-	;;
-esac
+		*)
+			if [ -d "$themedir/$theme" ]; then
+				set_theme
+			else
+				die "No such theme $theme"
+			fi
+		;;
+	esac
+}
 
 main() {
 	confdir=${XDG_CONFIG_HOME:=$HOME/.config}

@@ -1,14 +1,19 @@
 #!/bin/sh
 . "$bin/common.sh"
 
-move() xdotool windowmove $id "$(( $1 + margin ))" "$(( $2 + margin + title_h ))"
-size() xdotool windowsize $id "$@"
+move() {
+	xdotool windowmove $id \
+		"$(( $1 + margin ))" "$(( $2 + margin + title_h ))"
+}
+size() { xdotool windowsize $id "$@"; }
 
-find_window() for i in $(xdotool search --class "$1"); do
-	case $(xdotool getwindowname $i) in
-		$2) id=$i; break
-	esac
-done
+find_window() {
+	for i in $(xdotool search --class "$1"); do
+		case $(xdotool getwindowname $i) in
+			$2) id=$i; break
+		esac
+	done
+}
 
 main() {
 	[ "$1" ] || {

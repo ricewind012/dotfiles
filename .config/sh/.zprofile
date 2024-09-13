@@ -21,28 +21,31 @@ export ICEAUTHORITY="$XDG_CACHE_HOME/ICEauthority"
 export XAUTHORITY="$XDG_RUNTIME_DIR/Xauthority"
 export LESSHISTFILE="$XDG_CACHE_HOME/lesshst"
 export FVWM_USERDIR="$XDG_CONFIG_HOME/fvwm"
+export XINITRC="$XDG_CONFIG_HOME/sx/sxrc"
 export CARGO_HOME="$XDG_DATA_HOME/cargo"
 export GNUPGHOME="$XDG_DATA_HOME/gnupg"
 
 ## Convenience
 export windows="/mnt/1C4EC94375351805"
 export windows2="/mnt/A29E6A309E69FCE3"
-export winhome="$windows/Users/ok"
 export images="$winhome/Desktop/Images"
 export skindir="$windows2/linux/etc"
+export winhome="$windows/Users/ok"
 export bin="$windows2/linux/bin"
 export steamlib="$XDG_DATA_HOME/Steam/steamapps/common"
 export firefox="$HOME/.mozilla/firefox/9ztk7ed7.default-nightly"
-[[ -d $bin ]] && export path=($bin/**/*(/) $path)
-export path=($path /usr/lib/node_modules/*/bin)
-export path=($path $CARGO_HOME/bin)
+export path=(
+	$path
+	$CARGO_HOME/bin
+	$bin/**/*(/N)
+	/usr/lib/node_modules/*/bin(N)
+)
 
 export gtk3="$XDG_CONFIG_HOME/gtk-3.0/settings.ini"
 export picom="$XDG_CONFIG_HOME/picom/picom.conf"
 export dunst="$XDG_CONFIG_HOME/dunst/dunstrc"
 export sxhkd="$XDG_CONFIG_HOME/sxhkd/sxhkdrc"
 export vim="$XDG_CONFIG_HOME/nvim/init.vim"
-export xinit="$XDG_CONFIG_HOME/sx/sxrc"
 
 ## Other
 export TMPDIR='/tmp'
@@ -51,7 +54,6 @@ export CNF_OPTS=csipt
 export MOZ_USE_XINPUT2=1
 export ENV="$ZDOTDIR/.shrc"
 export GTK_OVERLAY_SCROLLING=0
-#export QT_QPA_PLATFORMTHEME=qt5ct
 export MOZ_CRASHREPORTER_NO_REPORT=1
 export DOTNET_CLI_TELEMETRY_OPTOUT=true
 export WINEDLLOVERRIDES='mshtml=d'
@@ -90,7 +92,7 @@ if (( ! $+DISPLAY )) {
 	xlog=$XDG_DATA_HOME/xorg/Xorg-stdout.log
 	[[ -f $xlog ]] && mv $xlog $xlog.old
 
-	if [[ ! -f $TMPDIR/xran ]] {
+	if [[ $commands[optimus-manager] && ! -f $TMPDIR/xran ]] {
 		sudo python3 -u -m optimus_manager.hooks.pre_daemon_start
 		sudo python3 -u -m optimus_manager.hooks.pre_xorg_start
 		print -r -- '
@@ -140,7 +142,7 @@ EndSection
 	}
 
 	for (( ;; ))
-		${=commands[sx]:-xinit $xinit -- $commands[X] \
+		${=commands[sx]:-xinit $XINITRC -- $commands[X] \
 			-nolisten tcp :0 vt1 -keeptty}
 	:> $TMPDIR/xran
 }

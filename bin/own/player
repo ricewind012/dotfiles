@@ -15,10 +15,14 @@
 export LC_ALL=C
 . "$bin/common.sh"
 
-uppercase() str=$(printf '%c' "${1%"${1#?}"}" |
-	tr '[:lower:]' '[:upper:]')${1#?}
-reverse_lines()
+uppercase() {
+	str=$(printf '%c' "${1%"${1#?}"}" |
+		tr '[:lower:]' '[:upper:]')${1#?}
+}
+
+reverse_lines() {
 	awk '{a[i++]=$0} END {while(i>0) print(a[--i])}'
+}
 
 get_icons() {
 	if [ -f "$confdir/gtk-3.0/settings.ini" ]; then
@@ -288,7 +292,7 @@ cmd() {
 
 	case $player in
 		cmus)
-			cmus_cmd() cmus-remote -C "player-$1"
+			cmus_cmd() { cmus-remote -C "player-$1"; }
 			cmd=cmus_cmd
 		;;
 
@@ -296,8 +300,10 @@ cmd() {
 			if [ "$beefweb" ]; then
 				[ "$1" = "$toggle" ] && cmdl=pause/toggle
 
-				fb2k_cmd() curl -X POST \
-					"http://localhost:8880/api/player/$cmdl"
+				fb2k_cmd() {
+					curl -X POST \
+						"http://localhost:8880/api/player/$cmdl"
+				}
 				cmd=fb2k_cmd
 			else
 				cmd=foobar2000
@@ -311,52 +317,54 @@ cmd() {
 	$cmd "$od$1" #&& $ncmd
 }
 
-args() case $1 in
-	play)
-		case $status in
-			Stopped) b=Started ;;
-			Paused) b=Resumed ;;
-			Playing) die 'Already playing' ;;
-		esac
+args() {
+	case $1 in
+		play)
+			case $status in
+				Stopped) b=Started ;;
+				Paused) b=Resumed ;;
+				Playing) die 'Already playing' ;;
+			esac
 
-		cmd "$1" "$b"
-	;;
+			cmd "$1" "$b"
+		;;
 
-	toggle)
-		case $status in
-			Stopped) b=Started ;;
-			Playing) b=Paused ;;
-			Paused) b=Resumed ;;
-		esac
+		toggle)
+			case $status in
+				Stopped) b=Started ;;
+				Playing) b=Paused ;;
+				Paused) b=Resumed ;;
+			esac
 
-		if [ "$player" = foobar2000 ] && [ ! "$beefweb" ]; then
-			# Faster way - Wine takes some time to respond
-			set -e
-			oldwindow=$(xdotool getactivewindow)
+			if [ "$player" = foobar2000 ] && [ ! "$beefweb" ]; then
+				# Faster way - Wine takes some time to respond
+				set -e
+				oldwindow=$(xdotool getactivewindow)
 
-			xdotool search --class foobar2000.exe \
-				windowactivate key End \
-				windowactivate "$oldwindow"
-		else
-			cmd "$toggle" "$b"
-		fi
-	;;
+				xdotool search --class foobar2000.exe \
+					windowactivate key End \
+					windowactivate "$oldwindow"
+			else
+				cmd "$toggle" "$b"
+			fi
+		;;
 
-	pause)
-		[ "$status" = Paused ] && die 'Already paused'
-		cmd "$1" Paused
-	;;
+		pause)
+			[ "$status" = Paused ] && die 'Already paused'
+			cmd "$1" Paused
+		;;
 
-	stop)
-		[ "$status" = Stopped ] && die 'Already stopped'
-		cmd "$1" Stopped
-	;;
+		stop)
+			[ "$status" = Stopped ] && die 'Already stopped'
+			cmd "$1" Stopped
+		;;
 
-	prev) cmd "$previous" Previous ;;
-	next) cmd "$1" Next ;;
-	file) get_file && printf '%s\n' "$file" ;;
-	*) get_metadata ;;
-esac
+		prev) cmd "$previous" Previous ;;
+		next) cmd "$1" Next ;;
+		file) get_file && printf '%s\n' "$file" ;;
+		*) get_metadata ;;
+	esac
+}
 
 check() {
 	[ -f "$fb2k/running" ] && {
