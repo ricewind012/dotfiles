@@ -28,10 +28,10 @@ export GNUPGHOME="$XDG_DATA_HOME/gnupg"
 ## Convenience
 export windows="/mnt/1C4EC94375351805"
 export windows2="/mnt/A29E6A309E69FCE3"
-export images="$winhome/Desktop/Images"
 export skindir="$windows2/linux/etc"
 export winhome="$windows/Users/ok"
 export bin="$windows2/linux/bin"
+export images="$winhome/Desktop/Images"
 export steamlib="$XDG_DATA_HOME/Steam/steamapps/common"
 export firefox="$HOME/.mozilla/firefox/9ztk7ed7.default-nightly"
 export path=(
